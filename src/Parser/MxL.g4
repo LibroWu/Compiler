@@ -1,6 +1,6 @@
 grammar MxL;
 
-program: declaration*;
+program: declaration* EOF;
 
 /* declarations */
 
@@ -72,7 +72,7 @@ forInitStatement:
     expressionStatement
     | declarationStatement;
 
-forIncrStatement: expressionList?;
+forIncrStatement: expression?;
 
 /*Expressions*/
 primaryExpression:
@@ -93,7 +93,7 @@ lambdaDeclarator:
 
 postfixExpression:
     primaryExpression
-    | postfixExpression LeftParen expressionList? RightParen
+    | postfixExpression LeftParen expression? RightParen
     | postfixExpression LeftBracket expression RightBracket
     | postfixExpression Dot idExpression
     | postfixExpression (PlusPlus | MinusMinus);
@@ -158,7 +158,6 @@ logicalOrExpression:
 
 assignmentExpression:
     logicalOrExpression (Assign assignmentExpression)*;
-expressionList: expression (Comma expression)*;
 
 expression: assignmentExpression (Comma assignmentExpression)*;
 

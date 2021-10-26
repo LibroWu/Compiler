@@ -1,4 +1,5 @@
-// Generated from D:/workspace/libro_workspace/OS/Compiler/src\MxL.g4 by ANTLR 4.9.1
+// Generated from D:/workspace/libro_workspace/OS/Compiler/src/Parser\MxL.g4 by ANTLR 4.9.1
+package Parser;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -304,13 +305,6 @@ public class MxLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements Mx
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitAssignmentExpression(MxLParser.AssignmentExpressionContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitExpressionList(MxLParser.ExpressionListContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

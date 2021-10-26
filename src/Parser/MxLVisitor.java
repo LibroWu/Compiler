@@ -1,4 +1,5 @@
-// Generated from D:/workspace/libro_workspace/OS/Compiler/src\MxL.g4 by ANTLR 4.9.1
+// Generated from D:/workspace/libro_workspace/OS/Compiler/src/Parser\MxL.g4 by ANTLR 4.9.1
+package Parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -261,12 +262,6 @@ public interface MxLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAssignmentExpression(MxLParser.AssignmentExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MxLParser#expressionList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpressionList(MxLParser.ExpressionListContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MxLParser#expression}.
 	 * @param ctx the parse tree
