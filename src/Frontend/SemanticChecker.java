@@ -47,5 +47,6 @@ public class SemanticChecker implements ASTVisitor {
     @Override public void visit(shiftExprNode it){}
     @Override public void visit(stmtNode it) {}
     @Override public void visit(unaryExprNode it) {}
+    @Override public void visit(newArrayNode it) {}
 
 }

@@ -7,14 +7,13 @@ public class funcDefNode extends ASTNode {
 
     public boolean isConstructFunc = false;
     public String returnType, id;
+    public arraySpecifierNode arraySpecifier = null;
     public compoundStmtNode suite = null;
     public funcParameterNode parameters = null;
-
     //parameters
 
-    public funcDefNode(position pos, String rt, String Id) {
+    public funcDefNode(position pos, String Id) {
         super(pos);
-        returnType = rt;
         id = Id;
     }
 

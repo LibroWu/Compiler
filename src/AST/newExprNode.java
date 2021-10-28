@@ -4,6 +4,9 @@ import Util.position;
 
 public class newExprNode extends exprNode{
 
+    public String type = null;
+    public newArrayNode newArray = null;
+
     public newExprNode(position pos) {
         super(pos);
     }

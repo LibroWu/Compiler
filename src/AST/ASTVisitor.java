@@ -26,6 +26,7 @@ public interface ASTVisitor {
     void visit(logicOrExprNode it);
     void visit(multiExprNode it);
     void visit(newExprNode it);
+    void visit(newArrayNode it);
     void visit(postfixExprNode it);
     void visit(primaryExprNode it);
     void visit(relationExprNode it);

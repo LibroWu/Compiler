@@ -2,6 +2,8 @@ package AST;
 
 import Util.position;
 
+import java.util.ArrayList;
+
 public class logicAndExprNode extends exprNode{
 
     public logicAndExprNode(position pos) {

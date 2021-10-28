@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class exprNode extends ASTNode{
 
-    public ArrayList<assignExprNode> exprList = new ArrayList<>();
+    public ArrayList<exprNode> exprList = null;
 
     public exprNode(position pos) {
         super(pos);

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class funcParameterNode extends ASTNode {
 
-    public ArrayList<String> varType=new ArrayList<>();
+    public ArrayList<arraySpecifierNode> varType=new ArrayList<>();
     public ArrayList<String> Id = new ArrayList<>();
 
     public funcParameterNode(position pos) {

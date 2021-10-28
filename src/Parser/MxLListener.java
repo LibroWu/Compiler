@@ -478,6 +478,56 @@ public interface MxLListener extends ParseTreeListener {
 	 */
 	void exitConstructFunctionDefinition(MxLParser.ConstructFunctionDefinitionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MxLParser#theEqualOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterTheEqualOp(MxLParser.TheEqualOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxLParser#theEqualOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitTheEqualOp(MxLParser.TheEqualOpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MxLParser#theCmpOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterTheCmpOp(MxLParser.TheCmpOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxLParser#theCmpOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitTheCmpOp(MxLParser.TheCmpOpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MxLParser#theShiftOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterTheShiftOp(MxLParser.TheShiftOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxLParser#theShiftOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitTheShiftOp(MxLParser.TheShiftOpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MxLParser#thePMOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterThePMOp(MxLParser.ThePMOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxLParser#thePMOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitThePMOp(MxLParser.ThePMOpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MxLParser#theSDMOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterTheSDMOp(MxLParser.TheSDMOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxLParser#theSDMOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitTheSDMOp(MxLParser.TheSDMOpContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MxLParser#theOperator}.
 	 * @param ctx the parse tree
 	 */

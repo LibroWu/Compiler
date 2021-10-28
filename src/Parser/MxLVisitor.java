@@ -293,6 +293,36 @@ public interface MxLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitConstructFunctionDefinition(MxLParser.ConstructFunctionDefinitionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link MxLParser#theEqualOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTheEqualOp(MxLParser.TheEqualOpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MxLParser#theCmpOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTheCmpOp(MxLParser.TheCmpOpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MxLParser#theShiftOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTheShiftOp(MxLParser.TheShiftOpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MxLParser#thePMOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitThePMOp(MxLParser.ThePMOpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MxLParser#theSDMOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTheSDMOp(MxLParser.TheSDMOpContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link MxLParser#theOperator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

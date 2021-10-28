@@ -121,27 +121,27 @@ newArrayType:
 
 multiplicativeExpression:
     unaryExpression (
-        (Star | Div | Mod) unaryExpression
+        theSDMOp unaryExpression
     )*;
 
 additiveExpression:
     multiplicativeExpression (
-        (Plus | Minus) multiplicativeExpression
+        thePMOp multiplicativeExpression
     )*;
 
 shiftExpression:
     additiveExpression (
-        (RightShift | LeftShift) additiveExpression
+        theShiftOp additiveExpression
     )*;
 
 relationalExpression:
     shiftExpression (
-        (Less | Greater | LessEqual | GreaterEqual) shiftExpression
+        theCmpOp shiftExpression
     )*;
 
 equalityExpression:
     relationalExpression (
-        (Equal | NotEqual) relationalExpression
+        theEqualOp relationalExpression
     )*;
 
 andExpression: equalityExpression ( And equalityExpression)*;
@@ -179,6 +179,19 @@ memberDeclaration:
 constructFunctionDefinition: Identifier LeftParen RightParen compoundStatement;
 
 /* Lexer */
+theEqualOp: 
+    Equal 
+    |NotEqual;
+
+theCmpOp:
+    Less | Greater | LessEqual | GreaterEqual;
+
+theShiftOp:RightShift | LeftShift;
+
+thePMOp:Plus | Minus;
+
+theSDMOp:Star | Div | Mod;
+
 theOperator:
     New (LeftBracket RightBracket)?
     | Plus

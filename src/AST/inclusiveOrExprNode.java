@@ -2,6 +2,8 @@ package AST;
 
 import Util.position;
 
+import java.util.ArrayList;
+
 public class inclusiveOrExprNode extends exprNode{
 
     public inclusiveOrExprNode(position pos) {
