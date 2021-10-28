@@ -4,7 +4,7 @@ import Util.position;
 
 import java.util.ArrayList;
 
-public class declStmtNode extends ASTNode{
+public class declStmtNode extends stmtNode{
 
     public boolean isClassDef = false,fail=false;
     public classNode struct = null;

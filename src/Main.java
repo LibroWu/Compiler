@@ -1,5 +1,5 @@
 import AST.RootNode;
-import Backend.*;
+//import Backend.*;
 import Frontend.ASTBuilder;
 import Frontend.SemanticChecker;
 import Frontend.SymbolCollector;
@@ -19,7 +19,7 @@ import java.io.InputStream;
 public class Main {
     public static void main(String[] args) throws Exception{
 
-        String name = "test.MxL";
+        String name = "test.Mx";
         InputStream input = new FileInputStream(name);
 
         try {

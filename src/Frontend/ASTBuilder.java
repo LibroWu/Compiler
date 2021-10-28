@@ -209,7 +209,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         assign.logicExpr = (logicOrExprNode) visit(ctx.logicalOrExpression());
         if (ctx.assignmentExpression() != null) {
             assign.exprList = new ArrayList<>();
-            ctx.assignmentExpression().forEach(assignment -> assign.exprList.add((assignExprNode) visit(assignment)));
+            ctx.assignmentExpression().forEach(assignment -> assign.exprList.add((exprNode) visit(assignment)));
         }
         return assign;
     }
@@ -218,7 +218,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitLogicalOrExpression(MxLParser.LogicalOrExpressionContext ctx) {
         logicOrExprNode logicOrExpr = new logicOrExprNode(new position(ctx));
         logicOrExpr.exprList = new ArrayList<>();
-        ctx.logicalAndExpression().forEach(logic -> logicOrExpr.exprList.add((logicAndExprNode) visit(logic)));
+        ctx.logicalAndExpression().forEach(logic -> logicOrExpr.exprList.add((exprNode) visit(logic)));
         return logicOrExpr;
     }
 
@@ -226,7 +226,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitLogicalAndExpression(MxLParser.LogicalAndExpressionContext ctx) {
         logicAndExprNode logicAndExpr = new logicAndExprNode(new position(ctx));
         logicAndExpr.exprList = new ArrayList<>();
-        ctx.inclusiveOrExpression().forEach(logic -> logicAndExpr.exprList.add((inclusiveOrExprNode) visit(logic)));
+        ctx.inclusiveOrExpression().forEach(logic -> logicAndExpr.exprList.add((exprNode) visit(logic)));
         return logicAndExpr;
     }
 
@@ -234,7 +234,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitInclusiveOrExpression(MxLParser.InclusiveOrExpressionContext ctx) {
         inclusiveOrExprNode inclusiveOrExpr = new inclusiveOrExprNode(new position(ctx));
         inclusiveOrExpr.exprList = new ArrayList<>();
-        ctx.exclusiveOrExpression().forEach(logic -> inclusiveOrExpr.exprList.add((inclusiveOrExprNode) visit(logic)));
+        ctx.exclusiveOrExpression().forEach(logic -> inclusiveOrExpr.exprList.add((exprNode) visit(logic)));
         return inclusiveOrExpr;
     }
 
@@ -242,7 +242,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitExclusiveOrExpression(MxLParser.ExclusiveOrExpressionContext ctx) {
         exclusiveOrExprNode exclusiveOrExpr = new exclusiveOrExprNode(new position(ctx));
         exclusiveOrExpr.exprList = new ArrayList<>();
-        ctx.andExpression().forEach(logic -> exclusiveOrExpr.exprList.add((inclusiveOrExprNode) visit(logic)));
+        ctx.andExpression().forEach(logic -> exclusiveOrExpr.exprList.add((exprNode) visit(logic)));
         return exclusiveOrExpr;
     }
 
@@ -250,7 +250,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitAndExpression(MxLParser.AndExpressionContext ctx) {
         andExprNode andExpr = new andExprNode(new position(ctx));
         andExpr.exprList = new ArrayList<>();
-        ctx.equalityExpression().forEach(logic -> andExpr.exprList.add((inclusiveOrExprNode) visit(logic)));
+        ctx.equalityExpression().forEach(logic -> andExpr.exprList.add((exprNode) visit(logic)));
         return andExpr;
     }
 
@@ -258,7 +258,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitEqualityExpression(MxLParser.EqualityExpressionContext ctx) {
         equalExprNode equalExpr = new equalExprNode(new position(ctx));
         equalExpr.exprList = new ArrayList<>();
-        ctx.relationalExpression().forEach(logic -> equalExpr.exprList.add((inclusiveOrExprNode) visit(logic)));
+        ctx.relationalExpression().forEach(logic -> equalExpr.exprList.add((exprNode) visit(logic)));
         equalExpr.OpList = new ArrayList<>();
         ctx.theEqualOp().forEach(op -> equalExpr.OpList.add(op.toString()));
         return equalExpr;
@@ -268,7 +268,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitRelationalExpression(MxLParser.RelationalExpressionContext ctx) {
         relationExprNode relationExpr = new relationExprNode(new position(ctx));
         relationExpr.exprList = new ArrayList<>();
-        ctx.shiftExpression().forEach(logic -> relationExpr.exprList.add((inclusiveOrExprNode) visit(logic)));
+        ctx.shiftExpression().forEach(logic -> relationExpr.exprList.add((exprNode) visit(logic)));
         relationExpr.OpList = new ArrayList<>();
         ctx.theCmpOp().forEach(op -> relationExpr.OpList.add(op.toString()));
         return relationExpr;
@@ -278,7 +278,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitShiftExpression(MxLParser.ShiftExpressionContext ctx) {
         shiftExprNode shiftExpr = new shiftExprNode(new position(ctx));
         shiftExpr.exprList = new ArrayList<>();
-        ctx.additiveExpression().forEach(logic -> shiftExpr.exprList.add((inclusiveOrExprNode) visit(logic)));
+        ctx.additiveExpression().forEach(logic -> shiftExpr.exprList.add((exprNode) visit(logic)));
         shiftExpr.OpList = new ArrayList<>();
         ctx.theShiftOp().forEach(op -> shiftExpr.OpList.add(op.toString()));
         return shiftExpr;
@@ -288,7 +288,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitAdditiveExpression(MxLParser.AdditiveExpressionContext ctx) {
         addictiveExprNode addictiveExpr = new addictiveExprNode(new position(ctx));
         addictiveExpr.exprList = new ArrayList<>();
-        ctx.multiplicativeExpression().forEach(logic -> addictiveExpr.exprList.add((inclusiveOrExprNode) visit(logic)));
+        ctx.multiplicativeExpression().forEach(logic -> addictiveExpr.exprList.add((exprNode) visit(logic)));
         addictiveExpr.OpList = new ArrayList<>();
         ctx.thePMOp().forEach(op -> addictiveExpr.OpList.add(op.toString()));
         return addictiveExpr;
@@ -298,7 +298,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitMultiplicativeExpression(MxLParser.MultiplicativeExpressionContext ctx) {
         multiExprNode multiExpr = new multiExprNode(new position(ctx));
         multiExpr.exprList = new ArrayList<>();
-        ctx.unaryExpression().forEach(logic -> multiExpr.exprList.add((inclusiveOrExprNode) visit(logic)));
+        ctx.unaryExpression().forEach(logic -> multiExpr.exprList.add((exprNode) visit(logic)));
         multiExpr.OpList = new ArrayList<>();
         ctx.theSDMOp().forEach(op -> multiExpr.OpList.add(op.toString()));
         return multiExpr;
@@ -323,8 +323,8 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitPostfixExpression(MxLParser.PostfixExpressionContext ctx) {
         postfixExprNode postfixExpr = new postfixExprNode(new position(ctx));
-        if (ctx.postfixExpression() != null) {
-            postfixExpr.primaryExpr = (primaryExprNode) visit(ctx.postfixExpression());
+        if (ctx.primaryExpression() != null) {
+            postfixExpr.primaryExpr = (primaryExprNode) visit(ctx.primaryExpression());
         } else if (ctx.LeftParen() != null) {
             postfixExpr.isCallOp = true;
             postfixExpr.postfixExpr = (postfixExprNode) visit(ctx.postfixExpression());
