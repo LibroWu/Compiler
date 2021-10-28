@@ -6,7 +6,7 @@ import Util.position;
 public class funcDefNode extends ASTNode {
 
     public boolean isConstructFunc = false;
-    public String returnType, id;
+    public String id;
     public arraySpecifierNode arraySpecifier = null;
     public compoundStmtNode suite = null;
     public funcParameterNode parameters = null;

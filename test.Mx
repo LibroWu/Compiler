@@ -1,12 +1,12 @@
 /*
 Test Package: Sema_Local_Preview
 Test Target: Symbol
-Author: Pikachu
+Author: Pikachu'é"'éé
 Time: 2019-10-14
-Verdict: Fail
-Comment: numbers cannot be the first symbol of the identifier
+Verdict: Fail"
+Comment: numbeérs cannot be the first symbol of the identifier
 */
 
 int main(){
-    int 123;
+    int a;
 }

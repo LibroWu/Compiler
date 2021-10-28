@@ -35,7 +35,7 @@ functionDefinition: returnType Identifier LeftParen functionParameterDef? RightP
 
 functionParameterDef : varType Identifier (Comma varType Identifier)*;
 
-declarationStatement:(arraySpecifier | varType) initDeclaratorList? Semi;
+declarationStatement: varType initDeclaratorList? Semi;
 
 initDeclaratorList:declarator (Comma declarator)*;
 
@@ -55,11 +55,11 @@ statementSeq:statement+;
 
 compoundStatement: LeftBrace statementSeq? RightBrace;
 
-expressionStatement:expression? Semi;
+expressionStatement:expression Semi;
 selectionStatement:If LeftParen condition RightParen trueStatement=statement (Else falseStatement=statement)?;
 iterationStatement:
     While LeftParen condition RightParen statement
-    | For LeftParen forInitStatement condition? Semi forIncrStatement RightParen statement;
+    | For LeftParen forInitStatement? condition? Semi forIncrStatement? RightParen statement;
 jumpStatement:
     (
         Return expression?
@@ -72,7 +72,7 @@ forInitStatement:
     expressionStatement
     | declarationStatement;
 
-forIncrStatement: expression?;
+forIncrStatement: expression;
 
 /*Expressions*/
 primaryExpression:

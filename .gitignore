@@ -1,2 +1,4 @@
 .idea/
 *antlr-4.9.2*
+gen
+out

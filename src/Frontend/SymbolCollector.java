@@ -13,25 +13,44 @@ public class SymbolCollector implements ASTVisitor {
     }
     @Override
     public void visit(RootNode it) {
-        it.declList.forEach(dc -> dc.accept(this));
+        it.declList.forEach(decl ->
+        {if (decl.isDeclStmt) decl.accept(this);});
+        it.declList.forEach(decl ->
+        {if (decl.isFuncDef) decl.accept(this);});
     }
 
-    @Override public void visit(declNode it){}
-    @Override public void visit(classNode it) {}
+    @Override public void visit(declNode it){
+        if (it.isFuncDef) it.funcDef.accept(this);
+        else it.declStmt.accept(this);
+    }
+
+    @Override public void visit(declStmtNode it){
+        if (it.isClassDef) it.struct.accept(this);
+    }
+    @Override public void visit(classNode it) {
+        Type struct = new Type();
+        struct.members = new HashMap<>();
+        gScope.addType(it.name,struct,it.pos);
+    }
+
+    @Override public void visit(funcDefNode it){
+        Type func = new Type();
+        func.isFunc = true;
+        gScope.addType(it.id,func,it.pos);
+    }
+
     @Override public void visit(addictiveExprNode it){}
     @Override public void visit(andExprNode it){}
     @Override public void visit(arraySpecifierNode it) {}
     @Override public void visit(assignExprNode it){}
     @Override public void visit(compoundStmtNode it){}
     @Override public void visit(constExprNode it){}
-    @Override public void visit(declStmtNode it){}
     @Override public void visit(declaratorNode it) {}
     @Override public void visit(funcParameterNode it) {}
     @Override public void visit(equalExprNode it){}
     @Override public void visit(exclusiveOrExprNode it){}
     @Override public void visit(exprNode it){}
     @Override public void visit(exprStmtNode it){}
-    @Override public void visit(funcDefNode it){}
     @Override public void visit(idExprNode it){}
     @Override public void visit(inclusiveOrExprNode it){}
     @Override public void visit(iterStmtNode it){}

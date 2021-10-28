@@ -9,7 +9,6 @@ public class declStmtNode extends stmtNode{
     public boolean isClassDef = false,fail=false;
     public classNode struct = null;
     public arraySpecifierNode arraySpecifier = null;
-    public String varType = null;
     public ArrayList<declaratorNode> declaratorList = null;
     public declStmtNode(position pos) {
         super(pos);

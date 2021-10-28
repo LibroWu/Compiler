@@ -19,11 +19,19 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         this.gScope = gScope;
     }
 
-    Type intType, boolType, voidType, stringType;
+    Type intType, boolType, voidType, stringType,funcType;
 
     @Override
     public ASTNode visitProgram(MxLParser.ProgramContext ctx) {
         RootNode root = new RootNode(new position(ctx));
+        intType = new Type();intType.isInt = true;
+        boolType = new Type();boolType.isBool = true;
+        voidType = new Type(); voidType.isVoid = true;
+        stringType = new Type(); stringType.isString = true;
+        gScope.addType("int", intType, root.pos);
+        gScope.addType("bool", boolType, root.pos);
+        gScope.addType("string", stringType, root.pos);
+        gScope.addType("void", voidType, root.pos);
         ctx.declaration().forEach(dc -> root.declList.add((declNode) visit(dc)));
         return root;
     }
@@ -43,10 +51,14 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitFunctionDefinition(MxLParser.FunctionDefinitionContext ctx) {
-        funcDefNode func = new funcDefNode(new position(ctx) , ctx.Identifier().toString());
+        funcDefNode func = new funcDefNode(new position(ctx), ctx.Identifier().toString());
         func.suite = (compoundStmtNode) visit(ctx.compoundStatement());
-        if (ctx.returnType().arraySpecifier()!=null) func.arraySpecifier = (arraySpecifierNode) visit(ctx.returnType().arraySpecifier());
-        else func.returnType = ctx.returnType().toString();
+        if (ctx.returnType().arraySpecifier() != null)
+            func.arraySpecifier = (arraySpecifierNode) visit(ctx.returnType().arraySpecifier());
+        else {
+            func.arraySpecifier = new arraySpecifierNode(new position(ctx));
+            func.arraySpecifier.type = ctx.returnType().toString();
+        }
         if (ctx.functionParameterDef() != null) func.parameters = (funcParameterNode) visit(ctx.functionParameterDef());
         return func;
     }
@@ -56,9 +68,9 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         funcParameterNode parameterNode = new funcParameterNode(new position(ctx));
         ctx.varType().forEach(vt -> {
             arraySpecifierNode arraySpecifier = null;
-            if (vt.arraySpecifier()!=null) arraySpecifier = (arraySpecifierNode) visit(vt);
+            if (vt.arraySpecifier() != null) arraySpecifier = (arraySpecifierNode) visit(vt);
             else {
-                arraySpecifier=new arraySpecifierNode(new position(vt));
+                arraySpecifier = new arraySpecifierNode(new position(vt));
                 arraySpecifier.type = vt.toString();
             }
             parameterNode.varType.add(arraySpecifier);
@@ -72,22 +84,18 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         declStmtNode declStmt = new declStmtNode(new position(ctx));
         //is class definition in Mx*
         if (ctx.initDeclaratorList() == null) {
-            declStmt.isClassDef = true;
-            if (ctx.varType().classSpecifier() == null) declStmt.fail = true;
-            else {
+            if (ctx.varType().classSpecifier() != null) {
+                declStmt.isClassDef = true;
                 declStmt.struct = (classNode) visit(ctx.varType().classSpecifier());
             }
         } else {
-            //the varType is an array
-            if (ctx.arraySpecifier() != null) {
-                declStmt.arraySpecifier = (arraySpecifierNode) visit(ctx.arraySpecifier());
-            } else {
-                if (ctx.varType().classSpecifier() != null) declStmt.fail = true;
-                else {
-                    declStmt.declaratorList = new ArrayList<>();
-                    ctx.initDeclaratorList().declarator().forEach(decltor -> declStmt.declaratorList.add((declaratorNode) visit(decltor)));
-                }
+            if (ctx.varType().arraySpecifier()!=null) declStmt.arraySpecifier = (arraySpecifierNode) visit(ctx.varType().arraySpecifier());
+            else {
+                if (ctx.varType().classSpecifier()!=null) declStmt.fail = true;
+                declStmt.arraySpecifier = new arraySpecifierNode(declStmt.pos);
+                declStmt.arraySpecifier.type = ctx.varType().toString();
             }
+            ctx.initDeclaratorList().declarator().forEach( decl -> declStmt.declaratorList.add((declaratorNode) visit(decl)));
         }
         return declStmt;
     }
@@ -102,7 +110,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitArraySpecifier(MxLParser.ArraySpecifierContext ctx) {
         arraySpecifierNode arraySpecifier = new arraySpecifierNode(new position(ctx));
-        if (ctx.buildInType()!=null) arraySpecifier.type = ctx.buildInType().toString();
+        if (ctx.buildInType() != null) arraySpecifier.type = ctx.buildInType().toString();
         else arraySpecifier.type = ctx.Identifier().toString();
         arraySpecifier.emptyBracketPair = ctx.LeftBracket().size();
         return arraySpecifier;
@@ -113,9 +121,11 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         classNode struct = new classNode(new position(ctx), ctx.classHead().Identifier().toString());
         ctx.memberDeclaration().forEach(member -> {
             if (member.constructFunctionDefinition() != null) {
-                struct.constructFunc = (funcDefNode) visit(member);
+                struct.constructFunc = (funcDefNode) visit(member.constructFunctionDefinition());
             } else if (member.Semi() == null) {
-                struct.declList.add((declNode) visit(member));
+                if (member.constructFunctionDefinition() != null)
+                    struct.declList.add((declNode) visit(member.constructFunctionDefinition()));
+                else struct.declList.add((declNode) visit(member.functionDefinition()));
             }
         });
         return struct;
@@ -142,12 +152,12 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitIterationStatement(MxLParser.IterationStatementContext ctx) {
         iterStmtNode iter = new iterStmtNode(new position(ctx), ctx.For() != null, ctx.While() != null);
-        iter.cond = (exprNode) visit(ctx.condition());
+        if (ctx.condition() != null) iter.cond = (exprNode) visit(ctx.condition());
         if (iter.isWhile) {
             iter.mainStmt = (stmtNode) visit(ctx.statement());
         } else {
-            iter.initStmt = (stmtNode) visit(ctx.forInitStatement());
-            if (ctx.forIncrStatement().expression() != null) {
+            if (ctx.forInitStatement()!=null) iter.initStmt = (stmtNode) visit(ctx.forInitStatement());
+            if (ctx.forIncrStatement() != null) {
                 iter.incrExpr = (exprNode) visit(ctx.forIncrStatement().expression());
             }
         }
@@ -163,7 +173,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitExpressionStatement(MxLParser.ExpressionStatementContext ctx) {
         exprStmtNode exprStmt = new exprStmtNode(new position(ctx));
-        if (ctx.expression() != null) exprStmt.expr = (exprNode) visit(ctx.expression());
+        exprStmt.expr = (exprNode) visit(ctx.expression());
         return exprStmt;
     }
 
@@ -181,6 +191,11 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         select.trueStmt = (stmtNode) visit(ctx.trueStatement);
         if (ctx.falseStatement != null) select.falseStmt = (stmtNode) visit(ctx.falseStatement);
         return select;
+    }
+
+    @Override
+    public ASTNode visitCondition(MxLParser.ConditionContext ctx) {
+        return visit(ctx.expression());
     }
 
     @Override
@@ -389,8 +404,8 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitNewArrayType(MxLParser.NewArrayTypeContext ctx) {
         newArrayNode newArray = new newArrayNode(new position(ctx));
-        if (ctx.buildInType()!=null) newArray.type = ctx.buildInType().toString();
-        else newArray.type  = ctx.Identifier().toString();
+        if (ctx.buildInType() != null) newArray.type = ctx.buildInType().toString();
+        else newArray.type = ctx.Identifier().toString();
         newArray.exprList = new ArrayList<>();
         newArray.BracketPair = ctx.LeftBracket().size();
         ctx.expression().forEach(ex -> newArray.exprList.add((exprNode) visit(ex)));
@@ -400,8 +415,8 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitNewExpression(MxLParser.NewExpressionContext ctx) {
         newExprNode newExpr = new newExprNode(new position(ctx));
-        if (ctx.newArrayType()!=null) newExpr.newArray = (newArrayNode) visit(ctx.newArrayType());
-        else if (ctx.buildInType()!=null) newExpr.type = ctx.buildInType().toString();
+        if (ctx.newArrayType() != null) newExpr.newArray = (newArrayNode) visit(ctx.newArrayType());
+        else if (ctx.buildInType() != null) newExpr.type = ctx.buildInType().toString();
         else newExpr.type = ctx.Identifier().toString();
         return newExpr;
     }
