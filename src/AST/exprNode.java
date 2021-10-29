@@ -1,6 +1,6 @@
 package AST;
 
-import Util.Type;
+import Util.Type.Type;
 import Util.position;
 
 import java.util.ArrayList;

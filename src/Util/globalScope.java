@@ -1,5 +1,6 @@
 package Util;
 
+import Util.Type.Type;
 import Util.error.semanticError;
 
 import java.util.HashMap;

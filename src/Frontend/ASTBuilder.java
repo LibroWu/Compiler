@@ -3,13 +3,11 @@ package Frontend;
 import AST.*;
 import Parser.MxLBaseVisitor;
 import Parser.MxLParser;
-import Util.Type;
+import Util.Type.*;
 import Util.globalScope;
 import Util.position;
-import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
 
@@ -19,19 +17,9 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         this.gScope = gScope;
     }
 
-    Type intType, boolType, voidType, stringType,funcType;
-
     @Override
     public ASTNode visitProgram(MxLParser.ProgramContext ctx) {
         RootNode root = new RootNode(new position(ctx));
-        intType = new Type();intType.isInt = true;
-        boolType = new Type();boolType.isBool = true;
-        voidType = new Type(); voidType.isVoid = true;
-        stringType = new Type(); stringType.isString = true;
-        gScope.addType("int", intType, root.pos);
-        gScope.addType("bool", boolType, root.pos);
-        gScope.addType("string", stringType, root.pos);
-        gScope.addType("void", voidType, root.pos);
         ctx.declaration().forEach(dc -> root.declList.add((declNode) visit(dc)));
         return root;
     }
@@ -51,13 +39,13 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitFunctionDefinition(MxLParser.FunctionDefinitionContext ctx) {
-        funcDefNode func = new funcDefNode(new position(ctx), ctx.Identifier().toString());
+        funcDefNode func = new funcDefNode(new position(ctx), ctx.Identifier().getText());
         func.suite = (compoundStmtNode) visit(ctx.compoundStatement());
         if (ctx.returnType().arraySpecifier() != null)
             func.arraySpecifier = (arraySpecifierNode) visit(ctx.returnType().arraySpecifier());
         else {
             func.arraySpecifier = new arraySpecifierNode(new position(ctx));
-            func.arraySpecifier.type = ctx.returnType().toString();
+            func.arraySpecifier.type = ctx.returnType().getText();
         }
         if (ctx.functionParameterDef() != null) func.parameters = (funcParameterNode) visit(ctx.functionParameterDef());
         return func;
@@ -71,11 +59,11 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
             if (vt.arraySpecifier() != null) arraySpecifier = (arraySpecifierNode) visit(vt);
             else {
                 arraySpecifier = new arraySpecifierNode(new position(vt));
-                arraySpecifier.type = vt.toString();
+                arraySpecifier.type = vt.getText();
             }
             parameterNode.varType.add(arraySpecifier);
         });
-        ctx.Identifier().forEach(id -> parameterNode.Id.add(id.toString()));
+        ctx.Identifier().forEach(id -> parameterNode.Id.add(id.getText()));
         return parameterNode;
     }
 
@@ -93,7 +81,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
             else {
                 if (ctx.varType().classSpecifier()!=null) declStmt.fail = true;
                 declStmt.arraySpecifier = new arraySpecifierNode(declStmt.pos);
-                declStmt.arraySpecifier.type = ctx.varType().toString();
+                declStmt.arraySpecifier.type = ctx.varType().getText();
             }
             ctx.initDeclaratorList().declarator().forEach( decl -> declStmt.declaratorList.add((declaratorNode) visit(decl)));
         }
@@ -102,7 +90,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitDeclarator(MxLParser.DeclaratorContext ctx) {
-        declaratorNode declNode = new declaratorNode(new position(ctx), ctx.Identifier().toString());
+        declaratorNode declNode = new declaratorNode(new position(ctx), ctx.Identifier().getText());
         if (ctx.expression() != null) declNode.expr = (exprNode) visit(ctx.expression());
         return declNode;
     }
@@ -110,15 +98,15 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitArraySpecifier(MxLParser.ArraySpecifierContext ctx) {
         arraySpecifierNode arraySpecifier = new arraySpecifierNode(new position(ctx));
-        if (ctx.buildInType() != null) arraySpecifier.type = ctx.buildInType().toString();
-        else arraySpecifier.type = ctx.Identifier().toString();
+        if (ctx.buildInType() != null) arraySpecifier.type = ctx.buildInType().getText();
+        else arraySpecifier.type = ctx.Identifier().getText();
         arraySpecifier.emptyBracketPair = ctx.LeftBracket().size();
         return arraySpecifier;
     }
 
     @Override
     public ASTNode visitClassSpecifier(MxLParser.ClassSpecifierContext ctx) {
-        classNode struct = new classNode(new position(ctx), ctx.classHead().Identifier().toString());
+        classNode struct = new classNode(new position(ctx), ctx.classHead().Identifier().getText());
         ctx.memberDeclaration().forEach(member -> {
             if (member.constructFunctionDefinition() != null) {
                 struct.constructFunc = (funcDefNode) visit(member.constructFunctionDefinition());
@@ -133,7 +121,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitConstructFunctionDefinition(MxLParser.ConstructFunctionDefinitionContext ctx) {
-        funcDefNode funcDef = new funcDefNode(new position(ctx), ctx.Identifier().toString());
+        funcDefNode funcDef = new funcDefNode(new position(ctx), ctx.Identifier().getText());
         funcDef.isConstructFunc = true;
         funcDef.suite = (compoundStmtNode) visit(ctx.compoundStatement());
         return funcDef;
@@ -275,7 +263,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         equalExpr.exprList = new ArrayList<>();
         ctx.relationalExpression().forEach(logic -> equalExpr.exprList.add((exprNode) visit(logic)));
         equalExpr.OpList = new ArrayList<>();
-        ctx.theEqualOp().forEach(op -> equalExpr.OpList.add(op.toString()));
+        ctx.theEqualOp().forEach(op -> equalExpr.OpList.add(op.getText()));
         return equalExpr;
     }
 
@@ -285,7 +273,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         relationExpr.exprList = new ArrayList<>();
         ctx.shiftExpression().forEach(logic -> relationExpr.exprList.add((exprNode) visit(logic)));
         relationExpr.OpList = new ArrayList<>();
-        ctx.theCmpOp().forEach(op -> relationExpr.OpList.add(op.toString()));
+        ctx.theCmpOp().forEach(op -> relationExpr.OpList.add(op.getText()));
         return relationExpr;
     }
 
@@ -295,7 +283,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         shiftExpr.exprList = new ArrayList<>();
         ctx.additiveExpression().forEach(logic -> shiftExpr.exprList.add((exprNode) visit(logic)));
         shiftExpr.OpList = new ArrayList<>();
-        ctx.theShiftOp().forEach(op -> shiftExpr.OpList.add(op.toString()));
+        ctx.theShiftOp().forEach(op -> shiftExpr.OpList.add(op.getText()));
         return shiftExpr;
     }
 
@@ -305,7 +293,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         addictiveExpr.exprList = new ArrayList<>();
         ctx.multiplicativeExpression().forEach(logic -> addictiveExpr.exprList.add((exprNode) visit(logic)));
         addictiveExpr.OpList = new ArrayList<>();
-        ctx.thePMOp().forEach(op -> addictiveExpr.OpList.add(op.toString()));
+        ctx.thePMOp().forEach(op -> addictiveExpr.OpList.add(op.getText()));
         return addictiveExpr;
     }
 
@@ -315,7 +303,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         multiExpr.exprList = new ArrayList<>();
         ctx.unaryExpression().forEach(logic -> multiExpr.exprList.add((exprNode) visit(logic)));
         multiExpr.OpList = new ArrayList<>();
-        ctx.theSDMOp().forEach(op -> multiExpr.OpList.add(op.toString()));
+        ctx.theSDMOp().forEach(op -> multiExpr.OpList.add(op.getText()));
         return multiExpr;
     }
 
@@ -327,9 +315,9 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         } else if (ctx.newExpression() != null) {
             unaryExpr.newExpr = (newExprNode) visit(ctx.newExpression());
         } else {
-            if (ctx.PlusPlus() != null) unaryExpr.op = ctx.PlusPlus().toString();
-            else if (ctx.MinusMinus() != null) unaryExpr.op = ctx.MinusMinus().toString();
-            else unaryExpr.op = ctx.unaryOperator().toString();
+            if (ctx.PlusPlus() != null) unaryExpr.op = ctx.PlusPlus().getText();
+            else if (ctx.MinusMinus() != null) unaryExpr.op = ctx.MinusMinus().getText();
+            else unaryExpr.op = ctx.unaryOperator().getText();
             unaryExpr.unaryExpr = (unaryExprNode) visit(ctx.unaryExpression());
         }
         return unaryExpr;
@@ -383,7 +371,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitIdExpression(MxLParser.IdExpressionContext ctx) {
         idExprNode idExpr = new idExprNode(new position(ctx));
-        idExpr.Id = ctx.Identifier().toString();
+        idExpr.Id = ctx.Identifier().getText();
         return idExpr;
     }
 

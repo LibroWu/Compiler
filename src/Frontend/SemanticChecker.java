@@ -2,7 +2,7 @@ package Frontend;
 
 import AST.*;
 import Util.Scope;
-import Util.Type;
+import Util.Type.Type;
 import Util.error.semanticError;
 import Util.globalScope;
 import Util.position;
@@ -12,8 +12,10 @@ import java.util.Objects;
 public class SemanticChecker implements ASTVisitor {
     private Scope currentScope;
     private globalScope gScope;
+    //For currentStruct can be Type, classType and funcType,
+    // we use boolean inClassDefine and returnType to specify this.
     private Type currentStruct = null;
-    private Boolean hasMain = false;
+    private Boolean hasMain = false, inClassDefine = false;
     private position posMain = null;
     //if returnType is not null, then the visitor is in a function
     private arraySpecifierNode returnType = null;
@@ -39,6 +41,7 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(funcDefNode it) {
         currentScope = new Scope(currentScope);
+        //check the main function
         if (Objects.equals(it.id, "main")) {
             if (hasMain)
                 throw new semanticError("the program has duplicated main function, first defined in " + posMain.toString(), it.pos);
@@ -48,7 +51,8 @@ public class SemanticChecker implements ASTVisitor {
             hasMain = true;
             posMain = it.pos;
         }
-        if (it.parameters != null) it.parameters.varType.forEach(var -> var.accept(this));
+        //todo if (it.parameters != null) it.parameters.varType.forEach(var -> var.accept(this));
+
         if (it.isConstructFunc) {
             returnType = new arraySpecifierNode(it.pos);
             returnType.type = "void";
@@ -106,7 +110,7 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(selectStmtNode it) {
         it.cond.accept(this);
-        if (!it.cond.type.isBool) throw new semanticError("the condition's result is not boolean", it.cond.pos);
+        if (it.cond.type.typeType==Type.Types.BOOL_TYPE) throw new semanticError("the condition's result is not boolean", it.cond.pos);
         if (it.trueStmt != null) it.trueStmt.accept(this);
         if (it.falseStmt != null) it.falseStmt.accept(this);
     }
@@ -153,6 +157,7 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(stmtNode it) {
+
     }
 
     @Override
@@ -233,24 +238,29 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(primaryExprNode it) {
+
     }
 
     @Override
     public void visit(relationExprNode it) {
+
     }
 
 
     @Override
     public void visit(shiftExprNode it) {
+
     }
 
 
     @Override
     public void visit(unaryExprNode it) {
+
     }
 
     @Override
     public void visit(newArrayNode it) {
+
     }
 
 }

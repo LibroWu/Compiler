@@ -1,6 +1,5 @@
 package AST;
 
-import Util.Type;
 import Util.position;
 
 public class funcDefNode extends ASTNode {
@@ -10,7 +9,6 @@ public class funcDefNode extends ASTNode {
     public arraySpecifierNode arraySpecifier = null;
     public compoundStmtNode suite = null;
     public funcParameterNode parameters = null;
-    //parameters
 
     public funcDefNode(position pos, String Id) {
         super(pos);
