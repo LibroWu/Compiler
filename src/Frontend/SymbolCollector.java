@@ -123,13 +123,21 @@ public class SymbolCollector implements ASTVisitor {
         funcType func = new funcType(Type.Types.FUNC_TYPE);
         func.name = it.id;
         //do not check function overload, which is undefined behavior in MxStar?
-        func.returnType = gScope.getTypeFromName(it.arraySpecifier.type,it.arraySpecifier.pos);
-        func.returnType.dimension = it.arraySpecifier.emptyBracketPair;
+        if (it.isConstructFunc) {
+            func.returnType = new Type(Type.Types.NULL);
+        } else {
+            func.returnType = new Type(gScope.getTypeFromName(it.arraySpecifier.type,it.arraySpecifier.pos));
+            func.returnType.dimension = it.arraySpecifier.emptyBracketPair;
+        }
         if (it.parameters!=null) {
             func.parameter = new ArrayList<>();
-            it.parameters.varType.forEach(var -> func.parameter.add(gScope.getTypeFromName(var.type, var.pos)));
+            it.parameters.varType.forEach(var -> {
+                Type t = new Type(gScope.getTypeFromName(var.type, var.pos));
+                t.dimension = var.emptyBracketPair;
+                func.parameter.add(t);
+            });
         }
-        gScope.addType(it.id, func, it.pos);
+        gScope.addFunction(it.id, func, it.pos);
     }
 
     @Override

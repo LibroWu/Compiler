@@ -2,7 +2,7 @@ package Frontend;
 
 import AST.*;
 import Util.Scope;
-import Util.Type.Type;
+import Util.Type.*;
 import Util.error.semanticError;
 import Util.globalScope;
 import Util.position;
@@ -12,13 +12,11 @@ import java.util.Objects;
 public class SemanticChecker implements ASTVisitor {
     private Scope currentScope;
     private globalScope gScope;
-    //For currentStruct can be Type, classType and funcType,
-    // we use boolean inClassDefine and returnType to specify this.
-    private Type currentStruct = null;
-    private Boolean hasMain = false, inClassDefine = false;
+    private classType currentStruct = null;
+    private Boolean hasMain = false;
     private position posMain = null;
     //if returnType is not null, then the visitor is in a function
-    private arraySpecifierNode returnType = null;
+    private Type returnType = null;
     private int inLoop = 0;
 
     public SemanticChecker(globalScope gScope) {
@@ -51,24 +49,33 @@ public class SemanticChecker implements ASTVisitor {
             hasMain = true;
             posMain = it.pos;
         }
-        //todo if (it.parameters != null) it.parameters.varType.forEach(var -> var.accept(this));
-
-        if (it.isConstructFunc) {
-            returnType = new arraySpecifierNode(it.pos);
-            returnType.type = "void";
-        } else {
-            returnType = it.arraySpecifier;
-            gScope.getTypeFromName(returnType.type,returnType.pos);
+        int cnt = 0;
+        funcType func = gScope.getFunctionFromName(it.id, it.pos);
+        if (currentStruct!=null) {
+            assert (currentStruct.methods != null);
+            currentStruct.methods.put(it.id,func);
         }
+        if (it.parameters != null) {
+            for (String id : it.parameters.Id) {
+                gScope.nameConflict(id,it.parameters.pos);
+                currentScope.defineVariable(id, func.parameter.get(cnt), it.parameters.pos);
+                if (currentStruct!=null) {
+                    if (currentStruct.members.containsKey(id))
+                        throw new semanticError("redefinition of member " + id, it.parameters.pos);
+                    currentStruct.members.put(id,func.parameter.get(cnt));
+                }
+                ++cnt;
+            }
+        }
+        if (returnType!=null) throw new semanticError("define function in a function", it.pos);
+        returnType = func.returnType;
         it.suite.accept(this);
         returnType = null;
         currentScope = currentScope.parentScope();
     }
 
     @Override
-    public void visit(arraySpecifierNode it) {
-        gScope.getTypeFromName(it.type,it.pos);
-    }
+    public void visit(arraySpecifierNode it) {}
 
     @Override
     public void visit(compoundStmtNode it) {
@@ -86,18 +93,40 @@ public class SemanticChecker implements ASTVisitor {
         if (it.isClassDef) it.struct.accept(this);
         else {
             if (it.fail) throw new semanticError("declarator statement error", it.pos);
-            it.arraySpecifier.accept(this);
+            Type t = new Type(gScope.getTypeFromName(it.arraySpecifier.type,it.arraySpecifier.pos));
+            t.dimension = it.arraySpecifier.emptyBracketPair;
             it.declaratorList.forEach(declarator -> {
-                    //todo add array type into gScope
-                    //currentScope.defineVariable(declarator,gScope.getTypeFromName());
+                if (declarator.expr!=null) {
+                    declarator.expr.accept(this);
+                    if (!Objects.equals(declarator.expr.type.name, t.name) && declarator.expr.type.dimension != t.dimension)
+                        throw new semanticError("initialize expression's type mismatches the type of the variable",declarator.expr.pos);
+                }
+                // add to class as member
+                if (currentStruct!=null) {
+                    assert (currentStruct.members != null);
+                    if (currentStruct.members.containsKey(declarator.Identifier))
+                        throw new semanticError("redefinition of member " + declarator.Identifier, declarator.pos);
+                    currentStruct.members.put(declarator.Identifier,t);
+                }
+                // add to scope
+                currentScope.defineVariable(declarator.Identifier,t,declarator.pos);
             });
         }
     }
 
     @Override
     public void visit(classNode it) {
-        currentStruct = gScope.getTypeFromName(it.name, it.pos);
-        it.declList.forEach(decl -> decl.accept(this));
+        currentStruct = (classType)gScope.getTypeFromName(it.name, it.pos);
+        it.declList.forEach(decl -> {
+            if (decl.isDeclStmt) {
+                decl.accept(this);
+            }
+        });
+        it.declList.forEach(decl -> {
+            if (decl.isFuncDef) {
+                decl.accept(this);
+            }
+        });
         if (it.constructFunc != null) it.constructFunc.accept(this);
         currentStruct = null;
     }
@@ -110,7 +139,8 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(selectStmtNode it) {
         it.cond.accept(this);
-        if (it.cond.type.typeType==Type.Types.BOOL_TYPE) throw new semanticError("the condition's result is not boolean", it.cond.pos);
+        if (it.cond.type.typeType != Type.Types.BOOL_TYPE)
+            throw new semanticError("the condition's result is not boolean", it.cond.pos);
         if (it.trueStmt != null) it.trueStmt.accept(this);
         if (it.falseStmt != null) it.falseStmt.accept(this);
     }
@@ -119,13 +149,13 @@ public class SemanticChecker implements ASTVisitor {
     public void visit(iterStmtNode it) {
         currentScope = new Scope(currentScope);
         if (it.isWhile) {
-            if (it.cond == null) throw new semanticError("empty condition", it.cond.pos);
+            if (it.cond == null) throw new semanticError("empty condition", it.pos);
             it.cond.accept(this);
-            if (!it.cond.type.isBool) throw new semanticError("the condition's result is not boolean", it.cond.pos);
+            if (it.cond.type.typeType != Type.Types.BOOL_TYPE) throw new semanticError("the condition's result is not boolean", it.cond.pos);
         } else {
             if (it.cond != null) {
                 it.cond.accept(this);
-                if (!it.cond.type.isBool) throw new semanticError("the condition's result is not boolean", it.cond.pos);
+                if (it.cond.type.typeType != Type.Types.BOOL_TYPE) throw new semanticError("the condition's result is not boolean", it.cond.pos);
             }
             if (it.initStmt != null) it.initStmt.accept(this);
             if (it.incrExpr != null) it.incrExpr.accept(this);
@@ -141,14 +171,16 @@ public class SemanticChecker implements ASTVisitor {
         if (it.isReturn) {
             if (returnType == null) throw new semanticError("return happened outside of the function", it.pos);
             if (it.expr != null) {
-                if (Objects.equals(returnType.type, "void"))
+                if (Objects.equals(returnType.name, "void"))
                     throw new semanticError("return value in void function", it.pos);
+                if (Objects.equals(returnType.name, "null"))
+                    throw new semanticError("return value in construct function", it.pos);
                 it.expr.accept(this);
-                if (!Objects.equals(it.expr.type.type, returnType.type))
+                if (!Objects.equals(it.expr.type.name, returnType.name))
                     throw new semanticError("mismatch of the type in return", it.pos);
             } else {
-                if (!Objects.equals(returnType.type, "void"))
-                    throw new semanticError("mismatch of the type in return", it.pos);
+                if (!Objects.equals(returnType.name, "void"))
+                    throw new semanticError("empty return in non-void return type function", it.pos);
             }
         } else {
             if (inLoop == 0) throw new semanticError("loop control happened outside of the loop", it.pos);
@@ -226,14 +258,17 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(multiExprNode it) {
+
     }
 
     @Override
     public void visit(newExprNode it) {
+
     }
 
     @Override
     public void visit(postfixExprNode it) {
+
     }
 
     @Override
