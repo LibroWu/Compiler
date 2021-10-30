@@ -187,7 +187,11 @@ public class SemanticChecker implements ASTVisitor {
                 if (Objects.equals(returnType.name, "null"))
                     throw new semanticError("return value in construct function", it.pos);
                 it.expr.accept(this);
-                if (!Objects.equals(it.expr.type.name, returnType.name) || it.expr.type.dimension != returnType.dimension)
+                if (it.expr.type.typeType== Type.Types.CONST_NULL) {
+                    if ((returnType.name=="int"||returnType.name=="bool")&& returnType.dimension==0)
+                        throw new semanticError("can not return null to primitive type variable",it.pos);
+                }
+                else if (!Objects.equals(it.expr.type.name, returnType.name) || it.expr.type.dimension != returnType.dimension)
                     throw new semanticError("mismatch of the type in return", it.pos);
             } else {
                 if (!Objects.equals(returnType.name, "void") && !Objects.equals(returnType.name, "null"))
@@ -336,7 +340,7 @@ public class SemanticChecker implements ASTVisitor {
             exprNode rhs = it.exprList.get(1);
             lhs.accept(this);
             rhs.accept(this);
-            if (lhs.type.name == "int" || lhs.type.name == "bool" || (lhs.type.typeType != Type.Types.CONST_NULL && rhs.type.typeType != Type.Types.CONST_NULL))
+            if (((lhs.type.name == "int" || lhs.type.name == "bool") && lhs.type.dimension==0) || (lhs.type.typeType != Type.Types.CONST_NULL && rhs.type.typeType != Type.Types.CONST_NULL))
                 if (lhs.type.name != rhs.type.name)
                     throw new semanticError("type mismatch on equal expression", lhs.pos);
             for (int i = 2; i < it.exprList.size(); ++i) {

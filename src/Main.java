@@ -19,7 +19,7 @@ import java.io.InputStream;
 public class Main {
     public static void main(String[] args) throws Exception {
         String name = "test.mx";
-        //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\sema\\symbol-package\\symbol-8.mx";
+        //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\sema\\misc-package\\misc-7.mx";
         InputStream input = new FileInputStream(name);
 
         try {
