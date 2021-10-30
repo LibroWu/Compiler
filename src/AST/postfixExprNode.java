@@ -1,6 +1,7 @@
 package AST;
 
 import Util.position;
+import Util.Type.funcType;
 
 public class postfixExprNode extends exprNode{
 
@@ -8,6 +9,7 @@ public class postfixExprNode extends exprNode{
     public primaryExprNode primaryExpr = null;
     public postfixExprNode postfixExpr = null;
     public exprNode Expr =null;
+    public funcType func = null;
 
     public postfixExprNode(position pos) {
         super(pos);

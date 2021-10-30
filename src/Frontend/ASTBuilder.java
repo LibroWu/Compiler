@@ -77,13 +77,15 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
                 declStmt.struct = (classNode) visit(ctx.varType().classSpecifier());
             }
         } else {
-            if (ctx.varType().arraySpecifier()!=null) declStmt.arraySpecifier = (arraySpecifierNode) visit(ctx.varType().arraySpecifier());
+            if (ctx.varType().arraySpecifier() != null)
+                declStmt.arraySpecifier = (arraySpecifierNode) visit(ctx.varType().arraySpecifier());
             else {
-                if (ctx.varType().classSpecifier()!=null) declStmt.fail = true;
+                if (ctx.varType().classSpecifier() != null) declStmt.fail = true;
                 declStmt.arraySpecifier = new arraySpecifierNode(declStmt.pos);
                 declStmt.arraySpecifier.type = ctx.varType().getText();
             }
-            ctx.initDeclaratorList().declarator().forEach( decl -> declStmt.declaratorList.add((declaratorNode) visit(decl)));
+            declStmt.declaratorList = new ArrayList<>();
+            ctx.initDeclaratorList().declarator().forEach(decl -> declStmt.declaratorList.add((declaratorNode) visit(decl)));
         }
         return declStmt;
     }
@@ -141,10 +143,9 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitIterationStatement(MxLParser.IterationStatementContext ctx) {
         iterStmtNode iter = new iterStmtNode(new position(ctx), ctx.For() != null, ctx.While() != null);
         if (ctx.condition() != null) iter.cond = (exprNode) visit(ctx.condition());
-        if (iter.isWhile) {
-            iter.mainStmt = (stmtNode) visit(ctx.statement());
-        } else {
-            if (ctx.forInitStatement()!=null) iter.initStmt = (stmtNode) visit(ctx.forInitStatement());
+        iter.mainStmt = (stmtNode) visit(ctx.statement());
+        if (iter.isFor) {
+            if (ctx.forInitStatement() != null) iter.initStmt = (stmtNode) visit(ctx.forInitStatement());
             if (ctx.forIncrStatement() != null) {
                 iter.incrExpr = (exprNode) visit(ctx.forIncrStatement().expression());
             }
@@ -193,6 +194,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         else if (ctx.compoundStatement() != null) return visit(ctx.compoundStatement());
         else if (ctx.selectionStatement() != null) return visit(ctx.selectionStatement());
         else if (ctx.jumpStatement() != null) return visit(ctx.jumpStatement());
+        else if (ctx.iterationStatement()!=null) return visit(ctx.iterationStatement());
         stmtNode st = new stmtNode(new position(ctx));
         st.empty = true;
         return st;
@@ -372,17 +374,17 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitLiteral(MxLParser.LiteralContext ctx) {
         constExprNode constExpr = new constExprNode(new position(ctx));
-        if (ctx.IntegerLiteral()!=null) {
+        if (ctx.IntegerLiteral() != null) {
             constExpr.isInt = true;
-            constExpr.literal = ctx.StringLiteral().getText();
-        }else if (ctx.StringLiteral()!=null) {
-            constExpr.isString = true;
             constExpr.literal = ctx.IntegerLiteral().getText();
-        } else if (ctx.Null()!=null) {
+        } else if (ctx.StringLiteral() != null) {
+            constExpr.isString = true;
+            constExpr.literal = ctx.StringLiteral().getText();
+        } else if (ctx.Null() != null) {
             constExpr.literal = "null";
             constExpr.isNull = true;
         } else {
-            if (ctx.True()!=null) constExpr.literal = "true";
+            if (ctx.True() != null) constExpr.literal = "true";
             else constExpr.literal = "false";
             constExpr.isBool = true;
         }

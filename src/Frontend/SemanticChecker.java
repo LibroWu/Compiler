@@ -19,6 +19,7 @@ public class SemanticChecker implements ASTVisitor {
     private position posMain = null;
     //if returnType is not null, then the visitor is in a function
     private Type returnType = null;
+    private funcType arraySize = new funcType("size",new Type(Type.Types.INT_TYPE));
     private int inLoop = 0;
 
     public SemanticChecker(globalScope gScope) {
@@ -27,6 +28,7 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(RootNode it) {
+
         it.declList.forEach(dc -> dc.accept(this));
         if (!hasMain)
             throw new semanticError("the program does not have main function", it.pos);
@@ -201,30 +203,32 @@ public class SemanticChecker implements ASTVisitor {
         for (exprNode expr : it.exprList) {
             expr.accept(this);
         }
+        it.type = it.exprList.get(0).type;
     }
 
     @Override
     public void visit(assignExprNode it) {
         it.logicExpr.accept(this);
-        if (it.exprList!=null) {
+        it.type = it.logicExpr.type;
+        if (!it.exprList.isEmpty()) {
             if (!it.type.assignable)
-                throw new semanticError("assignment on rvalue",it.logicExpr.pos);
-            if (it.exprList.size()>1) {
-                for (int i=0;i<it.exprList.size()-1;++i) {
+                throw new semanticError("assignment on rvalue", it.logicExpr.pos);
+            if (it.exprList.size() > 1) {
+                for (int i = 0; i < it.exprList.size() - 1; ++i) {
                     exprNode expr = it.exprList.get(i);
                     expr.accept(this);
                     if (!expr.type.assignable)
-                        throw new semanticError("assignment on rvalue",expr.pos);
-                    if (expr.type.name!=it.logicExpr.type.name)
-                        throw new semanticError("type mismatch on assignment",expr.pos);
+                        throw new semanticError("assignment on rvalue", expr.pos);
+                    if (expr.type.name != it.logicExpr.type.name || expr.type.dimension != it.type.dimension)
+                        throw new semanticError("type mismatch on assignment", expr.pos);
                 }
             }
-            exprNode expr = it.exprList.get(it.exprList.size()-1);
+            exprNode expr = it.exprList.get(it.exprList.size() - 1);
             expr.accept(this);
-            if (expr.type.name!=it.logicExpr.type.name)
-                throw new semanticError("type mismatch on assignment",expr.pos);
-        } else {
-            it.type = it.logicExpr.type;
+            if (expr.type.typeType != Type.Types.CONST_NULL) {
+                if (expr.type.name != it.logicExpr.type.name || expr.type.dimension != it.type.dimension)
+                    throw new semanticError("type mismatch on assignment", expr.pos);
+            }
         }
     }
 
@@ -275,7 +279,7 @@ public class SemanticChecker implements ASTVisitor {
         it.type = it.exprList.get(0).type;
         if (it.exprList.size() > 1) {
             if (it.type.dimension > 0) throw new semanticError("can not operate on array", it.pos);
-            if (!Objects.equals(it.type.name, "int")&&!Objects.equals(it.type.name, "bool")) {
+            if (!Objects.equals(it.type.name, "int") && !Objects.equals(it.type.name, "bool")) {
                 throw new semanticError("inclusive or expression on non-int value", it.pos);
             }
             it.type.assignable = false;
@@ -294,7 +298,7 @@ public class SemanticChecker implements ASTVisitor {
         it.type = it.exprList.get(0).type;
         if (it.exprList.size() > 1) {
             if (it.type.dimension > 0) throw new semanticError("can not operate on array", it.pos);
-            if (!Objects.equals(it.type.name, "int")&&!Objects.equals(it.type.name, "bool")) {
+            if (!Objects.equals(it.type.name, "int") && !Objects.equals(it.type.name, "bool")) {
                 throw new semanticError("exclusive or expression on non-int value", it.pos);
             }
             it.type.assignable = false;
@@ -313,7 +317,7 @@ public class SemanticChecker implements ASTVisitor {
         it.type = it.exprList.get(0).type;
         if (it.exprList.size() > 1) {
             if (it.type.dimension > 0) throw new semanticError("can not operate on array", it.pos);
-            if (!Objects.equals(it.type.name, "int")&&!Objects.equals(it.type.name, "bool")) {
+            if (!Objects.equals(it.type.name, "int") && !Objects.equals(it.type.name, "bool")) {
                 throw new semanticError("and expression on non-int value", it.pos);
             }
             it.type.assignable = false;
@@ -322,19 +326,19 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(equalExprNode it) {
-        if (it.exprList.size()>1) {
-            exprNode lhs=it.exprList.get(0);
-            exprNode rhs=it.exprList.get(1);
+        if (it.exprList.size() > 1) {
+            exprNode lhs = it.exprList.get(0);
+            exprNode rhs = it.exprList.get(1);
             lhs.accept(this);
             rhs.accept(this);
-            if (lhs.type.name=="int" || lhs.type.name=="bool" || (lhs.type.typeType!= Type.Types.NULL && rhs.type.typeType!= Type.Types.NULL))
-                if (lhs.type.name!=rhs.type.name)
-                    throw new semanticError("type mismatch on equal expression",lhs.pos);
-            for (int i=2;i<it.exprList.size();++i) {
+            if (lhs.type.name == "int" || lhs.type.name == "bool" || (lhs.type.typeType != Type.Types.CONST_NULL && rhs.type.typeType != Type.Types.CONST_NULL))
+                if (lhs.type.name != rhs.type.name)
+                    throw new semanticError("type mismatch on equal expression", lhs.pos);
+            for (int i = 2; i < it.exprList.size(); ++i) {
                 exprNode tmp = it.exprList.get(i);
                 tmp.accept(this);
                 if (!Objects.equals(tmp.type.name, "bool"))
-                    throw new semanticError("type mismatch on equal expression",tmp.pos);
+                    throw new semanticError("type mismatch on equal expression", tmp.pos);
             }
             it.type = new Type(Type.Types.BOOL_TYPE);
         } else {
@@ -345,11 +349,11 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(relationExprNode it) {
-        if (it.exprList.size()>2)
+        if (it.exprList.size() > 2)
             throw new semanticError("can not compare two boolean value", it.pos);
-        else if (it.exprList.size()==2) {
-            exprNode lhs=it.exprList.get(0);
-            exprNode rhs=it.exprList.get(1);
+        else if (it.exprList.size() == 2) {
+            exprNode lhs = it.exprList.get(0);
+            exprNode rhs = it.exprList.get(1);
             lhs.accept(this);
             rhs.accept(this);
             if (Objects.equals(lhs.type.name, "bool") || Objects.equals(rhs.type.name, "bool"))
@@ -438,7 +442,7 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(newExprNode it) {
         if (it.newArray != null) {
-            it.type = new Type(gScope.getTypeFromName(it.typename, it.pos));
+            it.type = new Type(gScope.getTypeFromName(it.newArray.type, it.pos));
             it.type.assignable = false;
             it.type.dimension = it.newArray.BracketPair;
             for (exprNode expr : it.newArray.exprList) {
@@ -467,16 +471,18 @@ public class SemanticChecker implements ASTVisitor {
             if (t.isClass) {
                 it.type = new Type(gScope.getMemberTypeFromName(t.name, id.Id, id.pos));
                 if (!it.type.isFunc) it.type.assignable = true;
+                else it.func = (funcType) gScope.getMemberTypeFromName(t.name,id.Id,id.pos);
             } else if (t.dimension > 0) {
                 if (!Objects.equals(id.Id, "size"))
                     throw new semanticError("array do not have this method", it.pos);
-                it.type = new Type(Type.Types.INT_TYPE);
+                it.func = arraySize;
+                it.type = new Type(arraySize);
             } else throw new semanticError("do not have member/method", it.pos);
         } else if (it.isCallOp) {
             it.postfixExpr.accept(this);
-            funcType func = (funcType) it.postfixExpr.type;
-            if (!it.type.isFunc)
+            if (!it.postfixExpr.type.isFunc)
                 throw new semanticError("call fail because it is not a function", it.pos);
+            funcType func = it.postfixExpr.func;
             if (it.Expr != null) {
                 it.Expr.accept(this);
                 int cnt = 0;
@@ -498,7 +504,7 @@ public class SemanticChecker implements ASTVisitor {
             if (it.type.dimension-- == 0)
                 throw new semanticError("subscript on non-array variable", it.Expr.pos);
             it.Expr.accept(this);
-            if (!Objects.equals(it.Expr.type.name, "int"))
+            if (!Objects.equals(it.Expr.type.name, "int") || it.Expr.type.dimension != 0)
                 throw new semanticError("subscript is not int", it.Expr.pos);
         } else {
             it.primaryExpr.accept(this);
@@ -522,7 +528,8 @@ public class SemanticChecker implements ASTVisitor {
         } else if (it.isIdExpr) {
             String s = ((idExprNode) it.expr).Id;
             if (currentScope.containsVariable(s, true)) {
-                it.type = currentStruct.members.get(s);
+                it.type = new Type(currentScope.getType(s, true));
+                it.type.assignable = true;
             } else if (gScope.hasFunction(s)) {
                 it.type = gScope.getFunctionFromName(s, it.expr.pos);
             } else throw new semanticError("can not find the definition of " + s, it.expr.pos);
@@ -536,9 +543,9 @@ public class SemanticChecker implements ASTVisitor {
     public void visit(constExprNode it) {
         Type.Types ts = Type.Types.NULL;
         if (it.isBool) ts = Type.Types.BOOL_TYPE;
-        else if (it.isInt) ts = Type.Types.CONST_NULL;
+        else if (it.isInt) ts = Type.Types.INT_TYPE;
         else if (it.isString) ts = Type.Types.CLASS_TYPE;
-        else if (it.isNull) ts = Type.Types.INT_TYPE;
+        else if (it.isNull) ts = Type.Types.CONST_NULL;
         it.type = new Type(ts);
     }
 

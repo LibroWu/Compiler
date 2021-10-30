@@ -34,15 +34,19 @@ public class SymbolCollector implements ASTVisitor {
                     substringFunc = new funcType(Type.Types.FUNC_TYPE),
                     parseIntFunc = new funcType(Type.Types.FUNC_TYPE),
                     ordFunc = new funcType(Type.Types.FUNC_TYPE);
+            lengthFunc.name = "length";
             lengthFunc.returnType = intType;
 
+            substringFunc.name = "substring";
             substringFunc.returnType = stringType;
             substringFunc.parameter = new ArrayList<>();
             substringFunc.parameter.add(intType);
             substringFunc.parameter.add(intType);
 
+            parseIntFunc.name = "parseInt";
             parseIntFunc.returnType = intType;
 
+            ordFunc.name = "ord";
             ordFunc.returnType = intType;
             ordFunc.parameter = new ArrayList<>();
             ordFunc.parameter.add(intType);
@@ -59,37 +63,44 @@ public class SymbolCollector implements ASTVisitor {
         gScope.addType("string", stringType, it.pos);
         gScope.addType("void", voidType, it.pos);
         //build in functions
+        printFunc.name = "print";
         printFunc.returnType = voidType;
         printFunc.parameter = new ArrayList<>();
         printFunc.parameter.add(stringType);
 
+        printlnFunc.name = "println";
         printlnFunc.returnType = voidType;
         printlnFunc.parameter = new ArrayList<>();
         printlnFunc.parameter.add(stringType);
 
+        printIntFunc.name = "printInt";
         printIntFunc.returnType = voidType;
         printIntFunc.parameter = new ArrayList<>();
         printIntFunc.parameter.add(intType);
 
+        printlnIntFunc.name = "printlnInt";
         printlnIntFunc.returnType = voidType;
         printlnIntFunc.parameter = new ArrayList<>();
         printlnIntFunc.parameter.add(intType);
 
+        getStringFunc.name = "getString";
         getStringFunc.returnType = stringType;
         getIntFunc = new funcType(Type.Types.FUNC_TYPE);
         getIntFunc.returnType = intType;
 
+        toStringFunc.name = "toString";
         toStringFunc.returnType = stringType;
         toStringFunc.parameter = new ArrayList<>();
         toStringFunc.parameter.add(intType);
+
         //add build in functions into globalScope
-        gScope.addType("print", printFunc, it.pos);
-        gScope.addType("println", printlnFunc, it.pos);
-        gScope.addType("printInt", printIntFunc, it.pos);
-        gScope.addType("printlnInt", printlnIntFunc, it.pos);
-        gScope.addType("getString", getStringFunc, it.pos);
-        gScope.addType("getInt", getIntFunc, it.pos);
-        gScope.addType("toString", toStringFunc, it.pos);
+        gScope.addFunction("print", printFunc, it.pos);
+        gScope.addFunction("println", printlnFunc, it.pos);
+        gScope.addFunction("printInt", printIntFunc, it.pos);
+        gScope.addFunction("printlnInt", printlnIntFunc, it.pos);
+        gScope.addFunction("getString", getStringFunc, it.pos);
+        gScope.addFunction("getInt", getIntFunc, it.pos);
+        gScope.addFunction("toString", toStringFunc, it.pos);
         it.declList.forEach(decl ->
         {
             if (decl.isDeclStmt) decl.accept(this);

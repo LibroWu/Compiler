@@ -12,7 +12,7 @@ public class Type {
         typeType = t;
         switch (t) {
             case NULL -> name = "null";
-            case INT_TYPE -> name = "Int";
+            case INT_TYPE -> name = "int";
             case BOOL_TYPE -> name = "bool";
             case VOID_TYPE -> name = "void";
             case CONST_NULL -> name = "const_null";
