@@ -357,6 +357,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         } else if (ctx.This() != null) {
             primaryExpr.isThis = true;
         } else if (ctx.LeftParen() != null) {
+            primaryExpr.isExpr = true;
             primaryExpr.expr = (exprNode) visit(ctx.expression());
         } else if (ctx.idExpression() != null) {
             primaryExpr.isIdExpr = true;
@@ -366,6 +367,26 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
             primaryExpr.expr = (exprNode) visit(ctx.lambdaExpression());
         }
         return primaryExpr;
+    }
+
+    @Override
+    public ASTNode visitLiteral(MxLParser.LiteralContext ctx) {
+        constExprNode constExpr = new constExprNode(new position(ctx));
+        if (ctx.IntegerLiteral()!=null) {
+            constExpr.isInt = true;
+            constExpr.literal = ctx.StringLiteral().getText();
+        }else if (ctx.StringLiteral()!=null) {
+            constExpr.isString = true;
+            constExpr.literal = ctx.IntegerLiteral().getText();
+        } else if (ctx.Null()!=null) {
+            constExpr.literal = "null";
+            constExpr.isNull = true;
+        } else {
+            if (ctx.True()!=null) constExpr.literal = "true";
+            else constExpr.literal = "false";
+            constExpr.isBool = true;
+        }
+        return constExpr;
     }
 
     @Override
@@ -392,8 +413,8 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitNewArrayType(MxLParser.NewArrayTypeContext ctx) {
         newArrayNode newArray = new newArrayNode(new position(ctx));
-        if (ctx.buildInType() != null) newArray.type = ctx.buildInType().toString();
-        else newArray.type = ctx.Identifier().toString();
+        if (ctx.buildInType() != null) newArray.type = ctx.buildInType().getText();
+        else newArray.type = ctx.Identifier().getText();
         newArray.exprList = new ArrayList<>();
         newArray.BracketPair = ctx.LeftBracket().size();
         ctx.expression().forEach(ex -> newArray.exprList.add((exprNode) visit(ex)));
@@ -404,8 +425,8 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     public ASTNode visitNewExpression(MxLParser.NewExpressionContext ctx) {
         newExprNode newExpr = new newExprNode(new position(ctx));
         if (ctx.newArrayType() != null) newExpr.newArray = (newArrayNode) visit(ctx.newArrayType());
-        else if (ctx.buildInType() != null) newExpr.type = ctx.buildInType().toString();
-        else newExpr.type = ctx.Identifier().toString();
+        else if (ctx.buildInType() != null) newExpr.typename = ctx.buildInType().getText();
+        else newExpr.typename = ctx.Identifier().getText();
         return newExpr;
     }
 

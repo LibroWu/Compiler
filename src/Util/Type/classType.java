@@ -8,13 +8,7 @@ public class classType extends Type {
 
     public classType(Types t) {
         super(t);
+        isClass = true;
     }
 
-    public void defineMember(String name, Type t) {
-        members.put(name, t);
-    }
-
-    public void defineMethod(String name, funcType t) {
-        methods.put(name, t);
-    }
 }

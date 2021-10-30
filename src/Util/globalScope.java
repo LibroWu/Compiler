@@ -59,6 +59,22 @@ public class globalScope extends Scope {
         throw new semanticError("no such type: " + name, pos);
     }
 
+    public Type getMemberTypeFromName(String type,String member, position pos) {
+        if (types.containsKey(type)) {
+            Type t = types.get(type);
+            if (t.isClass) {
+                if(((classType) t).members.containsKey(member))
+                    return ((classType) t).members.get(member);
+                else if (((classType) t).methods.containsKey(member))
+                    return ((classType) t).methods.get(member);
+                else throw new semanticError("no such member :"+ member+ " in class "+type,pos);
+            } else throw new semanticError("no such class: "+type,pos);
+        }
+        throw new semanticError("no such type: " + type, pos);
+    }
+    public boolean hasFunction(String name) {
+        return (funcTypes.containsKey(name));
+    }
     public funcType getFunctionFromName(String name, position pos) {
         if (funcTypes.containsKey(name)) return funcTypes.get(name);
         throw new semanticError("no such function: " + name, pos);

@@ -9,5 +9,6 @@ public class funcType extends Type{
 
     public funcType(Types t) {
         super(t);
+        isFunc = true;
     }
 }
