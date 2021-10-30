@@ -59,7 +59,7 @@ expressionStatement:expression Semi;
 selectionStatement:If LeftParen condition RightParen trueStatement=statement (Else falseStatement=statement)?;
 iterationStatement:
     While LeftParen condition RightParen statement
-    | For LeftParen forInitStatement? condition? Semi forIncrStatement? RightParen statement;
+    | For LeftParen forInitStatement condition? Semi forIncrStatement? RightParen statement;
 jumpStatement:
     (
         Return expression?
@@ -70,7 +70,8 @@ condition: expression;
 
 forInitStatement:
     expressionStatement
-    | declarationStatement;
+    | declarationStatement
+    | Semi;
 
 forIncrStatement: expression;
 
