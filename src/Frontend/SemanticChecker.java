@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Objects;
 
+//remark: not check non-void function without return
+
 public class SemanticChecker implements ASTVisitor {
     private Scope currentScope;
     private globalScope gScope;
@@ -44,7 +46,7 @@ public class SemanticChecker implements ASTVisitor {
     public void visit(funcDefNode it) {
         currentScope = new Scope(currentScope);
         //check the main function
-        if (Objects.equals(it.id, "main")) {
+        if (currentStruct==null && Objects.equals(it.id, "main")) {
             if (hasMain)
                 throw new semanticError("the program has duplicated main function, first defined in " + posMain.toString(), it.pos);
             if (!Objects.equals(it.arraySpecifier.type, "int"))
@@ -54,20 +56,30 @@ public class SemanticChecker implements ASTVisitor {
             posMain = it.pos;
         }
         int cnt = 0;
-        funcType func = gScope.getFunctionFromName(it.id, it.pos);
+        funcType func;
         if (currentStruct != null) {
-            assert (currentStruct.methods != null);
+            Type rt ;
+            if (it.isConstructFunc) {
+                rt = new Type(Type.Types.NULL);
+            } else {
+                rt = new Type(gScope.getTypeFromName(it.arraySpecifier.type,it.arraySpecifier.pos));
+                rt.dimension = it.arraySpecifier.emptyBracketPair;
+            }
+            func = new funcType(it.id,rt);
             currentStruct.methods.put(it.id, func);
-        }
+            if (it.parameters!=null) {
+                func.parameter = new ArrayList<>();
+                it.parameters.varType.forEach(var -> {
+                    Type t = new Type(gScope.getTypeFromName(var.type, var.pos));
+                    t.dimension = var.emptyBracketPair;
+                    func.parameter.add(t);
+                });
+            }
+        } else func =(funcType) gScope.getFunctionFromName(it.id,it.pos);
         if (it.parameters != null) {
             for (String id : it.parameters.Id) {
                 gScope.nameConflict(id, it.parameters.pos);
                 currentScope.defineVariable(id, func.parameter.get(cnt), it.parameters.pos);
-                if (currentStruct != null) {
-                    if (currentStruct.members.containsKey(id))
-                        throw new semanticError("redefinition of member " + id, it.parameters.pos);
-                    currentStruct.members.put(id, func.parameter.get(cnt));
-                }
                 ++cnt;
             }
         }
@@ -103,9 +115,12 @@ public class SemanticChecker implements ASTVisitor {
             it.declaratorList.forEach(declarator -> {
                 if (declarator.expr != null) {
                     declarator.expr.accept(this);
-                    if (!Objects.equals(declarator.expr.type.name, t.name) && declarator.expr.type.dimension != t.dimension)
+                    if (!Objects.equals(declarator.expr.type.name, t.name) && declarator.expr.type.dimension != t.dimension && declarator.expr.type.typeType!= Type.Types.CONST_NULL)
                         throw new semanticError("initialize expression's type mismatches the type of the variable", declarator.expr.pos);
+                    if (declarator.expr.type.typeType== Type.Types.CONST_NULL && t.typeType!= Type.Types.CLASS_TYPE && t.dimension==0)
+                        throw new semanticError("can not assign null to primitive type variable",it.pos);
                 }
+                gScope.nameConflict(declarator.Identifier,declarator.pos);
                 // add to class as member
                 if (currentStruct != null) {
                     assert (currentStruct.members != null);
@@ -122,6 +137,7 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(classNode it) {
         currentStruct = (classType) gScope.getTypeFromName(it.name, it.pos);
+        currentScope = new Scope(currentScope);
         it.declList.forEach(decl -> {
             if (decl.isDeclStmt) {
                 decl.accept(this);
@@ -134,6 +150,7 @@ public class SemanticChecker implements ASTVisitor {
         });
         if (it.constructFunc != null) it.constructFunc.accept(this);
         currentStruct = null;
+        currentScope = currentScope.parentScope();
     }
 
     @Override
@@ -228,7 +245,8 @@ public class SemanticChecker implements ASTVisitor {
             if (expr.type.typeType != Type.Types.CONST_NULL) {
                 if (expr.type.name != it.logicExpr.type.name || expr.type.dimension != it.type.dimension)
                     throw new semanticError("type mismatch on assignment", expr.pos);
-            }
+            } else if (it.logicExpr.type.typeType!= Type.Types.CLASS_TYPE && it.logicExpr.type.dimension==0)
+                throw new semanticError("can not assign null to primitive type variable",it.pos);
         }
     }
 
@@ -469,7 +487,8 @@ public class SemanticChecker implements ASTVisitor {
             idExprNode id = (idExprNode) it.Expr;
             Type t = it.postfixExpr.type;
             if (t.isClass) {
-                it.type = new Type(gScope.getMemberTypeFromName(t.name, id.Id, id.pos));
+                if (id.Id=="this") it.type = t;
+                else it.type = new Type(gScope.getMemberTypeFromName(t.name, id.Id, id.pos));
                 if (!it.type.isFunc) it.type.assignable = true;
                 else it.func = (funcType) gScope.getMemberTypeFromName(t.name,id.Id,id.pos);
             } else if (t.dimension > 0) {
@@ -509,6 +528,7 @@ public class SemanticChecker implements ASTVisitor {
         } else {
             it.primaryExpr.accept(this);
             it.type = it.primaryExpr.type;
+            if (it.type.isFunc) it.func = (funcType) it.type;
         }
     }
 
@@ -542,11 +562,13 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(constExprNode it) {
         Type.Types ts = Type.Types.NULL;
-        if (it.isBool) ts = Type.Types.BOOL_TYPE;
-        else if (it.isInt) ts = Type.Types.INT_TYPE;
-        else if (it.isString) ts = Type.Types.CLASS_TYPE;
-        else if (it.isNull) ts = Type.Types.CONST_NULL;
-        it.type = new Type(ts);
+        if (it.isBool) it.type = new Type(gScope.getTypeFromName("bool",it.pos));
+        else if (it.isInt) it.type = new Type(gScope.getTypeFromName("int",it.pos));
+        else if (it.isString) it.type = new Type(gScope.getTypeFromName("string",it.pos));
+        else if (it.isNull) {
+            ts = Type.Types.CONST_NULL;
+            it.type = new Type(ts);
+        }
     }
 
     @Override

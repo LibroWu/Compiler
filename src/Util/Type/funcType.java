@@ -18,4 +18,9 @@ public class funcType extends Type{
         super(t);
         isFunc = true;
     }
+
+    public funcType() {
+        super(Types.FUNC_TYPE);
+        isFunc = true;
+    }
 }

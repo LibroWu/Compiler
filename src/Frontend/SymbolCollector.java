@@ -56,6 +56,7 @@ public class SymbolCollector implements ASTVisitor {
             stringType.methods.put("substring",substringFunc);
             stringType.methods.put("parseInt",parseIntFunc);
             stringType.methods.put("ord",ordFunc);
+            stringType.name = "string";
 
         //add build in types into globalScope
         gScope.addType("int", intType, it.pos);

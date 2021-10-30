@@ -82,7 +82,7 @@ primaryExpression:
 	| idExpression
 	| lambdaExpression;
 
-idExpression: Identifier;
+idExpression:Identifier;
 
 lambdaExpression: lambdaIntroducer lambdaDeclarator Arrow  compoundStatement;
 
@@ -95,7 +95,7 @@ postfixExpression:
     primaryExpression
     | postfixExpression LeftParen expression? RightParen
     | postfixExpression LeftBracket expression RightBracket
-    | postfixExpression Dot idExpression
+    | postfixExpression Dot (idExpression | This)
     | postfixExpression (PlusPlus | MinusMinus);
 
 unaryExpression:

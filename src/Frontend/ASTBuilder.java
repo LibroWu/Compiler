@@ -113,9 +113,17 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
             if (member.constructFunctionDefinition() != null) {
                 struct.constructFunc = (funcDefNode) visit(member.constructFunctionDefinition());
             } else if (member.Semi() == null) {
-                if (member.constructFunctionDefinition() != null)
-                    struct.declList.add((declNode) visit(member.constructFunctionDefinition()));
-                else struct.declList.add((declNode) visit(member.functionDefinition()));
+                declNode decl = new declNode(new position(member));
+                if (member.declarationStatement() != null)
+                {
+                    decl.isDeclStmt = true;
+                    decl.declStmt = (declStmtNode) visit(member.declarationStatement());
+                }
+                else {
+                    decl.isFuncDef = true;
+                    decl.funcDef = (funcDefNode) visit(member.functionDefinition());
+                }
+                struct.declList.add(decl);
             }
         });
         return struct;
@@ -341,7 +349,11 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         } else if (ctx.Dot() != null) {
             postfixExpr.isDotOp = true;
             postfixExpr.postfixExpr = (postfixExprNode) visit(ctx.postfixExpression());
-            postfixExpr.Expr = (idExprNode) visit(ctx.idExpression());
+            if (ctx.idExpression()!=null)postfixExpr.Expr = (idExprNode) visit(ctx.idExpression());
+            else {
+                postfixExpr.Expr = new idExprNode(new position(ctx.This()));
+                ((idExprNode)postfixExpr.Expr).Id="this";
+            }
         } else {
             postfixExpr.isSelfOp = true;
             postfixExpr.postfixExpr = (postfixExprNode) visit(ctx.postfixExpression());
