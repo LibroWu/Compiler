@@ -58,23 +58,10 @@ public class SemanticChecker implements ASTVisitor {
         int cnt = 0;
         funcType func;
         if (currentStruct != null) {
-            Type rt;
-            if (it.isConstructFunc) {
-                rt = new Type(Type.Types.NULL);
-            } else {
-                rt = new Type(gScope.getTypeFromName(it.arraySpecifier.type, it.arraySpecifier.pos));
-                rt.dimension = it.arraySpecifier.emptyBracketPair;
-            }
-            func = new funcType(it.id, rt);
-            currentStruct.methods.put(it.id, func);
-            if (it.parameters != null) {
-                func.parameter = new ArrayList<>();
-                it.parameters.varType.forEach(var -> {
-                    Type t = new Type(gScope.getTypeFromName(var.type, var.pos));
-                    t.dimension = var.emptyBracketPair;
-                    func.parameter.add(t);
-                });
-            }
+            if (currentStruct.methods.containsKey(it.id)) {
+                func = currentStruct.methods.get(it.id);
+            } else
+                throw new semanticError("class" + currentStruct.name + "does not have this method: " + it.id, it.pos);
         } else func = (funcType) gScope.getFunctionFromName(it.id, it.pos);
         if (it.parameters != null) {
             for (String id : it.parameters.Id) {
@@ -120,14 +107,6 @@ public class SemanticChecker implements ASTVisitor {
                     if (declarator.expr.type.typeType == Type.Types.CONST_NULL && t.typeType != Type.Types.CLASS_TYPE && t.dimension == 0)
                         throw new semanticError("can not assign null to primitive type variable", it.pos);
                 }
-                gScope.nameConflict(declarator.Identifier, declarator.pos);
-                // add to class as member
-                if (currentStruct != null) {
-                    assert (currentStruct.members != null);
-                    if (currentStruct.members.containsKey(declarator.Identifier))
-                        throw new semanticError("redefinition of member " + declarator.Identifier, declarator.pos);
-                    currentStruct.members.put(declarator.Identifier, t);
-                }
                 // add to scope
                 currentScope.defineVariable(declarator.Identifier, t, declarator.pos);
             });
@@ -163,8 +142,16 @@ public class SemanticChecker implements ASTVisitor {
         it.cond.accept(this);
         if (it.cond.type.typeType != Type.Types.BOOL_TYPE)
             throw new semanticError("the condition's result is not boolean", it.cond.pos);
-        if (it.trueStmt != null) it.trueStmt.accept(this);
-        if (it.falseStmt != null) it.falseStmt.accept(this);
+        if (it.trueStmt != null) {
+            currentScope = new Scope(currentScope);
+            it.trueStmt.accept(this);
+            currentScope = currentScope.parentScope();
+        }
+        if (it.falseStmt != null) {
+            currentScope = new Scope(currentScope);
+            it.falseStmt.accept(this);
+            currentScope = currentScope.parentScope();
+        }
     }
 
     @Override
@@ -200,10 +187,10 @@ public class SemanticChecker implements ASTVisitor {
                 if (Objects.equals(returnType.name, "null"))
                     throw new semanticError("return value in construct function", it.pos);
                 it.expr.accept(this);
-                if (!Objects.equals(it.expr.type.name, returnType.name))
+                if (!Objects.equals(it.expr.type.name, returnType.name) || it.expr.type.dimension != returnType.dimension)
                     throw new semanticError("mismatch of the type in return", it.pos);
             } else {
-                if (!Objects.equals(returnType.name, "void"))
+                if (!Objects.equals(returnType.name, "void") && !Objects.equals(returnType.name, "null"))
                     throw new semanticError("empty return in non-void return type function", it.pos);
             }
         } else {
@@ -454,7 +441,7 @@ public class SemanticChecker implements ASTVisitor {
                     throw new semanticError("unary operator(!) on non-bool variable", it.pos);
             } else if (!Objects.equals(it.unaryExpr.type.name, "int"))
                 throw new semanticError("unary operator(++/--/-) on non-int variable", it.pos);
-            else if ((Objects.equals(it.op, "++") || Objects.equals(it.op, "--")) &&!it.unaryExpr.type.assignable)
+            else if ((Objects.equals(it.op, "++") || Objects.equals(it.op, "--")) && !it.unaryExpr.type.assignable)
                 throw new semanticError("unary operator(++/--) on rvalue variable", it.pos);
             it.type = it.unaryExpr.type;
         }
@@ -481,9 +468,11 @@ public class SemanticChecker implements ASTVisitor {
     public void visit(postfixExprNode it) {
         if (it.isSelfOp) {
             it.postfixExpr.accept(this);
-            if (!Objects.equals(it.postfixExpr.type.name, "int"))
-                throw new semanticError("self operator on non-int value", it.pos);
             it.type = it.postfixExpr.type;
+            if (!Objects.equals(it.type.name, "int"))
+                throw new semanticError("self operator on non-int value", it.pos);
+            if (!it.type.assignable)
+                throw new semanticError("self operator on rvalue", it.pos);
             it.type.assignable = false;
         } else if (it.isDotOp) {
             it.postfixExpr.accept(this);
@@ -552,7 +541,12 @@ public class SemanticChecker implements ASTVisitor {
             it.type.assignable = false;
         } else if (it.isIdExpr) {
             String s = ((idExprNode) it.expr).Id;
-            if (currentScope.containsVariable(s, true)) {
+            if (currentStruct != null && (currentStruct.methods.containsKey(s) || currentStruct.members.containsKey(s))) {
+                if (currentStruct.members.containsKey(s)) {
+                    it.type = new Type(currentStruct.members.get(s));
+                    it.type.assignable = true;
+                } else it.type = currentStruct.methods.get(s);
+            } else if (currentScope.containsVariable(s, true)) {
                 it.type = new Type(currentScope.getType(s, true));
                 it.type.assignable = true;
             } else if (gScope.hasFunction(s)) {

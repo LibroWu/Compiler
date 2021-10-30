@@ -1,15 +1,18 @@
 package Frontend;
 
 import AST.*;
+import Util.Scope;
 import Util.Type.*;
+import Util.error.semanticError;
 import Util.globalScope;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class SymbolCollector implements ASTVisitor {
     private globalScope gScope;
-
+    private classType currentStruct = null;
     private Type intType = new Type(Type.Types.INT_TYPE),
             boolType = new Type(Type.Types.BOOL_TYPE),
             voidType = new Type(Type.Types.VOID_TYPE);
@@ -104,11 +107,23 @@ public class SymbolCollector implements ASTVisitor {
         gScope.addFunction("toString", toStringFunc, it.pos);
         it.declList.forEach(decl ->
         {
-            if (decl.isDeclStmt) decl.accept(this);
+            if (decl.isDeclStmt) {
+                declStmtNode declStmt = (declStmtNode) decl.declStmt;
+                if (declStmt.isClassDef) {
+                    classNode c = (classNode) declStmt.struct;
+                    classType struct = new classType(Type.Types.CLASS_TYPE);
+                    struct.name = c.name;
+                    gScope.addType(c.name, struct, it.pos);
+                }
+            }
         });
         it.declList.forEach(decl ->
         {
             if (decl.isFuncDef) decl.accept(this);
+        });
+        it.declList.forEach(decl ->
+        {
+            if (decl.isDeclStmt) decl.accept(this);
         });
     }
 
@@ -121,13 +136,37 @@ public class SymbolCollector implements ASTVisitor {
     @Override
     public void visit(declStmtNode it) {
         if (it.isClassDef) it.struct.accept(this);
+        else {
+            if (it.fail) throw new semanticError("declarator statement error", it.pos);
+            Type t = new Type(gScope.getTypeFromName(it.arraySpecifier.type, it.arraySpecifier.pos));
+            t.dimension = it.arraySpecifier.emptyBracketPair;
+            it.declaratorList.forEach(declarator -> {
+                gScope.nameConflict(declarator.Identifier, declarator.pos);
+                // add to class as member
+                if (currentStruct != null) {
+                    if (currentStruct.members.containsKey(declarator.Identifier))
+                        throw new semanticError("redefinition of member " + declarator.Identifier, declarator.pos);
+                    currentStruct.members.put(declarator.Identifier, t);
+                }
+            });
+        }
     }
 
     @Override
     public void visit(classNode it) {
-        classType struct = new classType(Type.Types.CLASS_TYPE);
-        struct.name = it.name;
-        gScope.addType(it.name, struct, it.pos);
+        currentStruct = (classType) gScope.getTypeFromName(it.name,it.pos);
+        it.declList.forEach(decl -> {
+            if (decl.isDeclStmt) {
+                decl.accept(this);
+            }
+        });
+        it.declList.forEach(decl -> {
+            if (decl.isFuncDef) {
+                decl.accept(this);
+            }
+        });
+        if (it.constructFunc != null) it.constructFunc.accept(this);
+        currentStruct = null;
     }
 
     @Override
@@ -136,6 +175,7 @@ public class SymbolCollector implements ASTVisitor {
         func.name = it.id;
         //do not check function overload, which is undefined behavior in MxStar?
         if (it.isConstructFunc) {
+            if (currentStruct==null) throw new semanticError("construct function outside the class",it.pos);
             func.returnType = new Type(Type.Types.NULL);
         } else {
             func.returnType = new Type(gScope.getTypeFromName(it.arraySpecifier.type,it.arraySpecifier.pos));
@@ -149,7 +189,11 @@ public class SymbolCollector implements ASTVisitor {
                 func.parameter.add(t);
             });
         }
-        gScope.addFunction(it.id, func, it.pos);
+
+        if (currentStruct!=null) {
+            if (currentStruct.methods.containsKey(it.id)) throw new semanticError("redefinition of method " + it.id,it.pos);
+            currentStruct.methods.put(it.id,func);
+        } else gScope.addFunction(it.id, func, it.pos);
     }
 
     @Override

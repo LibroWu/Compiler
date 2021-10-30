@@ -114,12 +114,10 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
                 struct.constructFunc = (funcDefNode) visit(member.constructFunctionDefinition());
             } else if (member.Semi() == null) {
                 declNode decl = new declNode(new position(member));
-                if (member.declarationStatement() != null)
-                {
+                if (member.declarationStatement() != null) {
                     decl.isDeclStmt = true;
                     decl.declStmt = (declStmtNode) visit(member.declarationStatement());
-                }
-                else {
+                } else {
                     decl.isFuncDef = true;
                     decl.funcDef = (funcDefNode) visit(member.functionDefinition());
                 }
@@ -164,7 +162,12 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitForInitStatement(MxLParser.ForInitStatementContext ctx) {
         if (ctx.expressionStatement() != null) return visit(ctx.expressionStatement());
-        else return visit(ctx.declarationStatement());
+        else if (ctx.declarationStatement() != null) return visit(ctx.declarationStatement());
+        else {
+            stmtNode st = new stmtNode(new position(ctx));
+            st.empty = true;
+            return st;
+        }
     }
 
     @Override
@@ -202,7 +205,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         else if (ctx.compoundStatement() != null) return visit(ctx.compoundStatement());
         else if (ctx.selectionStatement() != null) return visit(ctx.selectionStatement());
         else if (ctx.jumpStatement() != null) return visit(ctx.jumpStatement());
-        else if (ctx.iterationStatement()!=null) return visit(ctx.iterationStatement());
+        else if (ctx.iterationStatement() != null) return visit(ctx.iterationStatement());
         stmtNode st = new stmtNode(new position(ctx));
         st.empty = true;
         return st;
@@ -349,10 +352,10 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         } else if (ctx.Dot() != null) {
             postfixExpr.isDotOp = true;
             postfixExpr.postfixExpr = (postfixExprNode) visit(ctx.postfixExpression());
-            if (ctx.idExpression()!=null)postfixExpr.Expr = (idExprNode) visit(ctx.idExpression());
+            if (ctx.idExpression() != null) postfixExpr.Expr = (idExprNode) visit(ctx.idExpression());
             else {
                 postfixExpr.Expr = new idExprNode(new position(ctx.This()));
-                ((idExprNode)postfixExpr.Expr).Id="this";
+                ((idExprNode) postfixExpr.Expr).Id = "this";
             }
         } else {
             postfixExpr.isSelfOp = true;

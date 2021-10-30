@@ -17,9 +17,9 @@ import java.io.InputStream;
 
 
 public class Main {
-    public static void main(String[] args) throws Exception{
-
-            String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\sema\\class-package\\class-1.mx";
+    public static void main(String[] args) throws Exception {
+        String name = "test.mx";
+        //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\sema\\symbol-package\\symbol-8.mx";
         InputStream input = new FileInputStream(name);
 
         try {
@@ -34,7 +34,7 @@ public class Main {
             parser.addErrorListener(new MxLErrorListener());
             ParseTree parseTreeRoot = parser.program();
             ASTBuilder astBuilder = new ASTBuilder(gScope);
-            ASTRoot = (RootNode)astBuilder.visit(parseTreeRoot);
+            ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SymbolCollector(gScope).visit(ASTRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
         } catch (error er) {
