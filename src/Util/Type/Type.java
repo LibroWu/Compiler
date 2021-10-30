@@ -11,11 +11,11 @@ public class Type {
     public Type(Types t) {
         typeType = t;
         switch (t) {
-            case NULL -> name = "null";
-            case INT_TYPE -> name = "int";
-            case BOOL_TYPE -> name = "bool";
-            case VOID_TYPE -> name = "void";
-            case CONST_NULL -> name = "const_null";
+            case NULL : name = "null";break;
+            case INT_TYPE : name = "int";break;
+            case BOOL_TYPE : name = "bool";break;
+            case VOID_TYPE : name = "void";break;
+            case CONST_NULL : name = "const_null";break;
         }
     }
 
