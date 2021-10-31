@@ -1,22 +1,29 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: Basic
-Author: 16' Yuxuan Duan
-Time: 2019-11-11
-Verdict: Fail
-Comment: Return type error.
-Origin Package: Semantic Pretest
+Test Target: Scope
+Author: 15' Peiyao Sheng
+Time: 2019-10-20
+Verdict: Success
+Origin Package: Semantic Extended
 */
-class A
-{
-	bool b;
-	int e;
-
-	void c(int b)
-	{
-		this.b = b;
-	}
+int x = 1;
+bool b(bool x){
+    return x;
+}
+class C{
+    C(){
+        x();
+        {int x;}
+    }
+    void x(){}
 };
-int main()
-{
+int main(){
+    string x = "789dcbadcba\n";
+    int y;
+    C c;
+    c.x();
+    b(true);
+    {y = x.parseInt();
+    int x = y;}
+    return y;
 }

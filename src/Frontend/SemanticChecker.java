@@ -23,6 +23,7 @@ public class SemanticChecker implements ASTVisitor {
     private Type returnType = null, lambdaReturnType = null;
     private funcType arraySize = new funcType("size", new Type(Type.Types.INT_TYPE));
     private int inLoop = 0, inLambdaFunction = 0;
+    private boolean funcSuite = false;
 
     public SemanticChecker(globalScope gScope) {
         currentScope = this.gScope = gScope;
@@ -60,8 +61,8 @@ public class SemanticChecker implements ASTVisitor {
         if (currentStruct != null) {
             if (currentStruct.methods.containsKey(it.id)) {
                 func = currentStruct.methods.get(it.id);
-                if (func.returnType.typeType!= Type.Types.NULL && Objects.equals(it.id, currentStruct.name))
-                    throw new semanticError("the return type of construct function is wrong",it.pos);
+                if (func.returnType.typeType != Type.Types.NULL && Objects.equals(it.id, currentStruct.name))
+                    throw new semanticError("the return type of construct function is wrong", it.pos);
             } else
                 throw new semanticError("class" + currentStruct.name + "does not have this method: " + it.id, it.pos);
         } else func = (funcType) gScope.getFunctionFromName(it.id, it.pos);
@@ -74,6 +75,7 @@ public class SemanticChecker implements ASTVisitor {
         }
         if (returnType != null) throw new semanticError("define function in a function", it.pos);
         returnType = func.returnType;
+        funcSuite = true;
         it.suite.accept(this);
         returnType = null;
         currentScope = currentScope.parentScope();
@@ -86,11 +88,16 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(compoundStmtNode it) {
         if (it.stmtArray != null) {
-            currentScope = new Scope(currentScope);
+            boolean tmp=false;
+            if (!funcSuite)currentScope = new Scope(currentScope);
+            else {
+                funcSuite = false;
+                tmp = true;
+            }
             it.stmtArray.forEach(stmt -> {
                 stmt.accept(this);
             });
-            currentScope = currentScope.parentScope();
+            if (!tmp)currentScope = currentScope.parentScope();
         }
     }
 
@@ -576,14 +583,32 @@ public class SemanticChecker implements ASTVisitor {
             it.type.assignable = false;
         } else if (it.isIdExpr) {
             String s = ((idExprNode) it.expr).Id;
-            if (currentScope.containsVariable(s, true)) {
+            /*if (currentStruct != null) {
+                if (currentScope.containsVariable(s, false)) {
+                    it.type = new Type(currentScope.getType(s,false));
+                    it.type.assignable = true;
+                }
+                else if (currentStruct.methods.containsKey(s) || currentStruct.members.containsKey(s)) {
+                    if (currentStruct.members.containsKey(s)) {
+                        it.type = new Type(currentStruct.members.get(s));
+                        it.type.assignable = true;
+                    } else  it.type = currentStruct.methods.get(s);
+                } else if ()
+            } else {
+
+            }*/if (currentScope.containsVariable(s, false)) {
                 it.type = new Type(currentScope.getType(s, true));
                 it.type.assignable = true;
-            } else if (currentStruct != null && (currentStruct.methods.containsKey(s) || currentStruct.members.containsKey(s))) {
+            }
+            else
+            if (currentStruct != null && (currentStruct.methods.containsKey(s) || currentStruct.members.containsKey(s))) {
                 if (currentStruct.members.containsKey(s)) {
                     it.type = new Type(currentStruct.members.get(s));
                     it.type.assignable = true;
                 } else it.type = currentStruct.methods.get(s);
+            } else if (currentScope.containsVariable(s, true)) {
+                it.type = new Type(currentScope.getType(s, true));
+                it.type.assignable = true;
             } else if (gScope.hasFunction(s)) {
                 it.type = gScope.getFunctionFromName(s, it.expr.pos);
             } else throw new semanticError("can not find the definition of " + s, it.expr.pos);
