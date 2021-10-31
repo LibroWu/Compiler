@@ -187,11 +187,10 @@ public class SemanticChecker implements ASTVisitor {
                 if (Objects.equals(returnType.name, "null"))
                     throw new semanticError("return value in construct function", it.pos);
                 it.expr.accept(this);
-                if (it.expr.type.typeType== Type.Types.CONST_NULL) {
-                    if ((returnType.name=="int"||returnType.name=="bool")&& returnType.dimension==0)
-                        throw new semanticError("can not return null to primitive type variable",it.pos);
-                }
-                else if (!Objects.equals(it.expr.type.name, returnType.name) || it.expr.type.dimension != returnType.dimension)
+                if (it.expr.type.typeType == Type.Types.CONST_NULL) {
+                    if ((returnType.name == "int" || returnType.name == "bool") && returnType.dimension == 0)
+                        throw new semanticError("can not return null to primitive type variable", it.pos);
+                } else if (!Objects.equals(it.expr.type.name, returnType.name) || it.expr.type.dimension != returnType.dimension)
                     throw new semanticError("mismatch of the type in return", it.pos);
             } else {
                 if (!Objects.equals(returnType.name, "void") && !Objects.equals(returnType.name, "null"))
@@ -340,7 +339,7 @@ public class SemanticChecker implements ASTVisitor {
             exprNode rhs = it.exprList.get(1);
             lhs.accept(this);
             rhs.accept(this);
-            if (((lhs.type.name == "int" || lhs.type.name == "bool") && lhs.type.dimension==0) || (lhs.type.typeType != Type.Types.CONST_NULL && rhs.type.typeType != Type.Types.CONST_NULL))
+            if (((lhs.type.name == "int" || lhs.type.name == "bool") && lhs.type.dimension == 0) || (lhs.type.typeType != Type.Types.CONST_NULL && rhs.type.typeType != Type.Types.CONST_NULL))
                 if (lhs.type.name != rhs.type.name)
                     throw new semanticError("type mismatch on equal expression", lhs.pos);
             for (int i = 2; i < it.exprList.size(); ++i) {
@@ -482,18 +481,18 @@ public class SemanticChecker implements ASTVisitor {
             it.postfixExpr.accept(this);
             idExprNode id = (idExprNode) it.Expr;
             Type t = it.postfixExpr.type;
-            if (t.isClass) {
+            if (t.dimension > 0) {
+                if (!Objects.equals(id.Id, "size"))
+                    throw new semanticError("array do not have this method", it.pos);
+                it.func = arraySize;
+                it.type = new Type(arraySize);
+            } else if (t.isClass) {
                 if (id.Id == "this") {
                     it.type = t;
                     it.type.assignable = false;
                 } else it.type = new Type(gScope.getMemberTypeFromName(t.name, id.Id, id.pos));
                 if (!it.type.isFunc && id.Id != "this") it.type.assignable = true;
                 else it.func = (funcType) gScope.getMemberTypeFromName(t.name, id.Id, id.pos);
-            } else if (t.dimension > 0) {
-                if (!Objects.equals(id.Id, "size"))
-                    throw new semanticError("array do not have this method", it.pos);
-                it.func = arraySize;
-                it.type = new Type(arraySize);
             } else throw new semanticError("do not have member/method", it.pos);
         } else if (it.isCallOp) {
             it.postfixExpr.accept(this);
@@ -506,8 +505,18 @@ public class SemanticChecker implements ASTVisitor {
                 if (it.Expr.exprList.size() != func.parameter.size())
                     throw new semanticError(" number of parameters mismatch", it.Expr.pos);
                 for (exprNode expr : it.Expr.exprList) {
-                    if (!Objects.equals(expr.type.name, func.parameter.get(cnt).name))
-                        throw new semanticError("parameter mismatch", expr.pos);
+                    Type t = func.parameter.get(cnt);
+                    if (t.typeType == Type.Types.FUNC_TYPE)
+                        throw new semanticError("not support function argument yet", expr.pos);
+                    else if (t.typeType == Type.Types.CLASS_TYPE || t.dimension > 0) {
+                        if (expr.type.typeType != Type.Types.CONST_NULL)
+                            if (expr.type.name!=t.name || expr.type.dimension!=t.dimension)
+                                throw new semanticError("parameter mismatch", expr.pos);
+                    } else {
+                        if (expr.type.name!=t.name || expr.type.dimension!=t.dimension)
+                            throw new semanticError("parameter mismatch", expr.pos);
+                    }
+                    cnt++;
                 }
             } else {
                 if (func.parameter != null)
