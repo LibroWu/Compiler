@@ -25,7 +25,6 @@ public class Main {
         try {
             RootNode ASTRoot;
             globalScope gScope = new globalScope(null);
-
             MxLLexer lexer = new MxLLexer(CharStreams.fromStream(input));
             lexer.removeErrorListeners();
             lexer.addErrorListener(new MxLErrorListener());
