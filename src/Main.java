@@ -19,9 +19,9 @@ import java.io.InputStream;
 public class Main {
     public static void main(String[] args) throws Exception {
         //String name = "test.mx";
-        String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\sema\\basic-package\\basic-5.mx";
-        InputStream input = new FileInputStream(name);
-
+        //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\sema\\basic-package\\basic-5.mx";
+        //InputStream input = new FileInputStream(name);
+        InputStream input = System.in;
         try {
             RootNode ASTRoot;
             globalScope gScope = new globalScope(null);

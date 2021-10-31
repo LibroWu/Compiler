@@ -20,9 +20,9 @@ public class SemanticChecker implements ASTVisitor {
     private Boolean hasMain = false;
     private position posMain = null;
     //if returnType is not null, then the visitor is in a function
-    private Type returnType = null;
+    private Type returnType = null, lambdaReturnType = null;
     private funcType arraySize = new funcType("size", new Type(Type.Types.INT_TYPE));
-    private int inLoop = 0;
+    private int inLoop = 0, inLambdaFunction = 0;
 
     public SemanticChecker(globalScope gScope) {
         currentScope = this.gScope = gScope;
@@ -102,10 +102,13 @@ public class SemanticChecker implements ASTVisitor {
             it.declaratorList.forEach(declarator -> {
                 if (declarator.expr != null) {
                     declarator.expr.accept(this);
-                    if (!Objects.equals(declarator.expr.type.name, t.name) && declarator.expr.type.dimension != t.dimension && declarator.expr.type.typeType != Type.Types.CONST_NULL)
-                        throw new semanticError("initialize expression's type mismatches the type of the variable", declarator.expr.pos);
-                    if (declarator.expr.type.typeType == Type.Types.CONST_NULL && t.typeType != Type.Types.CLASS_TYPE && t.dimension == 0)
-                        throw new semanticError("can not assign null to primitive type variable", it.pos);
+                   if (declarator.expr.type.typeType == Type.Types.CONST_NULL) {
+                       if (!t.isClass && t.dimension==0)
+                           throw new semanticError("can not assign null to primitive type variable", it.pos);;
+                   } else {
+                        if (!Objects.equals(declarator.expr.type.name,t.name) || declarator.expr.type.dimension!=t.dimension)
+                            throw new semanticError("initialize expression's type mismatches the type of the variable", declarator.expr.pos);
+                   }
                 }
                 // add to scope
                 currentScope.defineVariable(declarator.Identifier, t, declarator.pos);
@@ -180,21 +183,33 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(jumpStmtNode it) {
         if (it.isReturn) {
-            if (returnType == null) throw new semanticError("return happened outside of the function", it.pos);
-            if (it.expr != null) {
-                if (Objects.equals(returnType.name, "void"))
-                    throw new semanticError("return value in void function", it.pos);
-                if (Objects.equals(returnType.name, "null"))
-                    throw new semanticError("return value in construct function", it.pos);
-                it.expr.accept(this);
-                if (it.expr.type.typeType == Type.Types.CONST_NULL) {
-                    if ((returnType.name == "int" || returnType.name == "bool") && returnType.dimension == 0)
-                        throw new semanticError("can not return null to primitive type variable", it.pos);
-                } else if (!Objects.equals(it.expr.type.name, returnType.name) || it.expr.type.dimension != returnType.dimension)
-                    throw new semanticError("mismatch of the type in return", it.pos);
+            if (inLambdaFunction > 0) {
+                if (it.expr != null) {
+                    it.expr.accept(this);
+                    if (lambdaReturnType == null) lambdaReturnType = it.expr.type;
+                    else if (lambdaReturnType.name != it.expr.type.name)
+                        throw new semanticError("return type inconsensus on return statements in lambda expression", it.pos);
+                } else if (lambdaReturnType == null) {
+                    lambdaReturnType = new Type(Type.Types.VOID_TYPE);
+                } else if (lambdaReturnType.typeType != Type.Types.VOID_TYPE)
+                    throw new semanticError("return type inconsensus on return statements in lambda expression", it.pos);
             } else {
-                if (!Objects.equals(returnType.name, "void") && !Objects.equals(returnType.name, "null"))
-                    throw new semanticError("empty return in non-void return type function", it.pos);
+                if (returnType == null) throw new semanticError("return happened outside of the function", it.pos);
+                if (it.expr != null) {
+                    if (Objects.equals(returnType.name, "void"))
+                        throw new semanticError("return value in void function", it.pos);
+                    if (Objects.equals(returnType.name, "null"))
+                        throw new semanticError("return value in construct function", it.pos);
+                    it.expr.accept(this);
+                    if (it.expr.type.typeType == Type.Types.CONST_NULL) {
+                        if ((returnType.name == "int" || returnType.name == "bool") && returnType.dimension == 0)
+                            throw new semanticError("can not return null to primitive type variable", it.pos);
+                    } else if (!Objects.equals(it.expr.type.name, returnType.name) || it.expr.type.dimension != returnType.dimension)
+                        throw new semanticError("mismatch of the type in return", it.pos);
+                } else {
+                    if (!Objects.equals(returnType.name, "void") && !Objects.equals(returnType.name, "null"))
+                        throw new semanticError("empty return in non-void return type function", it.pos);
+                }
             }
         } else {
             if (inLoop == 0) throw new semanticError("loop control happened outside of the loop", it.pos);
@@ -510,10 +525,10 @@ public class SemanticChecker implements ASTVisitor {
                         throw new semanticError("not support function argument yet", expr.pos);
                     else if (t.typeType == Type.Types.CLASS_TYPE || t.dimension > 0) {
                         if (expr.type.typeType != Type.Types.CONST_NULL)
-                            if (expr.type.name!=t.name || expr.type.dimension!=t.dimension)
+                            if (expr.type.name != t.name || expr.type.dimension != t.dimension)
                                 throw new semanticError("parameter mismatch", expr.pos);
                     } else {
-                        if (expr.type.name!=t.name || expr.type.dimension!=t.dimension)
+                        if (expr.type.name != t.name || expr.type.dimension != t.dimension)
                             throw new semanticError("parameter mismatch", expr.pos);
                     }
                     cnt++;
@@ -566,8 +581,8 @@ public class SemanticChecker implements ASTVisitor {
                 it.type = gScope.getFunctionFromName(s, it.expr.pos);
             } else throw new semanticError("can not find the definition of " + s, it.expr.pos);
         } else {
-            //todo lambda expression
             it.expr.accept(this);
+            it.type = it.expr.type;
         }
     }
 
@@ -585,7 +600,37 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(lambdaExprNode it) {
-
+        funcType lambdaFunc = new funcType();
+        ++inLambdaFunction;
+        currentScope = new Scope(currentScope);
+        if (it.funcParameter != null) {
+            lambdaFunc.parameter = new ArrayList<>();
+            it.funcParameter.varType.forEach(var -> {
+                Type t = new Type(gScope.getTypeFromName(var.type, var.pos));
+                t.dimension = var.emptyBracketPair;
+                lambdaFunc.parameter.add(t);
+            });
+        }
+        int cnt = 0;
+        if (it.funcParameter != null) {
+            for (String id : it.funcParameter.Id) {
+                gScope.nameConflict(id, it.funcParameter.pos);
+                currentScope.defineVariable(id, lambdaFunc.parameter.get(cnt), it.funcParameter.pos);
+                ++cnt;
+            }
+        }
+        Type parentLambdaReturnType = lambdaReturnType;
+        lambdaReturnType = null;
+        it.compoundStmt.accept(this);
+        if (lambdaReturnType != null) {
+            lambdaFunc.returnType = lambdaReturnType;
+        } else {
+            lambdaFunc.returnType = new Type(Type.Types.VOID_TYPE);
+        }
+        lambdaReturnType = parentLambdaReturnType;
+        currentScope = currentScope.parentScope();
+        --inLambdaFunction;
+        it.type = lambdaFunc;
     }
 
     @Override
