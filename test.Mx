@@ -1,36 +1,22 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: Lambda-1
-Author: 17' zwx
+Test Target: Basic
+Author: 16' Yuxuan Duan
+Time: 2019-11-11
 Verdict: Fail
+Comment: Return type error.
 Origin Package: Semantic Pretest
 */
+class A
+{
+	bool b;
+	int e;
 
-
-int main(){
-    int d = [&](int a) -> {
-        int f = a;
-        int sum = 0;
-        while(f > 0){
-            sum = sum + f;
-            f = f / 4;
-        }
-        int q = [&](int a) -> {
-            if(a > 0){
-                int q = [&](int d) -> {
-                    return d + 20;
-                }(a);
-            } else {
-                int q = [&](int d) -> {
-                    return d + 10;
-                }(a);
-            }
-            return q;
-        }(sum);
-        return q;
-    }(10086);
-    d++;
-    return d;
+	void c(int b)
+	{
+		this.b = b;
+	}
+};
+int main()
+{
 }
-
-

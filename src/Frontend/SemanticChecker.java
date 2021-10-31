@@ -60,6 +60,8 @@ public class SemanticChecker implements ASTVisitor {
         if (currentStruct != null) {
             if (currentStruct.methods.containsKey(it.id)) {
                 func = currentStruct.methods.get(it.id);
+                if (func.returnType.typeType!= Type.Types.NULL && Objects.equals(it.id, currentStruct.name))
+                    throw new semanticError("the return type of construct function is wrong",it.pos);
             } else
                 throw new semanticError("class" + currentStruct.name + "does not have this method: " + it.id, it.pos);
         } else func = (funcType) gScope.getFunctionFromName(it.id, it.pos);
@@ -102,13 +104,14 @@ public class SemanticChecker implements ASTVisitor {
             it.declaratorList.forEach(declarator -> {
                 if (declarator.expr != null) {
                     declarator.expr.accept(this);
-                   if (declarator.expr.type.typeType == Type.Types.CONST_NULL) {
-                       if (!t.isClass && t.dimension==0)
-                           throw new semanticError("can not assign null to primitive type variable", it.pos);;
-                   } else {
-                        if (!Objects.equals(declarator.expr.type.name,t.name) || declarator.expr.type.dimension!=t.dimension)
+                    if (declarator.expr.type.typeType == Type.Types.CONST_NULL) {
+                        if (!t.isClass && t.dimension == 0)
+                            throw new semanticError("can not assign null to primitive type variable", it.pos);
+                        ;
+                    } else {
+                        if (!Objects.equals(declarator.expr.type.name, t.name) || declarator.expr.type.dimension != t.dimension)
                             throw new semanticError("initialize expression's type mismatches the type of the variable", declarator.expr.pos);
-                   }
+                    }
                 }
                 // add to scope
                 currentScope.defineVariable(declarator.Identifier, t, declarator.pos);
@@ -130,7 +133,11 @@ public class SemanticChecker implements ASTVisitor {
                 decl.accept(this);
             }
         });
-        if (it.constructFunc != null) it.constructFunc.accept(this);
+        if (it.constructFunc != null) {
+            if (!Objects.equals(it.constructFunc.id, it.name))
+                throw new semanticError("construct funtion mismatch", it.constructFunc.pos);
+            it.constructFunc.accept(this);
+        }
         currentStruct = null;
         currentScope = currentScope.parentScope();
     }
@@ -569,14 +576,14 @@ public class SemanticChecker implements ASTVisitor {
             it.type.assignable = false;
         } else if (it.isIdExpr) {
             String s = ((idExprNode) it.expr).Id;
-            if (currentStruct != null && (currentStruct.methods.containsKey(s) || currentStruct.members.containsKey(s))) {
+            if (currentScope.containsVariable(s, true)) {
+                it.type = new Type(currentScope.getType(s, true));
+                it.type.assignable = true;
+            } else if (currentStruct != null && (currentStruct.methods.containsKey(s) || currentStruct.members.containsKey(s))) {
                 if (currentStruct.members.containsKey(s)) {
                     it.type = new Type(currentStruct.members.get(s));
                     it.type.assignable = true;
                 } else it.type = currentStruct.methods.get(s);
-            } else if (currentScope.containsVariable(s, true)) {
-                it.type = new Type(currentScope.getType(s, true));
-                it.type.assignable = true;
             } else if (gScope.hasFunction(s)) {
                 it.type = gScope.getFunctionFromName(s, it.expr.pos);
             } else throw new semanticError("can not find the definition of " + s, it.expr.pos);
