@@ -524,7 +524,8 @@ public class SemanticChecker implements ASTVisitor {
                     it.type = t;
                     it.type.assignable = false;
                 } else {
-                    it.type = new Type(gScope.getMemberTypeFromName(t.name, id.Id, id.pos));
+                    Type tmpT = gScope.getMemberTypeFromName(t.name, id.Id, id.pos);
+                    if (tmpT!=null) it.type = new Type(tmpT);
                     it.func = gScope.getMemberFuncFromName(t.name,id.Id,id.pos);
                 }
             } else throw new semanticError("do not have member/method", it.pos);
