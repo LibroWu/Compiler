@@ -88,8 +88,8 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(compoundStmtNode it) {
         if (it.stmtArray != null) {
-            boolean tmp=false;
-            if (!funcSuite)currentScope = new Scope(currentScope);
+            boolean tmp = false;
+            if (!funcSuite) currentScope = new Scope(currentScope);
             else {
                 funcSuite = false;
                 tmp = true;
@@ -97,7 +97,7 @@ public class SemanticChecker implements ASTVisitor {
             it.stmtArray.forEach(stmt -> {
                 stmt.accept(this);
             });
-            if (!tmp)currentScope = currentScope.parentScope();
+            if (!tmp) currentScope = currentScope.parentScope();
         }
     }
 
@@ -501,6 +501,8 @@ public class SemanticChecker implements ASTVisitor {
         if (it.isSelfOp) {
             it.postfixExpr.accept(this);
             it.type = it.postfixExpr.type;
+            if (it.type == null)
+                throw new semanticError("self operator on function", it.pos);
             if (!Objects.equals(it.type.name, "int"))
                 throw new semanticError("self operator on non-int value", it.pos);
             if (!it.type.assignable)
@@ -510,22 +512,25 @@ public class SemanticChecker implements ASTVisitor {
             it.postfixExpr.accept(this);
             idExprNode id = (idExprNode) it.Expr;
             Type t = it.postfixExpr.type;
+            if (t==null)
+                throw new semanticError("can not operate dot on function",it.pos);
             if (t.dimension > 0) {
                 if (!Objects.equals(id.Id, "size"))
                     throw new semanticError("array do not have this method", it.pos);
                 it.func = arraySize;
-                it.type = new Type(arraySize);
+                it.type = null;
             } else if (t.isClass) {
                 if (id.Id == "this") {
                     it.type = t;
                     it.type.assignable = false;
-                } else it.type = new Type(gScope.getMemberTypeFromName(t.name, id.Id, id.pos));
-                if (!it.type.isFunc && id.Id != "this") it.type.assignable = true;
-                else it.func = (funcType) gScope.getMemberTypeFromName(t.name, id.Id, id.pos);
+                } else {
+                    it.type = new Type(gScope.getMemberTypeFromName(t.name, id.Id, id.pos));
+                    it.func = gScope.getMemberFuncFromName(t.name,id.Id,id.pos);
+                }
             } else throw new semanticError("do not have member/method", it.pos);
         } else if (it.isCallOp) {
             it.postfixExpr.accept(this);
-            if (!it.postfixExpr.type.isFunc)
+            if (it.postfixExpr.func == null)
                 throw new semanticError("call fail because it is not a function", it.pos);
             funcType func = it.postfixExpr.func;
             if (it.Expr != null) {
@@ -564,7 +569,7 @@ public class SemanticChecker implements ASTVisitor {
         } else {
             it.primaryExpr.accept(this);
             it.type = it.primaryExpr.type;
-            if (it.type.isFunc) it.func = (funcType) it.type;
+            it.func = it.primaryExpr.func;
         }
     }
 
@@ -576,6 +581,7 @@ public class SemanticChecker implements ASTVisitor {
         } else if (it.isExpr) {
             it.expr.accept(this);
             it.type = it.expr.type;
+            if (it.type.isFunc) it.func = (funcType) it.type;
         } else if (it.isThis) {
             if (currentStruct == null)
                 throw new semanticError("use this outside of the class", it.pos);
@@ -583,38 +589,29 @@ public class SemanticChecker implements ASTVisitor {
             it.type.assignable = false;
         } else if (it.isIdExpr) {
             String s = ((idExprNode) it.expr).Id;
-            /*if (currentStruct != null) {
-                if (currentScope.containsVariable(s, false)) {
-                    it.type = new Type(currentScope.getType(s,false));
-                    it.type.assignable = true;
-                }
-                else if (currentStruct.methods.containsKey(s) || currentStruct.members.containsKey(s)) {
-                    if (currentStruct.members.containsKey(s)) {
-                        it.type = new Type(currentStruct.members.get(s));
-                        it.type.assignable = true;
-                    } else  it.type = currentStruct.methods.get(s);
-                } else if ()
-            } else {
-
-            }*/if (currentScope.containsVariable(s, false)) {
+            //find the variable
+            if (currentScope.containsVariable(s, false)) {
                 it.type = new Type(currentScope.getType(s, true));
                 it.type.assignable = true;
-            }
-            else
-            if (currentStruct != null && (currentStruct.methods.containsKey(s) || currentStruct.members.containsKey(s))) {
-                if (currentStruct.members.containsKey(s)) {
-                    it.type = new Type(currentStruct.members.get(s));
-                    it.type.assignable = true;
-                } else it.type = currentStruct.methods.get(s);
+            } else if (currentStruct != null && currentStruct.members.containsKey(s)) {
+                it.type = new Type(currentStruct.members.get(s));
+                it.type.assignable = true;
             } else if (currentScope.containsVariable(s, true)) {
                 it.type = new Type(currentScope.getType(s, true));
                 it.type.assignable = true;
+            }
+            //find the function
+            if (currentStruct != null && currentStruct.methods.containsKey(s)) {
+                it.func = currentStruct.methods.get(s);
             } else if (gScope.hasFunction(s)) {
-                it.type = gScope.getFunctionFromName(s, it.expr.pos);
-            } else throw new semanticError("can not find the definition of " + s, it.expr.pos);
+                it.func = gScope.getFunctionFromName(s, it.expr.pos);
+            }
+            if (it.func == null && it.type == null)
+                throw new semanticError("can not find the definition of " + s, it.expr.pos);
         } else {
             it.expr.accept(this);
             it.type = it.expr.type;
+            if (it.type.isFunc) it.func = (funcType) it.type;
         }
     }
 
