@@ -6,8 +6,6 @@ public class Type {
 
     public enum Types {INT_TYPE, BOOL_TYPE, VOID_TYPE, CLASS_TYPE, FUNC_TYPE, NULL, CONST_NULL}
 
-    ;
-
     public Type(Types t) {
         typeType = t;
         switch (t) {

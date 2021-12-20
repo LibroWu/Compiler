@@ -158,7 +158,7 @@ logicalOrExpression:
     logicalAndExpression (OrOr logicalAndExpression)*;
 
 assignmentExpression:
-    logicalOrExpression (Assign assignmentExpression)*;
+    logicalOrExpression (Assign assignmentExpression)?;
 
 expression: assignmentExpression (Comma assignmentExpression)*;
 

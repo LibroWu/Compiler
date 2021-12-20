@@ -31,7 +31,6 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(RootNode it) {
-
         it.declList.forEach(dc -> dc.accept(this));
         if (!hasMain)
             throw new semanticError("the program does not have main function", it.pos);

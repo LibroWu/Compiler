@@ -7,8 +7,6 @@ import java.util.ArrayList;
 public class compoundStmtNode extends stmtNode{
 
     public ArrayList<stmtNode> stmtArray = null;
-    public String returnType = "void";
-    public int dimension = 0;
 
     public compoundStmtNode(position pos) {
         super(pos);
