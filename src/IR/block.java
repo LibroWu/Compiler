@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 public class block {
     private LinkedList<statement> stmts = new LinkedList<>();
-    private terminalStmt tailStmt = null;
+    public terminalStmt tailStmt = null;
     public block() {}
     public void push_back(statement stmt) {
         stmts.add(stmt);

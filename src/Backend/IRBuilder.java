@@ -43,7 +43,7 @@ public class IRBuilder implements ASTVisitor {
         currentFunc = new funcDef(currentFunc);
         currentBlock = currentFunc.rootBlock;
         pg.push_back(currentFunc);
-        String idPrefix = ((currentStruct==null)? "": "_"+currentStruct.name) ;
+        String idPrefix = ((currentStruct==null)? "": "_"+currentStruct.name);
         currentFunc.funcId = idPrefix+it.id;
         funcType func;
         if (currentStruct != null) {
@@ -57,6 +57,11 @@ public class IRBuilder implements ASTVisitor {
             currentFunc.push_back(new alloca(rd,4,tmpIrType));
             currentBlock.push_back(new store(rs,rd,4,tmpIrType));
         } else func = gScope.getFunctionFromName(it.id, it.pos);
+        //for return
+        if (func.returnType.typeType!= Type.Types.VOID_TYPE) {
+            currentFunc.retReg = new register();
+            currentFunc.push_back(new alloca(currentFunc.retReg,4,new IRType()));
+        }
         if (it.parameters != null) {
             int loopLen = it.parameters.Id.size();
             for (int i = 0; i < loopLen;++i) {
@@ -75,6 +80,15 @@ public class IRBuilder implements ASTVisitor {
         currentFunc.returnType = new IRType(func.returnType);
         funcSuite = true;
         it.suite.accept(this);
+        if (currentBlock.tailStmt==null) {
+            if (func.returnType.typeType== Type.Types.VOID_TYPE) {
+                IRType irType = new IRType();
+                irType.isVoid = true;
+                currentBlock.push_back(new ret(new constant(),irType));
+            } else {
+                currentBlock.push_back(new ret(new constant(0),new IRType()));
+            }
+        }
         currentScope = currentScope.parentScope();
         currentFunc = currentFunc.parentFunc();
     }
@@ -92,7 +106,9 @@ public class IRBuilder implements ASTVisitor {
                 funcSuite = false;
                 flag =true;
             }
-            it.stmtArray.forEach(this::visit);
+            for (stmtNode stmtNode : it.stmtArray) {
+                stmtNode.accept(this);
+            }
             if (!flag) currentScope = currentScope.parentScope();
         }
     }
@@ -160,10 +176,20 @@ public class IRBuilder implements ASTVisitor {
         if (it.isReturn) {
             if (it.expr!=null) {
                 it.expr.accept(this);
-                ret retStmt = new ret(it.expr.rd);
+                entity rd;
+                if (currentFunc.retReg!=null) {
+                    rd = new register();
+                    currentBlock.push_back(new store(it.expr.rd,currentFunc.retReg,4,new IRType(it.expr.type)));
+                    currentBlock.push_back(new load((register)rd,currentFunc.retReg,new IRType(it.expr.type),4));
+                } else {
+                    rd = it.expr.rd;
+                }
+                ret retStmt = new ret(rd,new IRType(it.expr.type));
                 currentBlock.push_back(retStmt);
             } else {
-                ret retStmt = new ret(new constant());
+                IRType irType = new IRType();
+                irType.isVoid = true;
+                ret retStmt = new ret(new constant(),irType);
                 currentBlock.push_back(retStmt);
             }
         } else {
@@ -180,13 +206,18 @@ public class IRBuilder implements ASTVisitor {
         for (exprNode expr : it.exprList) {
             expr.accept(this);
         }
-        it.type = it.exprList.get(0).type;
+        exprNode firstExpr = it.exprList.get(0);
+        it.type = firstExpr.type;
+        it.rd = firstExpr.rd;
+        it.idReg = firstExpr.idReg;
     }
 
     @Override
     public void visit(assignExprNode it) {
         if (it.exprList!=null) {
-            it.exprList.forEach(this::visit);
+            for (exprNode exprNode : it.exprList) {
+                exprNode.accept(this);
+            }
             it.rd = it.exprList.get(0).rd;
             it.logicExpr.accept(this);
             currentBlock.push_back(new store(it.rd, it.logicExpr.idReg,4,new IRType(it.logicExpr.type)));
@@ -199,38 +230,79 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(logicOrExprNode it) {
-        it.exprList.forEach(this::visit);
+        for (exprNode exprNode : it.exprList) {
+            exprNode.accept(this);
+        }
+        exprNode firstExpr = it.exprList.get(0);
+        it.rd = firstExpr.rd;
+        it.idReg = firstExpr.idReg;
         //todo: consider logic operator
     }
 
     @Override
     public void visit(logicAndExprNode it) {
-        it.exprList.forEach(this::visit);
+        for (exprNode exprNode : it.exprList) {
+            exprNode.accept(this);
+        }
+        exprNode firstExpr = it.exprList.get(0);
+        it.rd = firstExpr.rd;
+        it.idReg = firstExpr.idReg;
+        //todo: consider logic operator
     }
 
     @Override
     public void visit(inclusiveOrExprNode it) {
-        it.exprList.forEach(this::visit);
+        for (exprNode exprNode : it.exprList) {
+            exprNode.accept(this);
+        }
+        exprNode firstExpr = it.exprList.get(0);
+        it.rd = firstExpr.rd;
+        it.idReg = firstExpr.idReg;
+        //todo: consider logic operator
     }
 
     @Override
     public void visit(exclusiveOrExprNode it) {
-        it.exprList.forEach(this::visit);
+        for (exprNode exprNode : it.exprList) {
+            exprNode.accept(this);
+        }
+        exprNode firstExpr = it.exprList.get(0);
+        it.rd = firstExpr.rd;
+        it.idReg = firstExpr.idReg;
+        //todo: consider logic operator
     }
 
     @Override
     public void visit(andExprNode it) {
-        it.exprList.forEach(this::visit);
+        for (exprNode exprNode : it.exprList) {
+            exprNode.accept(this);
+        }
+        exprNode firstExpr = it.exprList.get(0);
+        it.rd = firstExpr.rd;
+        it.idReg = firstExpr.idReg;
+        //todo: consider logic operator
     }
 
     @Override
     public void visit(equalExprNode it) {
-        it.exprList.forEach(this::visit);
+        for (exprNode exprNode : it.exprList) {
+            exprNode.accept(this);
+        }
+        exprNode firstExpr = it.exprList.get(0);
+        it.rd = firstExpr.rd;
+        it.idReg = firstExpr.idReg;
+        //todo: consider logic operator
     }
 
     @Override
     public void visit(relationExprNode it) {
-        it.exprList.forEach(this::visit);
+        for (exprNode exprNode : it.exprList) {
+            exprNode.accept(this);
+        }
+        exprNode firstExpr = it.exprList.get(0);
+        it.rd = firstExpr.rd;
+        it.idReg = firstExpr.idReg;
+        //todo: consider logic operator
     }
 
     @Override

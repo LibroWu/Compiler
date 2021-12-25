@@ -114,6 +114,7 @@ public class IRPrinter implements Pass{
     }
 
     private void print(statement s){
+        out.print("\t");
         if (s instanceof alloca) {
             alloca a = (alloca) s;
             out.print(getRegName(a.rd)+" = alloca "+getType(a.irType)+", align "+a.align);
@@ -141,7 +142,8 @@ public class IRPrinter implements Pass{
         } else if (s instanceof phi) {
 
         } else if (s instanceof ret) {
-
+            ret r = (ret) s;
+            out.print("ret "+getType(r.irType)+" "+getEntityString(r.value));
         } else if (s instanceof store) {
             store t = (store) s;
             out.print("store "+getType(t.resourceType)+" "+getEntityString(t.resource)+", "+getType(t.resourceType.getPtr())+" "+getRegName(t.target)+", align "+t.align);

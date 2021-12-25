@@ -14,6 +14,7 @@ public class funcDef extends global{
     public ArrayList<alloca> allocas = new ArrayList<>();
     public block rootBlock = new block();
     public Set<block> blocks = new HashSet<>();
+    public register retReg = null;
 
     public funcDef(funcDef parentFunc) {
         this.parentFunc = parentFunc;
