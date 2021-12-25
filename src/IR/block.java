@@ -13,7 +13,7 @@ public class block {
     public void push_back(statement stmt) {
         stmts.add(stmt);
         if (stmt instanceof terminalStmt) {
-            if (tailStmt != null) throw new internalError("multiple tails of a block",new position(0,0));
+            //todo if (tailStmt != null) throw new internalError("multiple tails of a block",new position(0,0));
             tailStmt = (terminalStmt) stmt;
         }
     }

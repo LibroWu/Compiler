@@ -1,5 +1,7 @@
 import AST.RootNode;
-//import Backend.*;
+import Backend.*;
+import IR.*;
+import Backend.IRBuilder;
 import Frontend.ASTBuilder;
 import Frontend.SemanticChecker;
 import Frontend.SymbolCollector;
@@ -36,6 +38,9 @@ public class Main {
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SymbolCollector(gScope).visit(ASTRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
+            program pg = new program();
+            new IRBuilder(pg, gScope).visit(ASTRoot);
+            new IRPrinter(System.out).visitProgram(pg);
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

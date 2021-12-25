@@ -64,7 +64,7 @@ public class SemanticChecker implements ASTVisitor {
                     throw new semanticError("the return type of construct function is wrong", it.pos);
             } else
                 throw new semanticError("class" + currentStruct.name + "does not have this method: " + it.id, it.pos);
-        } else func = (funcType) gScope.getFunctionFromName(it.id, it.pos);
+        } else func = gScope.getFunctionFromName(it.id, it.pos);
         if (it.parameters != null) {
             for (String id : it.parameters.Id) {
                 gScope.nameConflict(id, it.parameters.pos);
@@ -113,7 +113,6 @@ public class SemanticChecker implements ASTVisitor {
                     if (declarator.expr.type.typeType == Type.Types.CONST_NULL) {
                         if (!t.isClass && t.dimension == 0)
                             throw new semanticError("can not assign null to primitive type variable", it.pos);
-                        ;
                     } else {
                         if (!Objects.equals(declarator.expr.type.name, t.name) || declarator.expr.type.dimension != t.dimension)
                             throw new semanticError("initialize expression's type mismatches the type of the variable", declarator.expr.pos);
@@ -141,7 +140,7 @@ public class SemanticChecker implements ASTVisitor {
         });
         if (it.constructFunc != null) {
             if (!Objects.equals(it.constructFunc.id, it.name))
-                throw new semanticError("construct funtion mismatch", it.constructFunc.pos);
+                throw new semanticError("construct function mismatch", it.constructFunc.pos);
             it.constructFunc.accept(this);
         }
         currentStruct = null;
@@ -245,19 +244,9 @@ public class SemanticChecker implements ASTVisitor {
     public void visit(assignExprNode it) {
         it.logicExpr.accept(this);
         it.type = it.logicExpr.type;
-        if (!it.exprList.isEmpty()) {
+        if (it.exprList != null) {
             if (!it.type.assignable)
                 throw new semanticError("assignment on rvalue", it.logicExpr.pos);
-            if (it.exprList.size() > 1) {
-                for (int i = 0; i < it.exprList.size() - 1; ++i) {
-                    exprNode expr = it.exprList.get(i);
-                    expr.accept(this);
-                    if (!expr.type.assignable)
-                        throw new semanticError("assignment on rvalue", expr.pos);
-                    if (expr.type.name != it.logicExpr.type.name || expr.type.dimension != it.type.dimension)
-                        throw new semanticError("type mismatch on assignment", expr.pos);
-                }
-            }
             exprNode expr = it.exprList.get(it.exprList.size() - 1);
             expr.accept(this);
             if (expr.type.typeType != Type.Types.CONST_NULL) {
@@ -467,7 +456,7 @@ public class SemanticChecker implements ASTVisitor {
         } else {
             //unary logic operator is undefined, so it is not considered here.
             it.unaryExpr.accept(this);
-            if (Objects.equals(it.op, "!")) {
+            if (Objects.equals(it.op, "!")||Objects.equals(it.op, "not")) {
                 if (!Objects.equals(it.unaryExpr.type.name, "bool"))
                     throw new semanticError("unary operator(!) on non-bool variable", it.pos);
             } else if (!Objects.equals(it.unaryExpr.type.name, "int"))
@@ -519,17 +508,12 @@ public class SemanticChecker implements ASTVisitor {
                 it.func = arraySize;
                 it.type = null;
             } else if (t.isClass) {
-                if (id.Id == "this") {
-                    it.type = t;
-                    it.type.assignable = false;
-                } else {
-                    Type tmpT = gScope.getMemberTypeFromName(t.name, id.Id, id.pos);
-                    if (tmpT!=null) {
-                        it.type = new Type(tmpT);
-                        it.type.assignable = true;
-                    }
-                    it.func = gScope.getMemberFuncFromName(t.name,id.Id,id.pos);
+                Type tmpT = gScope.getMemberTypeFromName(t.name, id.Id, id.pos);
+                if (tmpT!=null) {
+                    it.type = new Type(tmpT);
+                    it.type.assignable = true;
                 }
+                it.func = gScope.getMemberFuncFromName(t.name,id.Id,id.pos);
             } else throw new semanticError("do not have member/method", it.pos);
         } else if (it.isCallOp) {
             it.postfixExpr.accept(this);
@@ -587,7 +571,7 @@ public class SemanticChecker implements ASTVisitor {
             if (it.type.isFunc) it.func = (funcType) it.type;
         } else if (it.isThis) {
             if (currentStruct == null)
-                throw new semanticError("use this outside of the class", it.pos);
+                throw new semanticError("use THIS outside of the class", it.pos);
             it.type = new Type(currentStruct);
             it.type.assignable = false;
         } else if (it.isIdExpr) {
@@ -677,6 +661,7 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(idExprNode it) {
+        //this part is useless?
         if (!currentScope.containsVariable(it.Id, true))
             throw new semanticError("Semantic Error: variable not define", it.pos);
         it.type = currentScope.getType(it.Id, true);

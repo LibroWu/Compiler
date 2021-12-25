@@ -225,7 +225,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
         assign.logicExpr = (logicOrExprNode) visit(ctx.logicalOrExpression());
         if (ctx.assignmentExpression() != null) {
             assign.exprList = new ArrayList<>();
-            ctx.assignmentExpression().forEach(assignment -> assign.exprList.add((exprNode) visit(assignment)));
+            assign.exprList.add((exprNode) visit(ctx.assignmentExpression()));
         }
         return assign;
     }
@@ -353,10 +353,6 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
             postfixExpr.isDotOp = true;
             postfixExpr.postfixExpr = (postfixExprNode) visit(ctx.postfixExpression());
             if (ctx.idExpression() != null) postfixExpr.Expr = (idExprNode) visit(ctx.idExpression());
-            else {
-                postfixExpr.Expr = new idExprNode(new position(ctx.This()));
-                ((idExprNode) postfixExpr.Expr).Id = "this";
-            }
         } else {
             postfixExpr.isSelfOp = true;
             postfixExpr.postfixExpr = (postfixExprNode) visit(ctx.postfixExpression());

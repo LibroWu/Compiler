@@ -1,7 +1,7 @@
 package IR;
 
 public class register extends entity{
-    register (){
+    public register (){
         super();
     }
 }

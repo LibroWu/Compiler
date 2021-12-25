@@ -9,8 +9,8 @@ public class IRPrinter implements Pass{
     private PrintStream out;
 
     private int Cnt = 0;
-    private HashMap<block, Integer> blockIndex = new HashMap<>();
-    private HashMap<register, Integer> regIndex = new HashMap<>();
+    private HashMap<block, Integer> blockIndex = null;
+    private HashMap<register, Integer> regIndex = null;
 
     public IRPrinter(PrintStream out) {
         this.out = out;
@@ -24,8 +24,53 @@ public class IRPrinter implements Pass{
     }
 
     @Override
-    public void visitFn(program f) {
+    public void visitProgram(program pg) {
+        for (classDef classDef : pg.classDefs) {
+            visitClassDef(classDef);
+        }
+        for (globalVarDecl globalVarDecl : pg.globalVarDecls) {
+            visitGlobalVarDecl(globalVarDecl);
+        }
+        for (funcDef funcDef : pg.funcDefs) {
+            visitFuncDef(funcDef);
+        }
+    }
+
+    @Override
+    public void visitFuncDef(funcDef f) {
+        Cnt = 0;
+        blockIndex = new HashMap<>();
+        regIndex = new HashMap<>();
+        out.print("define "+getType(f.returnType)+" @"+f.funcId+"(");
+        int len = f.parameters.size();
+        for (int i=0;i<len;++i) {
+            out.println(getType(f.parameters.get(i))+" "+getRegName(f.parameterRegs.get(i)));
+            if (i<len-1) out.print(",");
+        }
+        out.println("){");
+        for (alloca alloca : f.allocas) {
+            print(alloca);
+        }
         visitBlock(f.rootBlock);
+        out.println("}");
+    }
+
+    @Override
+    public void visitClassDef(classDef f) {
+
+    }
+
+    @Override
+    public void visitGlobalVarDecl(globalVarDecl gv) {
+
+    }
+
+    private String getType(IRType retType){
+        if (retType.isVoid) return "void";
+        StringBuilder s = new StringBuilder("i" + retType.iNum);
+        int len = retType.ptrNum;
+        s.append("*".repeat(Math.max(0, len)));
+        return s.toString();
     }
 
     private String getBlockName(block b) {
@@ -54,11 +99,28 @@ public class IRPrinter implements Pass{
         }
     }
 
+    private String getOp(binary.opTye op) {
+        return switch (op) {
+            case ADD -> "add";
+            case SUB -> "sub";
+            case OR -> "or";
+            case MUL -> "mul";
+            case SDIV -> "sdiv";
+            case MOD -> "srem";
+            case ASHR -> "ashr";
+            case SHL -> "shl";
+            default -> "";
+        };
+    }
+
     private void print(statement s){
         if (s instanceof alloca) {
-
+            alloca a = (alloca) s;
+            out.print(getRegName(a.rd)+" = alloca "+getType(a.irType)+", align "+a.align);
         } else if (s instanceof binary) {
-
+            binary b = (binary) s;
+            String op = getOp(b.op);
+            out.print(getEntityString(b.rd)+" = "+op+" "+getType(b.irType)+" "+getEntityString(b.rs1)+", "+getEntityString(b.rs2));
         } else if (s instanceof br) {
 
         } else if (s instanceof call) {
@@ -74,13 +136,18 @@ public class IRPrinter implements Pass{
         } else if (s instanceof icmp) {
 
         } else if (s instanceof load) {
-
+            load l = (load) s;
+            out.print(getRegName(l.rd)+" = load "+getType(l.rdType) +", "+getType(l.rdType.getPtr())+" "+getRegName(l.ptr)+", align "+l.align);
         } else if (s instanceof phi) {
 
         } else if (s instanceof ret) {
 
         } else if (s instanceof store) {
-
+            store t = (store) s;
+            out.print("store "+getType(t.resourceType)+" "+getEntityString(t.resource)+", "+getType(t.resourceType.getPtr())+" "+getRegName(t.target)+", align "+t.align);
         }
+        if (s.Comments!=null) {
+            out.println(";"+s.Comments);
+        } else out.println();
     }
 }

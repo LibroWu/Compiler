@@ -2,10 +2,11 @@ package IR;
 
 public class constant extends entity{
     public enum Genre {
-        STRING,INT,VOID
+        STRING,INT,VOID,BOOL
     }
     public Genre genre;
     private int intValue;
+    private boolean boolValue;
     private String stringValue;
 
     public constant(){
@@ -13,6 +14,11 @@ public class constant extends entity{
         this.genre = Genre.VOID;
     }
 
+    public constant(boolean flag){
+        super();
+        this.genre = Genre.BOOL;
+        this.boolValue = flag;
+    }
     public constant(int value) {
         super();
         this.intValue = value;
