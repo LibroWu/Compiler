@@ -9,6 +9,7 @@ import java.util.LinkedList;
 public class block {
     private LinkedList<statement> stmts = new LinkedList<>();
     public terminalStmt tailStmt = null;
+    public boolean jumpTo = false;
     public block() {}
     public void push_back(statement stmt) {
         stmts.add(stmt);
@@ -22,7 +23,7 @@ public class block {
         ArrayList<block> ret = new ArrayList<>();
         if (tailStmt instanceof br) {
             br tailTmp = (br) tailStmt;
-            if (tailTmp.op==null) {
+            if (tailTmp.val==null) {
                 ret.add(tailTmp.trueBranch);
             } else {
                 ret.add(tailTmp.trueBranch);;

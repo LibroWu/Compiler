@@ -1,5 +1,7 @@
 int main(){
-    int a;
+    int a=5,b;
+    bool c;
     a=10+5*100/4;
+    c = a>=100;
     return a;
 }

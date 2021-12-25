@@ -827,8 +827,8 @@ public class MxLParser extends Parser {
 	public static class DeclaratorContext extends ParserRuleContext {
 		public TerminalNode Identifier() { return getToken(MxLParser.Identifier, 0); }
 		public TerminalNode Assign() { return getToken(MxLParser.Assign, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public AssignmentExpressionContext assignmentExpression() {
+			return getRuleContext(AssignmentExpressionContext.class,0);
 		}
 		public DeclaratorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -866,7 +866,7 @@ public class MxLParser extends Parser {
 				setState(177);
 				match(Assign);
 				setState(178);
-				expression();
+				assignmentExpression();
 				}
 			}
 
@@ -3224,29 +3224,27 @@ public class MxLParser extends Parser {
 	public final ExpressionContext expression() throws RecognitionException {
 		ExpressionContext _localctx = new ExpressionContext(_ctx, getState());
 		enterRule(_localctx, 84, RULE_expression);
+		int _la;
 		try {
-			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(436);
 			assignmentExpression();
 			setState(441);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,44,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-				if ( _alt==1 ) {
-					{
-					{
-					setState(437);
-					match(Comma);
-					setState(438);
-					assignmentExpression();
-					}
-					} 
+			_la = _input.LA(1);
+			while (_la==Comma) {
+				{
+				{
+				setState(437);
+				match(Comma);
+				setState(438);
+				assignmentExpression();
+				}
 				}
 				setState(443);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,44,_ctx);
+				_la = _input.LA(1);
 			}
 			}
 		}
@@ -4228,7 +4226,7 @@ public class MxLParser extends Parser {
 		"\37\2\2\u00a9\23\3\2\2\2\u00aa\u00af\5\26\f\2\u00ab\u00ac\7 \2\2\u00ac"+
 		"\u00ae\5\26\f\2\u00ad\u00ab\3\2\2\2\u00ae\u00b1\3\2\2\2\u00af\u00ad\3"+
 		"\2\2\2\u00af\u00b0\3\2\2\2\u00b0\25\3\2\2\2\u00b1\u00af\3\2\2\2\u00b2"+
-		"\u00b5\7<\2\2\u00b3\u00b4\7\27\2\2\u00b4\u00b6\5V,\2\u00b5\u00b3\3\2\2"+
+		"\u00b5\7<\2\2\u00b3\u00b4\7\27\2\2\u00b4\u00b6\5T+\2\u00b5\u00b3\3\2\2"+
 		"\2\u00b5\u00b6\3\2\2\2\u00b6\27\3\2\2\2\u00b7\u00bf\5\22\n\2\u00b8\u00bf"+
 		"\5\36\20\2\u00b9\u00bf\5\34\17\2\u00ba\u00bf\5 \21\2\u00bb\u00bf\5\"\22"+
 		"\2\u00bc\u00bf\5$\23\2\u00bd\u00bf\7\37\2\2\u00be\u00b7\3\2\2\2\u00be"+

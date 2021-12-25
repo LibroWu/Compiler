@@ -17,6 +17,10 @@ public class IRType {
         iNum = 32;
     }
 
+    public IRType(int iNum){
+        this.iNum = iNum;
+    }
+
     public IRType(int iNum,int ptrNum,int arrayLen,classDef cDef) {
         this.iNum = iNum;
         this.ptrNum = ptrNum;

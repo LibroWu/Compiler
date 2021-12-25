@@ -93,7 +93,7 @@ public class ASTBuilder extends MxLBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitDeclarator(MxLParser.DeclaratorContext ctx) {
         declaratorNode declNode = new declaratorNode(new position(ctx), ctx.Identifier().getText());
-        if (ctx.expression() != null) declNode.expr = (exprNode) visit(ctx.expression());
+        if (ctx.assignmentExpression() != null) declNode.expr = (exprNode) visit(ctx.assignmentExpression());
         return declNode;
     }
 

@@ -60,6 +60,7 @@ public class IRBuilder implements ASTVisitor {
         //for return
         if (func.returnType.typeType!= Type.Types.VOID_TYPE) {
             currentFunc.retReg = new register();
+            currentBlock.push_back(new store(new constant(0),currentFunc.retReg,4,new IRType()));
             currentFunc.push_back(new alloca(currentFunc.retReg,4,new IRType()));
         }
         if (it.parameters != null) {
@@ -284,25 +285,42 @@ public class IRBuilder implements ASTVisitor {
     }
 
     @Override
-    public void visit(equalExprNode it) {
-        for (exprNode exprNode : it.exprList) {
-            exprNode.accept(this);
+    public void visit(equalExprNode it) {exprNode firstExpr = it.exprList.get(0);
+        firstExpr.accept(this);
+        int listLen = it.exprList.size();
+        entity lastRes = firstExpr.rd;
+        for (int i=1;i<listLen;++i) {
+            exprNode second = it.exprList.get(i);
+            second.accept(this);
+            String ss = it.OpList.get(i - 1);
+            icmp.cmpOpType op = Objects.equals(ss, "==")? icmp.cmpOpType.EQ : icmp.cmpOpType.NEQ;
+            register rd = new register();
+            currentBlock.push_back(new icmp(rd,lastRes,second.rd,op,new IRType()));
+            lastRes = rd;
         }
-        exprNode firstExpr = it.exprList.get(0);
-        it.rd = firstExpr.rd;
+        it.rd = lastRes;
         it.idReg = firstExpr.idReg;
-        //todo: consider logic operator
     }
 
     @Override
     public void visit(relationExprNode it) {
-        for (exprNode exprNode : it.exprList) {
-            exprNode.accept(this);
-        }
         exprNode firstExpr = it.exprList.get(0);
-        it.rd = firstExpr.rd;
+        firstExpr.accept(this);
+        int listLen = it.exprList.size();
+        entity lastRes = firstExpr.rd;
+        for (int i=1;i<listLen;++i) {
+            exprNode second = it.exprList.get(i);
+            second.accept(this);
+            String ss = it.OpList.get(i - 1);
+            icmp.cmpOpType op = Objects.equals(ss, "<")? icmp.cmpOpType.SLT :
+                                Objects.equals(ss,"<=")? icmp.cmpOpType.SLE :
+                                Objects.equals(ss, ">")? icmp.cmpOpType.SGT : icmp.cmpOpType.SGE;
+            register rd = new register();
+            currentBlock.push_back(new icmp(rd,lastRes,second.rd,op,new IRType()));
+            lastRes = rd;
+        }
+        it.rd = lastRes;
         it.idReg = firstExpr.idReg;
-        //todo: consider logic operator
     }
 
     @Override
@@ -366,6 +384,7 @@ public class IRBuilder implements ASTVisitor {
             it.postfixExpr.accept(this);
             it.idReg = it.postfixExpr.idReg;
             it.rd = it.postfixExpr.rd;
+            it.irType = it.postfixExpr.irType;
         } else if (it.newExpr != null) {
         } else {
             //unary logic operator is undefined, so it is not considered here.
@@ -397,10 +416,11 @@ public class IRBuilder implements ASTVisitor {
             it.postfixExpr.accept(this);
             it.idReg = it.postfixExpr.idReg;
             it.rd = it.postfixExpr.rd;
+            it.irType = it.postfixExpr.irType;
             register rd = new register();
             binary.opTye op = it.isSelfPlus? binary.opTye.ADD: binary.opTye.SUB;
-            currentBlock.push_back(new binary(op,new IRType(),rd,it.rd,new constant(1)));
-            currentBlock.push_back(new store(rd,it.idReg,4,new IRType()));
+            currentBlock.push_back(new binary(op,it.irType,rd,it.rd,new constant(1)));
+            currentBlock.push_back(new store(rd,it.idReg,4,it.irType));
         } else if (it.isDotOp) {
         } else if (it.isCallOp) {
         } else if (it.isLocateOp) {
@@ -408,6 +428,7 @@ public class IRBuilder implements ASTVisitor {
             it.primaryExpr.accept(this);
             it.rd = it.primaryExpr.rd;
             it.idReg = it.primaryExpr.idReg;
+            it.irType = it.primaryExpr.irType;
         }
     }
 
@@ -416,16 +437,21 @@ public class IRBuilder implements ASTVisitor {
         if (it.isLiteral) {
             it.expr.accept(this);
             it.rd = it.expr.rd;
+            it.irType = it.expr.irType;
         } else if (it.isExpr) {
             it.expr.accept(this);
+            it.rd = it.expr.rd;
+            it.idReg = it.expr.idReg;
+            it.irType = it.expr.irType;
         } else if (it.isThis) {
             regTypePair regType = currentScope.getEntity("this",true);
-            it.idReg = regType.reg;
+            it.rd = it.idReg = regType.reg;
             it.irType = regType.irType;
         } else if (it.isIdExpr) {
             it.expr.accept(this);
             it.idReg = it.expr.idReg;
             it.rd = it.expr.rd;
+            it.irType = it.expr.irType;
         } else {
             //lambda
         }
@@ -435,17 +461,21 @@ public class IRBuilder implements ASTVisitor {
     public void visit(constExprNode it) {
         if (it.isInt) {
             it.rd = new constant(Integer.parseInt(it.literal));
+            it.irType = new IRType();
         } else if (it.isBool) {
             it.rd = new constant(Objects.equals(it.literal,"true"));
+            it.irType = new IRType(1);
         } else if (it.isString) {
             //todo add global constant string
         } else if (it.isNull) {
             it.rd = new constant(0);
+            it.irType = new IRType();
         }
     }
 
     @Override
     public void visit(lambdaExprNode it) {
+
     }
 
     @Override

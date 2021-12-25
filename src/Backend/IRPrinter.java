@@ -18,7 +18,7 @@ public class IRPrinter implements Pass{
 
     @Override
     public void visitBlock(block b) {
-        out.println(getBlockName(b));
+        if (b.jumpTo)out.println("\n"+getBlockName(b));
         b.stmts().forEach(this::print);
         b.successors().forEach(this::visitBlock);
     }
@@ -38,7 +38,7 @@ public class IRPrinter implements Pass{
 
     @Override
     public void visitFuncDef(funcDef f) {
-        Cnt = 0;
+        Cnt = 1;
         blockIndex = new HashMap<>();
         regIndex = new HashMap<>();
         out.print("define "+getType(f.returnType)+" @"+f.funcId+"(");
@@ -113,6 +113,27 @@ public class IRPrinter implements Pass{
         };
     }
 
+    private String getCmpOp(icmp.cmpOpType op) {
+        return switch (op) {
+            case SLE -> "sle";
+            case SLT -> "slt";
+            case SGE -> "sge";
+            case SGT -> "sgt";
+            case EQ -> "eq";
+            case NEQ -> "neq";
+            default -> "";
+        };
+    }
+
+    private String getConvertOp(convertOp.convertType op) {
+        return switch (op) {
+            case TRUNC -> "trunc";
+            case SEXT -> "sext";
+            case ZEXT -> "zext";
+            default -> "";
+        };
+    }
+
     private void print(statement s){
         out.print("\t");
         if (s instanceof alloca) {
@@ -123,19 +144,26 @@ public class IRPrinter implements Pass{
             String op = getOp(b.op);
             out.print(getEntityString(b.rd)+" = "+op+" "+getType(b.irType)+" "+getEntityString(b.rs1)+", "+getEntityString(b.rs2));
         } else if (s instanceof br) {
-
+            br b = (br) s;
+            if (b.val == null) {
+                out.print("br label %"+getBlockName(b.trueBranch));
+            } else {
+                out.print("br i1 "+getRegName(b.val)+", label %"+getBlockName(b.trueBranch) + ", label %"+getBlockName(b.falseBranch));
+            }
         } else if (s instanceof call) {
 
         } else if (s instanceof constStmt) {
 
         } else if (s instanceof convertOp) {
-
+            convertOp con = (convertOp) s;
+            out.print(getRegName(con.rd)+" = "+getConvertOp(con.convert)+" "+getType(con.rsType)+" "+getEntityString(con.rs)+" to "+getType(con.rdType));
         } else if (s instanceof declare) {
 
         } else if (s instanceof getelementptr) {
 
         } else if (s instanceof icmp) {
-
+            icmp ic = (icmp) s;
+            out.print(getRegName(ic.rd)+" = icmp "+getCmpOp(ic.cmpOp)+" "+getType(ic.rsType)+" "+getEntityString(ic.rs1)+", "+getEntityString(ic.rs2));
         } else if (s instanceof load) {
             load l = (load) s;
             out.print(getRegName(l.rd)+" = load "+getType(l.rdType) +", "+getType(l.rdType.getPtr())+" "+getRegName(l.ptr)+", align "+l.align);

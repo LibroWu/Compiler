@@ -39,7 +39,7 @@ declarationStatement: varType initDeclaratorList Semi;
 
 initDeclaratorList:declarator (Comma declarator)*;
 
-declarator: Identifier (Assign expression)?;
+declarator: Identifier (Assign assignmentExpression)?;
 
 /* Statements */
 
