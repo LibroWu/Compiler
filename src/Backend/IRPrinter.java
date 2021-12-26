@@ -18,11 +18,52 @@ public class IRPrinter implements Pass{
 
     @Override
     public void visitBlock(block b) {
-        if (b.jumpTo)out.println("\n"+getBlockName(b));
+        if (b.jumpTo)out.println("\n"+getBlockName(b)+":");
         b.stmts().forEach(this::print);
-        b.successors().forEach(this::visitBlock);
+        b.successors.forEach(this::visitBlock);
     }
 
+    private void runNaming(block b) {
+        if (b.jumpTo) getBlockName(b);
+        for (statement stmt : b.stmts()) {
+            runNaming(stmt);
+        }
+        for (block successor : b.successors) {
+            runNaming(successor);
+        }
+    }
+
+    private void runNaming(statement s){
+        if (s instanceof alloca) {
+            alloca a = (alloca) s;
+            getRegName(a.rd);
+        } else if (s instanceof binary) {
+            binary b = (binary) s;
+            getEntityString(b.rd);
+        } else if (s instanceof br) {
+        } else if (s instanceof call) {
+
+        } else if (s instanceof constStmt) {
+
+        } else if (s instanceof convertOp) {
+            convertOp con = (convertOp) s;
+            getRegName(con.rd);
+        } else if (s instanceof declare) {
+
+        } else if (s instanceof getelementptr) {
+
+        } else if (s instanceof icmp) {
+            icmp ic = (icmp) s;
+            getRegName(ic.rd);
+        } else if (s instanceof load) {
+            load l = (load) s;
+            getRegName(l.rd);
+        } else if (s instanceof phi) {
+
+        } else if (s instanceof ret) {
+        } else if (s instanceof store) {
+        }
+    }
     @Override
     public void visitProgram(program pg) {
         for (classDef classDef : pg.classDefs) {
@@ -51,6 +92,7 @@ public class IRPrinter implements Pass{
         for (alloca alloca : f.allocas) {
             print(alloca);
         }
+        runNaming(f.rootBlock);
         visitBlock(f.rootBlock);
         out.println("}");
     }
@@ -70,14 +112,17 @@ public class IRPrinter implements Pass{
         StringBuilder s = new StringBuilder("i" + retType.iNum);
         int len = retType.ptrNum;
         s.append("*".repeat(Math.max(0, len)));
+        if (retType.arrayLen>0) {
+            s = new StringBuilder("["+retType.arrayLen+" x " +s.toString()+"]");
+        }
         return s.toString();
     }
 
     private String getBlockName(block b) {
-        if (blockIndex.containsKey(b)) return blockIndex.get(b) + ":";
+        if (blockIndex.containsKey(b)) return blockIndex.get(b) + "";
         else {
             blockIndex.put(b,Cnt++);
-            return (Cnt-1)+":";
+            return (Cnt-1)+"";
         }
     }
 

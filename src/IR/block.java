@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 public class block {
     private LinkedList<statement> stmts = new LinkedList<>();
+    public ArrayList<block> successors = new ArrayList<>();
     public terminalStmt tailStmt = null;
     public boolean jumpTo = false;
     public block() {}
@@ -19,17 +20,4 @@ public class block {
         }
     }
     public ArrayList<statement> stmts() {return new ArrayList<>(stmts);}
-    public ArrayList<block> successors(){
-        ArrayList<block> ret = new ArrayList<>();
-        if (tailStmt instanceof br) {
-            br tailTmp = (br) tailStmt;
-            if (tailTmp.val==null) {
-                ret.add(tailTmp.trueBranch);
-            } else {
-                ret.add(tailTmp.trueBranch);;
-                ret.add(tailTmp.falseBranch);
-            }
-        }
-        return ret;
-    }
 }

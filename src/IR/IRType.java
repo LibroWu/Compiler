@@ -29,6 +29,13 @@ public class IRType {
     }
 
     public IRType(Type t){
-        iNum = 32;
+        if (t.isClass) {
+
+        } else {
+            if (t.typeType== Type.Types.INT_TYPE) iNum = 32;
+            else if (t.typeType == Type.Types.BOOL_TYPE) iNum = 8;
+            else iNum =32;
+            arrayLen = t.dimension;
+        }
     }
 }

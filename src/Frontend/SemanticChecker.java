@@ -178,12 +178,12 @@ public class SemanticChecker implements ASTVisitor {
             if (it.cond.type.typeType != Type.Types.BOOL_TYPE)
                 throw new semanticError("the condition's result is not boolean", it.cond.pos);
         } else {
+            if (it.initStmt != null) it.initStmt.accept(this);
             if (it.cond != null) {
                 it.cond.accept(this);
                 if (it.cond.type.typeType != Type.Types.BOOL_TYPE)
                     throw new semanticError("the condition's result is not boolean", it.cond.pos);
             }
-            if (it.initStmt != null) it.initStmt.accept(this);
             if (it.incrExpr != null) it.incrExpr.accept(this);
         }
         inLoop++;

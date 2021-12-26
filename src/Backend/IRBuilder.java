@@ -166,10 +166,67 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(selectStmtNode it) {
+        it.cond.accept(this);
+        block TBlock=new block(),FBlock,ConvergeBlock=new block();
+        if (it.falseStmt!=null) {
+            FBlock = new block();
+            currentBlock.push_back(new br((register) it.cond.rd,TBlock,FBlock));
+            currentBlock.successors.add(TBlock);
+            currentBlock.successors.add(FBlock);
+            currentBlock.successors.add(ConvergeBlock);
+            TBlock.jumpTo = FBlock.jumpTo = ConvergeBlock.jumpTo= true;
+            currentBlock = TBlock;
+            it.trueStmt.accept(this);
+            currentBlock.push_back(new br(null,ConvergeBlock,null));
+            currentBlock = FBlock;
+            it.falseStmt.accept(this);
+            currentBlock.push_back(new br(null,ConvergeBlock,null));
+            currentBlock = ConvergeBlock;
+        } else {
+            currentBlock.push_back(new br((register) it.cond.rd,TBlock,ConvergeBlock));
+            currentBlock.successors.add(TBlock);
+            currentBlock.successors.add(ConvergeBlock);
+            TBlock.jumpTo = ConvergeBlock.jumpTo= true;
+            currentBlock = TBlock;
+            it.trueStmt.accept(this);
+            TBlock.push_back(new br(null,ConvergeBlock,null));
+            currentBlock = ConvergeBlock;
+        }
     }
 
     @Override
     public void visit(iterStmtNode it) {
+        if (it.isFor) {
+            block body = new block(),checkBlock = new block(),exitBlock = new block();
+            body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
+            currentBlock.successors.add(body);
+            currentBlock.successors.add(checkBlock);
+            currentBlock.successors.add(exitBlock);
+            if (it.initStmt!=null) it.initStmt.accept(this);
+            currentBlock.push_back(new br(null,checkBlock,null));
+            currentBlock = checkBlock;
+            it.cond.accept(this);
+            currentBlock.push_back(new br((register) it.cond.rd,body,exitBlock));
+            currentBlock = body;
+            it.mainStmt.accept(this);
+            if (it.incrExpr!=null) it.incrExpr.accept(this);
+            currentBlock.push_back(new br(null,checkBlock,null));
+            currentBlock = exitBlock;
+        } else {
+            block body = new block(),checkBlock = new block(),exitBlock = new block();
+            body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
+            currentBlock.successors.add(checkBlock);
+            currentBlock.successors.add(body);
+            currentBlock.successors.add(exitBlock);
+            currentBlock.push_back(new br(null,checkBlock,null));
+            currentBlock = checkBlock;
+            it.cond.accept(this);
+            currentBlock.push_back(new br((register) it.cond.rd,body,exitBlock));
+            currentBlock = body;
+            it.mainStmt.accept(this);
+            currentBlock.push_back(new br(null,checkBlock,null));
+            currentBlock = exitBlock;
+        }
     }
 
     @Override
@@ -211,6 +268,7 @@ public class IRBuilder implements ASTVisitor {
         it.type = firstExpr.type;
         it.rd = firstExpr.rd;
         it.idReg = firstExpr.idReg;
+        it.irType = firstExpr.irType;
     }
 
     @Override
@@ -219,13 +277,23 @@ public class IRBuilder implements ASTVisitor {
             for (exprNode exprNode : it.exprList) {
                 exprNode.accept(this);
             }
-            it.rd = it.exprList.get(0).rd;
+            exprNode firstExpr = it.exprList.get(0);
+            it.rd = firstExpr.rd;
+            it.irType = firstExpr.irType;
             it.logicExpr.accept(this);
-            currentBlock.push_back(new store(it.rd, it.logicExpr.idReg,4,new IRType(it.logicExpr.type)));
+            if (it.logicExpr.irType.iNum != firstExpr.irType.iNum) {
+                register rd = new register();
+                convertOp.convertType convert;
+                if (it.logicExpr.irType.iNum>firstExpr.irType.iNum) convert = convertOp.convertType.SEXT;
+                else convert = convertOp.convertType.TRUNC;
+                currentBlock.push_back(new convertOp(rd,(register) it.rd,convert,it.logicExpr.irType,firstExpr.irType));
+                currentBlock.push_back(new store(rd, it.logicExpr.idReg,4,new IRType(it.logicExpr.type)));
+            } else currentBlock.push_back(new store(it.rd, it.logicExpr.idReg,4,new IRType(it.logicExpr.type)));
         } else {
             it.logicExpr.accept(this);
             it.rd = it.logicExpr.rd;
             it.idReg = it.logicExpr.idReg;
+            it.irType = it.logicExpr.irType;
         }
     }
 
@@ -237,6 +305,7 @@ public class IRBuilder implements ASTVisitor {
         exprNode firstExpr = it.exprList.get(0);
         it.rd = firstExpr.rd;
         it.idReg = firstExpr.idReg;
+        it.irType = firstExpr.irType;
         //todo: consider logic operator
     }
 
@@ -248,6 +317,7 @@ public class IRBuilder implements ASTVisitor {
         exprNode firstExpr = it.exprList.get(0);
         it.rd = firstExpr.rd;
         it.idReg = firstExpr.idReg;
+        it.irType = firstExpr.irType;
         //todo: consider logic operator
     }
 
@@ -259,6 +329,7 @@ public class IRBuilder implements ASTVisitor {
         exprNode firstExpr = it.exprList.get(0);
         it.rd = firstExpr.rd;
         it.idReg = firstExpr.idReg;
+        it.irType = firstExpr.irType;
         //todo: consider logic operator
     }
 
@@ -270,6 +341,7 @@ public class IRBuilder implements ASTVisitor {
         exprNode firstExpr = it.exprList.get(0);
         it.rd = firstExpr.rd;
         it.idReg = firstExpr.idReg;
+        it.irType = firstExpr.irType;
         //todo: consider logic operator
     }
 
@@ -281,6 +353,7 @@ public class IRBuilder implements ASTVisitor {
         exprNode firstExpr = it.exprList.get(0);
         it.rd = firstExpr.rd;
         it.idReg = firstExpr.idReg;
+        it.irType = firstExpr.irType;
         //todo: consider logic operator
     }
 
@@ -300,6 +373,7 @@ public class IRBuilder implements ASTVisitor {
         }
         it.rd = lastRes;
         it.idReg = firstExpr.idReg;
+        it.irType = (listLen>1)? new IRType(1):firstExpr.irType;
     }
 
     @Override
@@ -321,6 +395,7 @@ public class IRBuilder implements ASTVisitor {
         }
         it.rd = lastRes;
         it.idReg = firstExpr.idReg;
+        it.irType = (listLen>1)? new IRType(1):firstExpr.irType;
     }
 
     @Override
@@ -339,6 +414,7 @@ public class IRBuilder implements ASTVisitor {
         }
         it.rd = lastRes;
         it.idReg = firstExpr.idReg;
+        it.irType = firstExpr.irType;
     }
 
     @Override
@@ -357,6 +433,7 @@ public class IRBuilder implements ASTVisitor {
         }
         it.rd = lastRes;
         it.idReg = firstExpr.idReg;
+        it.irType = firstExpr.irType;
     }
 
     @Override
@@ -376,6 +453,7 @@ public class IRBuilder implements ASTVisitor {
         }
         it.rd = lastRes;
         it.idReg = firstExpr.idReg;
+        it.irType = firstExpr.irType;
     }
 
     @Override
@@ -390,6 +468,7 @@ public class IRBuilder implements ASTVisitor {
             //unary logic operator is undefined, so it is not considered here.
             it.unaryExpr.accept(this);
             it.idReg = it.unaryExpr.idReg;
+            it.irType = it.unaryExpr.irType;
             if (Objects.equals(it.op,"++")||Objects.equals(it.op,"--")) {
                 binary.opTye op = Objects.equals(it.op,"++")? binary.opTye.ADD: binary.opTye.SUB;
                 register rd = new register();
