@@ -14,15 +14,17 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 
 
 public class Main {
     public static void main(String[] args) throws Exception {
         String name = "test.mx";
+        String nameOutput = "test.ll";
         //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\sema\\basic-package\\basic-5.mx";
         InputStream input = new FileInputStream(name);
+        PrintStream out = new PrintStream(nameOutput);
+        //OutputStream out = System.out;
         //InputStream input = System.in;
         try {
             RootNode ASTRoot;
@@ -40,7 +42,7 @@ public class Main {
             new SemanticChecker(gScope).visit(ASTRoot);
             program pg = new program();
             new IRBuilder(pg, gScope).visit(ASTRoot);
-            new IRPrinter(System.out).visitProgram(pg);
+            new IRPrinter(out).visitProgram(pg);
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

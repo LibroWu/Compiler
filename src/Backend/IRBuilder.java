@@ -199,8 +199,8 @@ public class IRBuilder implements ASTVisitor {
         if (it.isFor) {
             block body = new block(),checkBlock = new block(),exitBlock = new block();
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
-            currentBlock.successors.add(body);
             currentBlock.successors.add(checkBlock);
+            currentBlock.successors.add(body);
             currentBlock.successors.add(exitBlock);
             if (it.initStmt!=null) it.initStmt.accept(this);
             currentBlock.push_back(new br(null,checkBlock,null));
@@ -323,38 +323,59 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(inclusiveOrExprNode it) {
-        for (exprNode exprNode : it.exprList) {
-            exprNode.accept(this);
-        }
         exprNode firstExpr = it.exprList.get(0);
-        it.rd = firstExpr.rd;
+        firstExpr.accept(this);
+        int listLen = it.exprList.size();
+        entity lastRes = firstExpr.rd;
+        for (int i=1;i<listLen;++i) {
+            exprNode second = it.exprList.get(i);
+            second.accept(this);
+            binary.opTye op = binary.opTye.OR;
+            register rd = new register();
+            currentBlock.push_back(new binary(op,new IRType(),rd,lastRes,second.rd));
+            lastRes = rd;
+        }
+        it.rd = lastRes;
         it.idReg = firstExpr.idReg;
         it.irType = firstExpr.irType;
-        //todo: consider logic operator
     }
 
     @Override
     public void visit(exclusiveOrExprNode it) {
-        for (exprNode exprNode : it.exprList) {
-            exprNode.accept(this);
-        }
         exprNode firstExpr = it.exprList.get(0);
-        it.rd = firstExpr.rd;
+        firstExpr.accept(this);
+        int listLen = it.exprList.size();
+        entity lastRes = firstExpr.rd;
+        for (int i=1;i<listLen;++i) {
+            exprNode second = it.exprList.get(i);
+            second.accept(this);
+            binary.opTye op = binary.opTye.XOR;
+            register rd = new register();
+            currentBlock.push_back(new binary(op,new IRType(),rd,lastRes,second.rd));
+            lastRes = rd;
+        }
+        it.rd = lastRes;
         it.idReg = firstExpr.idReg;
         it.irType = firstExpr.irType;
-        //todo: consider logic operator
     }
 
     @Override
     public void visit(andExprNode it) {
-        for (exprNode exprNode : it.exprList) {
-            exprNode.accept(this);
-        }
         exprNode firstExpr = it.exprList.get(0);
-        it.rd = firstExpr.rd;
+        firstExpr.accept(this);
+        int listLen = it.exprList.size();
+        entity lastRes = firstExpr.rd;
+        for (int i=1;i<listLen;++i) {
+            exprNode second = it.exprList.get(i);
+            second.accept(this);
+            binary.opTye op = binary.opTye.AND;
+            register rd = new register();
+            currentBlock.push_back(new binary(op,new IRType(),rd,lastRes,second.rd));
+            lastRes = rd;
+        }
+        it.rd = lastRes;
         it.idReg = firstExpr.idReg;
         it.irType = firstExpr.irType;
-        //todo: consider logic operator
     }
 
     @Override
