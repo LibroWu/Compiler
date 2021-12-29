@@ -24,7 +24,7 @@ public class IRPrinter implements Pass{
     }
 
     private void runNaming(block b) {
-        if (b.jumpTo) getBlockName(b);
+        getBlockName(b);
         for (statement stmt : b.stmts()) {
             runNaming(stmt);
         }
@@ -59,7 +59,8 @@ public class IRPrinter implements Pass{
             load l = (load) s;
             getRegName(l.rd);
         } else if (s instanceof phi) {
-
+            phi p = (phi) s;
+            getRegName(p.rd);
         } else if (s instanceof ret) {
         } else if (s instanceof store) {
         }
@@ -79,9 +80,14 @@ public class IRPrinter implements Pass{
 
     @Override
     public void visitFuncDef(funcDef f) {
-        Cnt = 1;
+        Cnt = 0;
         blockIndex = new HashMap<>();
         regIndex = new HashMap<>();
+        getBlockName(f.rootBlock);
+        for (alloca alloca : f.allocas) {
+            runNaming(alloca);
+        }
+        runNaming(f.rootBlock);
         out.print("define "+getType(f.returnType)+" @"+f.funcId+"(");
         int len = f.parameters.size();
         for (int i=0;i<len;++i) {
@@ -92,7 +98,6 @@ public class IRPrinter implements Pass{
         for (alloca alloca : f.allocas) {
             print(alloca);
         }
-        runNaming(f.rootBlock);
         visitBlock(f.rootBlock);
         out.println("}");
     }
@@ -140,6 +145,7 @@ public class IRPrinter implements Pass{
             constant constE = (constant) e;
             if (constE.genre== constant.Genre.INT) return constE.getIntValue() + "";
             else if (constE.genre == constant.Genre.STRING) return constE.getStringValue();
+            else if (constE.genre== constant.Genre.BOOL) return (constE.getBoolValue()?"true":"false");
             else return "void";
         }
     }
@@ -213,7 +219,15 @@ public class IRPrinter implements Pass{
             load l = (load) s;
             out.print(getRegName(l.rd)+" = load "+getType(l.rdType) +", "+getType(l.rdType.getPtr())+" "+getRegName(l.ptr)+", align "+l.align);
         } else if (s instanceof phi) {
-
+            phi p = (phi) s;
+            out.print(getRegName(p.rd)+" = phi "+getType(p.rdType) + " ");
+            int len = p.entityBlockPairs.size();
+            for (int i=0;i<len-1;++i) {
+                entityBlockPair enBl = p.entityBlockPairs.get(i);
+                out.print("[ "+getEntityString(enBl.en)+", %" + getBlockName(enBl.bl)+" ], ");
+            }
+            entityBlockPair enBl = p.entityBlockPairs.get(len-1);
+            out.print("[ "+getEntityString(enBl.en)+", %" + getBlockName(enBl.bl)+" ]");
         } else if (s instanceof ret) {
             ret r = (ret) s;
             out.print("ret "+getType(r.irType)+" "+getEntityString(r.value));

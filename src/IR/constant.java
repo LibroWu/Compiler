@@ -33,4 +33,5 @@ public class constant extends entity{
 
     public int getIntValue() { return intValue;}
     public String getStringValue() { return stringValue;}
+    public boolean getBoolValue() {return boolValue;}
 }

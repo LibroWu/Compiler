@@ -299,26 +299,66 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(logicOrExprNode it) {
-        for (exprNode exprNode : it.exprList) {
-            exprNode.accept(this);
-        }
+        int len = it.exprList.size();
         exprNode firstExpr = it.exprList.get(0);
+        if (len==1) {
+            firstExpr.accept(this);
+        } else {
+            block exitBl = new block();
+            exitBl.jumpTo = true;
+            phi p = new phi(new register(),new IRType(1));
+            exitBl.push_back(p);
+            for (int i=0;i<len-1;++i) {
+                firstExpr.accept(this);
+                p.push_back(new entityBlockPair(new constant(true), currentBlock));
+                block bl = new block();
+                bl.jumpTo = true;
+                currentBlock.push_back(new br((register) firstExpr.rd,exitBl,bl));
+                currentBlock.successors.add(bl);
+                currentBlock = bl;
+                firstExpr = it.exprList.get(i+1);
+            }
+            firstExpr.accept(this);
+            p.push_back(new entityBlockPair(firstExpr.rd, currentBlock));
+            currentBlock.push_back(new br(null,exitBl,null));
+            currentBlock.successors.add(exitBl);
+            currentBlock = exitBl;
+        }
         it.rd = firstExpr.rd;
         it.idReg = firstExpr.idReg;
         it.irType = firstExpr.irType;
-        //todo: consider logic operator
     }
 
     @Override
     public void visit(logicAndExprNode it) {
-        for (exprNode exprNode : it.exprList) {
-            exprNode.accept(this);
-        }
+        int len = it.exprList.size();
         exprNode firstExpr = it.exprList.get(0);
+        if (len==1) {
+            firstExpr.accept(this);
+        } else {
+            block exitBl = new block();
+            exitBl.jumpTo = true;
+            phi p = new phi(new register(),new IRType(1));
+            exitBl.push_back(p);
+            for (int i=0;i<len-1;++i) {
+                firstExpr.accept(this);
+                p.push_back(new entityBlockPair(new constant(false), currentBlock));
+                block bl = new block();
+                bl.jumpTo = true;
+                currentBlock.push_back(new br((register) firstExpr.rd,bl,exitBl));
+                currentBlock.successors.add(bl);
+                currentBlock = bl;
+                firstExpr = it.exprList.get(i+1);
+            }
+            firstExpr.accept(this);
+            p.push_back(new entityBlockPair(firstExpr.rd, currentBlock));
+            currentBlock.push_back(new br(null,exitBl,null));
+            currentBlock.successors.add(exitBl);
+            currentBlock = exitBl;
+        }
         it.rd = firstExpr.rd;
         it.idReg = firstExpr.idReg;
         it.irType = firstExpr.irType;
-        //todo: consider logic operator
     }
 
     @Override
