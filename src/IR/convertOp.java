@@ -4,11 +4,12 @@ public class convertOp extends statement{
     public enum convertType{
         TRUNC,ZEXT,SEXT
     }
-    public register rd,rs;
+    public register rd;
+    public entity rs;
     public convertType convert;
     public IRType rsType,rdType;
 
-    public convertOp(register rd,register rs,convertType convert,IRType rdType,IRType rsType) {
+    public convertOp(register rd,entity rs,convertType convert,IRType rdType,IRType rsType) {
         this.rd = rd;
         this.rs = rs;
         this.convert = convert;

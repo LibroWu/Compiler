@@ -13,11 +13,11 @@ public class block {
     public boolean jumpTo = false;
     public block() {}
     public void push_back(statement stmt) {
-        stmts.add(stmt);
         if (stmt instanceof terminalStmt) {
-            //todo if (tailStmt != null) throw new internalError("multiple tails of a block",new position(0,0));
+            if (tailStmt != null) return;//todo throw new internalError("multiple tails of a block",new position(0,0));
             tailStmt = (terminalStmt) stmt;
         }
+        stmts.add(stmt);
     }
     public ArrayList<statement> stmts() {return new ArrayList<>(stmts);}
 }

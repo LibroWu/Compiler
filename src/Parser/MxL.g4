@@ -35,7 +35,7 @@ functionDefinition: returnType Identifier LeftParen functionParameterDef? RightP
 
 functionParameterDef : varType Identifier (Comma varType Identifier)*;
 
-declarationStatement: varType initDeclaratorList Semi;
+declarationStatement: varType initDeclaratorList? Semi;
 
 initDeclaratorList:declarator (Comma declarator)*;
 

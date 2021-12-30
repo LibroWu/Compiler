@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class IRBuilder implements ASTVisitor {
-    private block currentBlock = null;
+    private block currentBlock = null, loopExitBlock = null, loopContinueBlock = null;
     private funcDef currentFunc = null;
     private program pg;
     private classType currentStruct = null;
@@ -196,11 +196,20 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(iterStmtNode it) {
+        block parentLoopExitBlock = loopExitBlock;
+        block parentLoopContinueBlock = loopContinueBlock;
         if (it.isFor) {
-            block body = new block(),checkBlock = new block(),exitBlock = new block();
+            block body = new block(),checkBlock = new block(),exitBlock = new block(),incrBlock = new block();
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
             currentBlock.successors.add(checkBlock);
             currentBlock.successors.add(body);
+            if (it.incrExpr!=null) {
+                incrBlock.jumpTo = true;
+                loopContinueBlock = incrBlock;
+                currentBlock.successors.add(incrBlock);
+            }
+            else loopContinueBlock = checkBlock;
+            loopExitBlock = exitBlock;
             currentBlock.successors.add(exitBlock);
             if (it.initStmt!=null) it.initStmt.accept(this);
             currentBlock.push_back(new br(null,checkBlock,null));
@@ -209,11 +218,17 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.push_back(new br((register) it.cond.rd,body,exitBlock));
             currentBlock = body;
             it.mainStmt.accept(this);
-            if (it.incrExpr!=null) it.incrExpr.accept(this);
+            if (it.incrExpr!=null) {
+                currentBlock.push_back(new br(null,incrBlock,null));
+                currentBlock = incrBlock;
+                it.incrExpr.accept(this);
+            }
             currentBlock.push_back(new br(null,checkBlock,null));
             currentBlock = exitBlock;
         } else {
             block body = new block(),checkBlock = new block(),exitBlock = new block();
+            loopExitBlock = exitBlock;
+            loopContinueBlock = checkBlock;
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
             currentBlock.successors.add(checkBlock);
             currentBlock.successors.add(body);
@@ -227,6 +242,8 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.push_back(new br(null,checkBlock,null));
             currentBlock = exitBlock;
         }
+        loopExitBlock = parentLoopExitBlock;
+        loopContinueBlock = parentLoopContinueBlock;
     }
 
     @Override
@@ -251,7 +268,11 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.push_back(retStmt);
             }
         } else {
-
+            if (it.isContinue) {
+                currentBlock.push_back(new br(null,loopContinueBlock,null));
+            } else if (it.isBreak) {
+                currentBlock.push_back(new br(null,loopExitBlock,null));
+            }
         }
     }
 
@@ -286,7 +307,7 @@ public class IRBuilder implements ASTVisitor {
                 convertOp.convertType convert;
                 if (it.logicExpr.irType.iNum>firstExpr.irType.iNum) convert = convertOp.convertType.SEXT;
                 else convert = convertOp.convertType.TRUNC;
-                currentBlock.push_back(new convertOp(rd,(register) it.rd,convert,it.logicExpr.irType,firstExpr.irType));
+                currentBlock.push_back(new convertOp(rd, it.rd,convert,it.logicExpr.irType,firstExpr.irType));
                 currentBlock.push_back(new store(rd, it.logicExpr.idReg,4,new IRType(it.logicExpr.type)));
             } else currentBlock.push_back(new store(it.rd, it.logicExpr.idReg,4,new IRType(it.logicExpr.type)));
         } else {
@@ -310,6 +331,12 @@ public class IRBuilder implements ASTVisitor {
             exitBl.push_back(p);
             for (int i=0;i<len-1;++i) {
                 firstExpr.accept(this);
+                if (firstExpr.irType.iNum!=1) {
+                    register rd = new register();
+                    currentBlock.push_back(new icmp(rd,firstExpr.rd,new constant(0), icmp.cmpOpType.SGT, firstExpr.irType));
+                    firstExpr.rd = rd;
+                    firstExpr.irType = new IRType(1);
+                }
                 p.push_back(new entityBlockPair(new constant(true), currentBlock));
                 block bl = new block();
                 bl.jumpTo = true;
@@ -319,6 +346,12 @@ public class IRBuilder implements ASTVisitor {
                 firstExpr = it.exprList.get(i+1);
             }
             firstExpr.accept(this);
+            if (firstExpr.irType.iNum!=1) {
+                register rd = new register();
+                currentBlock.push_back(new icmp(rd,firstExpr.rd,new constant(0), icmp.cmpOpType.SGT, firstExpr.irType));
+                firstExpr.rd = rd;
+                firstExpr.irType = new IRType(1);
+            }
             p.push_back(new entityBlockPair(firstExpr.rd, currentBlock));
             currentBlock.push_back(new br(null,exitBl,null));
             currentBlock.successors.add(exitBl);
@@ -342,6 +375,12 @@ public class IRBuilder implements ASTVisitor {
             exitBl.push_back(p);
             for (int i=0;i<len-1;++i) {
                 firstExpr.accept(this);
+                if (firstExpr.irType.iNum!=1) {
+                    register rd = new register();
+                    currentBlock.push_back(new icmp(rd,firstExpr.rd,new constant(0), icmp.cmpOpType.SGT,firstExpr.irType));
+                    firstExpr.rd = rd;
+                    firstExpr.irType = new IRType(1);
+                }
                 p.push_back(new entityBlockPair(new constant(false), currentBlock));
                 block bl = new block();
                 bl.jumpTo = true;
@@ -351,6 +390,12 @@ public class IRBuilder implements ASTVisitor {
                 firstExpr = it.exprList.get(i+1);
             }
             firstExpr.accept(this);
+            if (firstExpr.irType.iNum!=1) {
+                register rd = new register();
+                currentBlock.push_back(new icmp(rd,firstExpr.rd,new constant(0), icmp.cmpOpType.SGT, firstExpr.irType));
+                firstExpr.rd = rd;
+                firstExpr.irType = new IRType(1);
+            }
             p.push_back(new entityBlockPair(firstExpr.rd, currentBlock));
             currentBlock.push_back(new br(null,exitBl,null));
             currentBlock.successors.add(exitBl);

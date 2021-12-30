@@ -42,7 +42,8 @@ public class IRPrinter implements Pass{
             getEntityString(b.rd);
         } else if (s instanceof br) {
         } else if (s instanceof call) {
-
+            call c = (call) s;
+            getRegName(c.rd);
         } else if (s instanceof constStmt) {
 
         } else if (s instanceof convertOp) {
@@ -51,7 +52,8 @@ public class IRPrinter implements Pass{
         } else if (s instanceof declare) {
 
         } else if (s instanceof getelementptr) {
-
+            getelementptr g = (getelementptr) s;
+            getRegName(g.rd);
         } else if (s instanceof icmp) {
             icmp ic = (icmp) s;
             getRegName(ic.rd);
@@ -145,7 +147,7 @@ public class IRPrinter implements Pass{
             constant constE = (constant) e;
             if (constE.genre== constant.Genre.INT) return constE.getIntValue() + "";
             else if (constE.genre == constant.Genre.STRING) return constE.getStringValue();
-            else if (constE.genre== constant.Genre.BOOL) return (constE.getBoolValue()?"true":"false");
+            else if (constE.genre== constant.Genre.BOOL) return (constE.getBoolValue()?"1":"0");
             else return "void";
         }
     }
@@ -202,7 +204,15 @@ public class IRPrinter implements Pass{
                 out.print("br i1 "+getRegName(b.val)+", label %"+getBlockName(b.trueBranch) + ", label %"+getBlockName(b.falseBranch));
             }
         } else if (s instanceof call) {
-
+            call c = (call) s;
+            out.print(getRegName(c.rd) + " = call " +getType(c.rdType) +" @" + c.funcName + "(");
+            int len = c.parameters.size();
+            for (int i=0;i<len-1;++i) {
+                entityTypePair para = c.parameters.get(i);
+                out.print(getType(para.ir) + " "+getEntityString(para.en)+", ");
+            }
+            entityTypePair para = c.parameters.get(len-1);
+            out.print(getType(para.ir) + " "+getEntityString(para.en)+")");
         } else if (s instanceof constStmt) {
 
         } else if (s instanceof convertOp) {
