@@ -1,17 +1,23 @@
+int f(int k,int c){
+  return k*c;
+}
 class A{
-    int f(int k){
-      k=0;
-      return 0;
+    int a;
+    bool c;
+    A(){
+        a = 10;
+        this.c = false;
+    }
+    A f() {
+        return this;
+    }
+    int g(int t){
+        a = t;
+        return a*2;
     }
 };
-
 int main(){
-    int b=10,c=0;
-    bool d = false;
-    for (int i=0;i<b;++i) {
-        if (i==5) continue;
-        c = c+i+1;
-        if (i==7) break;
-    }
-    return c;
+    A b;
+    int[] t;
+    return f(5,6);
 }

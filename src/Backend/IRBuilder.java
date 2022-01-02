@@ -13,13 +13,17 @@ import java.util.Objects;
 
 public class IRBuilder implements ASTVisitor {
     private block currentBlock = null, loopExitBlock = null, loopContinueBlock = null;
-    private funcDef currentFunc = null;
+    private funcDef currentFunc = null, globalInitializer = null;
     private program pg;
     private classType currentStruct = null;
     private Scope currentScope;
     private globalScope gScope;
     private HashMap<String,classDef> nameToClassDef = new HashMap<>();
     private boolean funcSuite = false;
+    private funcType lastCallFunc = null;
+    private String lastCallId = null;
+    private classDef currentClassDef = null;
+    private HashMap<String,classDef> idToDef = new HashMap<>();
 
     public IRBuilder(program pg, globalScope gScope){
         this.pg = pg;
@@ -43,17 +47,17 @@ public class IRBuilder implements ASTVisitor {
         currentFunc = new funcDef(currentFunc);
         currentBlock = currentFunc.rootBlock;
         pg.push_back(currentFunc);
-        String idPrefix = ((currentStruct==null)? "": "_"+currentStruct.name);
+        String idPrefix = ((currentStruct==null)? "": "_"+currentStruct.name) + (Objects.equals(it.id, "main")?"":"LiBRO_");
         currentFunc.funcId = idPrefix+it.id;
         funcType func;
         if (currentStruct != null) {
             func = currentStruct.methods.get(it.id);
-            currentFunc.parameters.add(new IRType(currentStruct));
-            currentScope.defineVariable("this",currentStruct,it.pos);
+            IRType tmpIrType =new IRType(idToDef.get(currentStruct.name),1,0);
             register rd = new register(),rs = new register();
-            IRType tmpIrType = new IRType(currentStruct),tmpIrTypePtr = tmpIrType.getPtr();
+            currentFunc.parameters.add(tmpIrType);
+            currentFunc.parameterRegs.add(rs);
             currentScope.defineVariable("this",currentStruct,it.pos);
-            currentScope.linkRegister("this",rd,tmpIrTypePtr);
+            currentScope.linkRegister("this",rd,tmpIrType);
             currentFunc.push_back(new alloca(rd,4,tmpIrType));
             currentBlock.push_back(new store(rs,rd,4,tmpIrType));
         } else func = gScope.getFunctionFromName(it.id, it.pos);
@@ -69,20 +73,22 @@ public class IRBuilder implements ASTVisitor {
                 String tmpId = it.parameters.Id.get(i);
                 Type t = func.parameter.get(i);
                 register rd = new register(),rs = new register();
-                IRType tmpIrType = new IRType(t),tmpIrTypePtr = tmpIrType.getPtr();
+                IRType tmpIrType = new IRType(t);
                 currentFunc.parameters.add(tmpIrType);
                 currentFunc.parameterRegs.add(rs);
                 currentScope.defineVariable(tmpId,t,it.parameters.pos);
-                currentScope.linkRegister(tmpId,rd,tmpIrTypePtr);
+                currentScope.linkRegister(tmpId,rd,tmpIrType);
                 currentFunc.push_back(new alloca(rd,4,tmpIrType));
                 currentBlock.push_back(new store(rs,rd,4,tmpIrType));
             }
         }
-        currentFunc.returnType = new IRType(func.returnType);
+        if (func.returnType.isClass) {
+            currentFunc.returnType = new IRType(idToDef.get(func.returnType.name),func.returnType.dimension+1,0);
+        } else currentFunc.returnType = new IRType(func.returnType);
         funcSuite = true;
         it.suite.accept(this);
         if (currentBlock.tailStmt==null) {
-            if (func.returnType.typeType== Type.Types.VOID_TYPE) {
+            if (func.returnType.typeType== Type.Types.VOID_TYPE || func.returnType.typeType== Type.Types.NULL) {
                 IRType irType = new IRType();
                 irType.isVoid = true;
                 currentBlock.push_back(new ret(new constant(),irType));
@@ -120,19 +126,29 @@ public class IRBuilder implements ASTVisitor {
         else {
             Type t = new Type(gScope.getTypeFromName(it.arraySpecifier.type, it.arraySpecifier.pos));
             t.dimension = it.arraySpecifier.emptyBracketPair;
-            IRType tmpIrType = new IRType(t);
+            IRType tmpIrType;
+            if (t.typeType== Type.Types.CLASS_TYPE) {
+                tmpIrType = new IRType(idToDef.get(t.name),t.dimension+1,0);
+            }else tmpIrType = new IRType(t);
             for (declaratorNode declaratorNode : it.declaratorList) {
+                currentScope.defineVariable(declaratorNode.Identifier,t,declaratorNode.pos);
                 if (currentStruct==null) {
                     register rd = new register();
                     currentFunc.push_back(new alloca(rd,4,tmpIrType));
-                    currentScope.defineVariable(declaratorNode.Identifier,t,declaratorNode.pos);
                     currentScope.linkRegister(declaratorNode.Identifier,rd,tmpIrType);
                     if (declaratorNode.expr!=null) {
                         declaratorNode.expr.accept(this);
                         currentBlock.push_back(new store(declaratorNode.expr.rd,rd,4,tmpIrType));
                     }
+                    //todo define global variables
                 } else {
-                    //define global variables
+                    currentClassDef.members.add(tmpIrType);
+                    IRTypeWithCounter irTypeWithCounter = new IRTypeWithCounter();
+                    irTypeWithCounter.counter = currentClassDef.counter++;
+                    irTypeWithCounter.irType = new IRType(tmpIrType);
+                    irTypeWithCounter.irType.ptrNum ++;
+                    currentClassDef.memberType.put(declaratorNode.Identifier,irTypeWithCounter);
+                    //undefined behavior: initialization of member
                 }
             }
         }
@@ -142,8 +158,10 @@ public class IRBuilder implements ASTVisitor {
     public void visit(classNode it) {
         currentStruct = (classType) gScope.getTypeFromName(it.name, it.pos);
         currentScope = new Scope(currentScope);
-        currentStruct = null;
-        currentScope = currentScope.parentScope();
+        currentClassDef = new classDef();
+        currentClassDef.structName = currentStruct.name;
+        pg.push_back(currentClassDef);
+        idToDef.put(it.name,currentClassDef);
         it.declList.forEach(decl -> {
             if (decl.isDeclStmt) {
                 decl.accept(this);
@@ -157,6 +175,9 @@ public class IRBuilder implements ASTVisitor {
         if (it.constructFunc != null) {
             it.constructFunc.accept(this);
         }
+        currentClassDef = null;
+        currentStruct = null;
+        currentScope = currentScope.parentScope();
     }
 
     @Override
@@ -464,7 +485,8 @@ public class IRBuilder implements ASTVisitor {
     }
 
     @Override
-    public void visit(equalExprNode it) {exprNode firstExpr = it.exprList.get(0);
+    public void visit(equalExprNode it) {
+        exprNode firstExpr = it.exprList.get(0);
         firstExpr.accept(this);
         int listLen = it.exprList.size();
         entity lastRes = firstExpr.rd;
@@ -607,8 +629,39 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.push_back(new binary(op,it.irType,rd,it.rd,new constant(1)));
             currentBlock.push_back(new store(rd,it.idReg,4,it.irType));
         } else if (it.isDotOp) {
+            it.postfixExpr.accept(this);
+            IRType irType = it.postfixExpr.irType;
+            IRTypeWithCounter tmp = irType.cDef.memberType.get(((idExprNode)it.Expr).Id);
+            currentBlock.push_back(new getelementptr((register) it.rd,(register) it.postfixExpr.rd,it.postfixExpr.irType,new constant(0),new constant(tmp.counter)));
+            it.irType = tmp.irType;
+            it.rd = new register();
+            it.idReg = null;
         } else if (it.isCallOp) {
+            it.postfixExpr.accept(this);
+            register rd = new register();
+            IRType ir =new IRType(lastCallFunc.returnType);
+            call tmpCall = new call(rd,ir,lastCallId);
+            if (it.postfixExpr.irType != null && it.postfixExpr.irType.cDef!=null) tmpCall.push_back(new entityTypePair(it.postfixExpr.rd,it.postfixExpr.irType));
+            if (it.Expr != null) {
+                for (exprNode expr : it.Expr.exprList) {
+                    expr.accept(this);
+                    tmpCall.push_back(new entityTypePair(expr.rd, expr.irType));
+                }
+            }
+            currentBlock.push_back(tmpCall);
+            it.rd = rd;
+            it.idReg = null;
+            it.irType = ir;
+            lastCallId = null;
+            lastCallFunc = null;
         } else if (it.isLocateOp) {
+            it.postfixExpr.accept(this);
+            it.Expr.accept(this);
+            it.rd = new register();
+            currentBlock.push_back(new getelementptr((register) it.rd,(register) it.postfixExpr.rd,it.postfixExpr.irType,it.Expr.rd,new constant(0)));
+            it.irType = new IRType(it.postfixExpr.irType);
+            it.irType.ptrNum --;
+            it.idReg = null;
         } else {
             it.primaryExpr.accept(this);
             it.rd = it.primaryExpr.rd;
@@ -675,8 +728,33 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(idExprNode it) {
-        //todo func call and class methods
-        regTypePair regType = currentScope.getEntity(it.Id,true);
+        regTypePair regType;
+        if (currentScope.containsVariable(it.Id,false)) {
+            regType = currentScope.getEntity(it.Id,false);
+        } else if (currentStruct != null && currentStruct.members.containsKey(it.Id)) {
+            regType = currentScope.getEntity("this",true);
+            register thisReg = new register(),ptrReg = new register();
+            currentBlock.push_back(new load(thisReg,regType.reg,regType.irType,4));
+            it.rd = new register();
+            IRTypeWithCounter tmp = regType.irType.cDef.memberType.get(it.Id);
+            //getelementptr's result is still pointer
+            currentBlock.push_back(new getelementptr(ptrReg,thisReg,regType.irType,new constant(0),new constant(tmp.counter)));
+            it.idReg = ptrReg;
+            it.irType = new IRType(tmp.irType);
+            it.irType.ptrNum--;
+            currentBlock.push_back(new load((register) it.rd,ptrReg,it.irType,4));
+            return;
+        } else if (currentScope.containsVariable(it.Id,true)) {
+            regType = currentScope.getEntity(it.Id,true);
+        } else if (currentStruct != null && currentStruct.methods.containsKey(it.Id)) {
+            lastCallFunc = currentStruct.methods.get(it.Id);
+            lastCallId = ((currentStruct==null)? "": "_"+currentStruct.name) + (Objects.equals(lastCallFunc.name, "main")?"":"LiBRO_")+lastCallFunc.name;
+            return;
+        } else if (gScope.hasFunction(it.Id)) {
+            lastCallFunc = gScope.getFunctionFromName(it.Id, it.pos);
+            lastCallId = (Objects.equals(lastCallFunc.name, "main")?"":"LiBRO_")+lastCallFunc.name;
+            return;
+        }else return;
         it.idReg = regType.reg;
         it.irType = regType.irType;
         it.rd = new register();
