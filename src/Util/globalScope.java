@@ -44,7 +44,6 @@ public class globalScope extends Scope {
     public void nameConflict(String name, position pos) {
         if (types.containsKey(name)) throw new semanticError("name conflict with the class " + name, pos);
         if (Keys.contains(name)) throw new semanticError("name conflict with the Key " + name, pos);
-        ;
     }
 
     public void addType(String name, Type t, position pos) {

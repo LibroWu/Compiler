@@ -1,23 +1,6 @@
-int f(int k,int c){
-  return k*c;
-}
-class A{
-    int a;
-    bool c;
-    A(){
-        a = 10;
-        this.c = false;
-    }
-    A f() {
-        return this;
-    }
-    int g(int t){
-        a = t;
-        return a*2;
-    }
-};
+int a = 10;
+int b = a*a;
+
 int main(){
-    A b;
-    int[] t;
-    return f(5,6);
+    return b;
 }

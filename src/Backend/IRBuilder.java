@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class IRBuilder implements ASTVisitor {
     private block currentBlock = null, loopExitBlock = null, loopContinueBlock = null;
-    private funcDef currentFunc = null, globalInitializer = null;
+    private funcDef currentFunc = null, globalInitializer = new funcDef(null);
     private program pg;
     private classType currentStruct = null;
     private Scope currentScope;
@@ -24,15 +24,26 @@ public class IRBuilder implements ASTVisitor {
     private String lastCallId = null;
     private classDef currentClassDef = null;
     private HashMap<String,classDef> idToDef = new HashMap<>();
+    private int initFuncCounter = 0;
+    private IRType voidIrType = new IRType();
 
     public IRBuilder(program pg, globalScope gScope){
         this.pg = pg;
         currentScope = this.gScope = gScope;
+        globalInitializer.returnType = new IRType();
+        globalInitializer.returnType.isVoid = true;
+        globalInitializer.rootBlock = new block();
+        globalInitializer.funcId = "_GLOBAL_";
+        voidIrType.isVoid = true;
     }
 
     @Override
     public void visit(RootNode it) {
         it.declList.forEach(dc -> dc.accept(this));
+        if (initFuncCounter>0) {
+            globalInitializer.rootBlock.push_back(new ret(null,voidIrType));
+            pg.push_back(globalInitializer);
+        }
     }
 
     @Override
@@ -45,6 +56,7 @@ public class IRBuilder implements ASTVisitor {
     public void visit(funcDefNode it) {
         currentScope = new Scope(currentScope);
         currentFunc = new funcDef(currentFunc);
+        currentFunc.rootBlock = new block();
         currentBlock = currentFunc.rootBlock;
         pg.push_back(currentFunc);
         String idPrefix = ((currentStruct==null)? "": "_"+currentStruct.name) + (Objects.equals(it.id, "main")?"":"LiBRO_");
@@ -131,17 +143,41 @@ public class IRBuilder implements ASTVisitor {
                 tmpIrType = new IRType(idToDef.get(t.name),t.dimension+1,0);
             }else tmpIrType = new IRType(t);
             for (declaratorNode declaratorNode : it.declaratorList) {
-                currentScope.defineVariable(declaratorNode.Identifier,t,declaratorNode.pos);
                 if (currentStruct==null) {
                     register rd = new register();
-                    currentFunc.push_back(new alloca(rd,4,tmpIrType));
-                    currentScope.linkRegister(declaratorNode.Identifier,rd,tmpIrType);
-                    if (declaratorNode.expr!=null) {
-                        declaratorNode.expr.accept(this);
-                        currentBlock.push_back(new store(declaratorNode.expr.rd,rd,4,tmpIrType));
+                    currentScope.linkRegister(declaratorNode.Identifier, rd, tmpIrType);
+                    if (currentFunc!=null) {
+                        currentScope.defineVariable(declaratorNode.Identifier,t,declaratorNode.pos);
+                        currentFunc.push_back(new alloca(rd, 4, tmpIrType));
+                        if (declaratorNode.expr != null) {
+                            declaratorNode.expr.accept(this);
+                            currentBlock.push_back(new store(declaratorNode.expr.rd, rd, 4, tmpIrType));
+                        }
+                    } else {
+                        entity en;
+                        if (declaratorNode.expr!=null) {
+                            block tmpBlock = new block();
+                            currentBlock = tmpBlock;
+                            declaratorNode.expr.accept(this);
+                            if (declaratorNode.expr.rd instanceof constant) en = declaratorNode.expr.rd;
+                            else {
+                                en = new constant(0);
+                                funcDef initFunc = new funcDef(null);
+                                initFunc.returnType = new IRType();
+                                initFunc.returnType.isVoid = true;
+                                initFunc.funcId = "_global_var_init." + initFuncCounter++;
+                                initFunc.rootBlock = tmpBlock;
+                                tmpBlock.push_back(new store(declaratorNode.expr.rd,rd,4,declaratorNode.expr.irType));
+                                tmpBlock.push_back(new ret(null,voidIrType));
+                                pg.push_back(initFunc);
+                                globalInitializer.rootBlock.push_back(new call(null,voidIrType,initFunc.funcId));
+                            }
+                            currentBlock = null;
+                        } else en = new constant(0);
+                        pg.push_back(new globalVarDecl(rd, tmpIrType, en , 4,declaratorNode.Identifier));
                     }
-                    //todo define global variables
                 } else {
+                    currentScope.defineVariable(declaratorNode.Identifier,t,declaratorNode.pos);
                     currentClassDef.members.add(tmpIrType);
                     IRTypeWithCounter irTypeWithCounter = new IRTypeWithCounter();
                     irTypeWithCounter.counter = currentClassDef.counter++;

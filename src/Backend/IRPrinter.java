@@ -2,6 +2,7 @@ package Backend;
 
 import IR.*;
 
+import javax.swing.plaf.InsetsUIResource;
 import java.io.PrintStream;
 import java.util.HashMap;
 
@@ -10,7 +11,8 @@ public class IRPrinter implements Pass {
 
     private int Cnt = 0;
     private HashMap<block, Integer> blockIndex = null;
-    private HashMap<register, Integer> regIndex = null;
+    private HashMap<register, Integer> regIndex = new HashMap<>();
+    private HashMap<register,String> regGlobal = new HashMap<>();
 
     public IRPrinter(PrintStream out) {
         this.out = out;
@@ -123,12 +125,14 @@ public class IRPrinter implements Pass {
         for (int i = 0; i < len - 1; ++i) {
             out.print(getType(f.members.get(i)) + ", ");
         }
-        out.println(getType(f.members.get(len - 1)) + " }");
+        if (len>0) out.print(getType(f.members.get(len - 1)) + " }");
+        else out.print("}");
     }
 
     @Override
     public void visitGlobalVarDecl(globalVarDecl gv) {
-
+        regGlobal.put(gv.rd,gv.name);
+        out.println(getRegName(gv.rd)+" = global "+getType(gv.rsType)+" "+getEntityString(gv.rs)+", align "+gv.align);
     }
 
     private String getType(IRType irType) {
@@ -172,13 +176,13 @@ public class IRPrinter implements Pass {
 
     private String getRegName(register r) {
         if (regIndex.containsKey(r)) return "%" + regIndex.get(r);
-        else {
-            regIndex.put(r, Cnt++);
-            return "%" + (Cnt - 1);
-        }
+        if (regGlobal.containsKey(r)) return "@" + regGlobal.get(r);
+        regIndex.put(r, Cnt++);
+        return "%" + (Cnt - 1);
     }
 
     private String getEntityString(entity e) {
+        if (e==null) return "";
         if (e instanceof register) return getRegName((register) e);
         else {
             constant constE = (constant) e;
@@ -242,14 +246,17 @@ public class IRPrinter implements Pass {
             }
         } else if (s instanceof call) {
             call c = (call) s;
-            out.print(getRegName(c.rd) + " = call " + getType(c.rdType) + " @" + c.funcName + "(");
+            if (c.rd!=null) out.print(getRegName(c.rd) + " = call " + getType(c.rdType) + " @" + c.funcName + "(");
+            else out.print("call " + getType(c.rdType) + " @" + c.funcName + "(");
             int len = c.parameters.size();
             for (int i = 0; i < len - 1; ++i) {
                 entityTypePair para = c.parameters.get(i);
                 out.print(getType(para.ir) + " " + getEntityString(para.en) + ", ");
             }
-            entityTypePair para = c.parameters.get(len - 1);
-            out.print(getType(para.ir) + " " + getEntityString(para.en) + ")");
+            if (len>0) {
+                entityTypePair para = c.parameters.get(len - 1);
+                out.print(getType(para.ir) + " " + getEntityString(para.en) + ")");
+            } else out.print(")");
         } else if (s instanceof constStmt) {
 
         } else if (s instanceof convertOp) {
