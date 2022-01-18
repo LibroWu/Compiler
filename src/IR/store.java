@@ -6,10 +6,10 @@ public class store extends statement{
     public int align;
     public IRType resourceType;
 
-    public store(entity resource,register target,int align,IRType resourceType){
+    public store(entity resource,register target,IRType resourceType){
         this.resource = resource;
         this.target = target;
-        this.align = align;
+        this.align = resourceType.getAlign();
         this.resourceType = resourceType;
     }
 }

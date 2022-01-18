@@ -5,10 +5,10 @@ public class load extends statement{
     public IRType rdType;
     public int align;
 
-    public load(register rd,register ptr,IRType rdType,int align){
+    public load(register rd,register ptr,IRType rdType){
         this.rd = rd;
         this.ptr = ptr;
         this.rdType = rdType;
-        this.align = align;
+        this.align = rdType.getAlign();
     }
 }

@@ -1,5 +1,6 @@
 package Util;
 
+import IR.classDef;
 import Util.Type.*;
 import Util.error.semanticError;
 
@@ -10,6 +11,7 @@ public class globalScope extends Scope {
     private HashSet<String> Keys = new HashSet<>();
     private HashMap<String, Type> types = new HashMap<>();
     private HashMap<String, funcType> funcTypes = new HashMap<>();
+    private HashMap<String, classDef> idToDef = null;
 
     public globalScope(Scope parentScope) {
         super(parentScope);
@@ -86,5 +88,17 @@ public class globalScope extends Scope {
     public funcType getFunctionFromName(String name, position pos) {
         if (funcTypes.containsKey(name)) return funcTypes.get(name);
         throw new semanticError("no such function: " + name, pos);
+    }
+
+    public void setIdToDef( HashMap<String,classDef> idToDef ){
+        this.idToDef = idToDef;
+    }
+
+    public classDef getClassDef(String name) {
+        return idToDef.get(name);
+    }
+
+    public void addClassDef(String name,classDef newDef) {
+        idToDef.put(name,newDef);
     }
 }

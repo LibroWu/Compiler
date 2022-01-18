@@ -1,6 +1,42 @@
 int a = 10;
 int b = a*a;
+int[] c;
+
+class strA{
+    int t;
+    strB b;
+    strA getAofB(){
+        return b.a;
+    }
+};
+
+class strB{
+    strA a;
+    bool t;
+
+    /*strB getA(){
+        return a.b;
+    }*/
+};
+
+/*strA getA(){
+    return null;
+}*/
 
 int main(){
-    return b;
+    int t=getInt();
+    printlnInt(t);
+    printlnInt(t*t);
+    bool b;
+    b= false;
+    int []k = fff();
+    return 0;
+}
+
+int[] fff(){
+    int [] a;
+    int [][]k;
+    k[1][2];
+    bool b = false;
+    return  a;
 }

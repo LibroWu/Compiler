@@ -1,10 +1,12 @@
 package Frontend;
 
 import AST.*;
+import IR.IRType;
 import Util.Scope;
 import Util.Type.*;
 import Util.error.semanticError;
 import Util.globalScope;
+import IR.classDef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ public class SymbolCollector implements ASTVisitor {
             getIntFunc = new funcType(Type.Types.FUNC_TYPE),
             toStringFunc = new funcType(Type.Types.FUNC_TYPE),
             printlnIntFunc = new funcType(Type.Types.FUNC_TYPE);
+    private classDef currentClassDef = null;
 
     public SymbolCollector(globalScope gScope) {
         this.gScope = gScope;
@@ -89,7 +92,8 @@ public class SymbolCollector implements ASTVisitor {
 
         getStringFunc.name = "getString";
         getStringFunc.returnType = stringType;
-        getIntFunc = new funcType(Type.Types.FUNC_TYPE);
+
+        getIntFunc.name = "getInt";
         getIntFunc.returnType = intType;
 
         toStringFunc.name = "toString";
@@ -113,6 +117,9 @@ public class SymbolCollector implements ASTVisitor {
                     classNode c = (classNode) declStmt.struct;
                     classType struct = new classType(Type.Types.CLASS_TYPE);
                     struct.name = c.name;
+                    currentClassDef = new classDef();
+                    currentClassDef.structName = c.name;
+                    gScope.addClassDef(c.name,currentClassDef);
                     gScope.addType(c.name, struct, it.pos);
                 }
             }
@@ -140,6 +147,10 @@ public class SymbolCollector implements ASTVisitor {
             if (it.fail) throw new semanticError("declarator statement error", it.pos);
             Type t = new Type(gScope.getTypeFromName(it.arraySpecifier.type, it.arraySpecifier.pos));
             t.dimension = it.arraySpecifier.emptyBracketPair;
+            IRType tmpIrType;
+            if (t.isClass) {
+                tmpIrType = new IRType(gScope.getClassDef(t.name),t.dimension+1,0);
+            }else tmpIrType = new IRType(t);
             it.declaratorList.forEach(declarator -> {
                 gScope.nameConflict(declarator.Identifier, declarator.pos);
                 // add to class as member
@@ -147,6 +158,7 @@ public class SymbolCollector implements ASTVisitor {
                     if (currentStruct.members.containsKey(declarator.Identifier))
                         throw new semanticError("redefinition of member " + declarator.Identifier, declarator.pos);
                     currentStruct.members.put(declarator.Identifier, t);
+                    currentClassDef.addMember(tmpIrType,declarator.Identifier);
                 }
             });
         }
@@ -155,6 +167,7 @@ public class SymbolCollector implements ASTVisitor {
     @Override
     public void visit(classNode it) {
         currentStruct = (classType) gScope.getTypeFromName(it.name,it.pos);
+        currentClassDef = gScope.getClassDef(it.name);
         it.declList.forEach(decl -> {
             if (decl.isDeclStmt) {
                 decl.accept(this);
@@ -167,6 +180,7 @@ public class SymbolCollector implements ASTVisitor {
         });
         if (it.constructFunc != null) it.constructFunc.accept(this);
         currentStruct = null;
+        currentClassDef = null;
     }
 
     @Override

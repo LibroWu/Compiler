@@ -14,6 +14,7 @@ public class funcDef extends globalUnit {
     public ArrayList<alloca> allocas = new ArrayList<>();
     public block rootBlock = null;
     public register retReg = null;
+    public IRType retType = null;
 
     public funcDef(funcDef parentFunc) {
         this.parentFunc = parentFunc;

@@ -5,6 +5,7 @@ import IR.program;
 import IR.funcDef;
 import IR.classDef;
 import IR.globalVarDecl;
+import IR.declare;
 
 public interface Pass {
     void visitBlock(block b);
@@ -12,4 +13,5 @@ public interface Pass {
     void visitFuncDef(funcDef f);
     void visitClassDef(classDef f);
     void visitGlobalVarDecl(globalVarDecl gv);
+    void visitDeclare(declare dec);
 }

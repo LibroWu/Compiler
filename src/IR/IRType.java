@@ -54,4 +54,10 @@ public class IRType {
         this.ptrNum = ptrNum;
         this.arrayLen = arrayLen;
     }
+
+    public int getAlign(){
+        if (ptrNum>0 || arrayLen>0) return 8;
+        if (cDef!=null) return 8;
+        return iNum/8;
+    }
 }

@@ -55,8 +55,6 @@ public class IRPrinter implements Pass {
         } else if (s instanceof convertOp) {
             convertOp con = (convertOp) s;
             getRegName(con.rd);
-        } else if (s instanceof declare) {
-
         } else if (s instanceof getelementptr) {
             getelementptr g = (getelementptr) s;
             getRegName(g.rd);
@@ -71,6 +69,9 @@ public class IRPrinter implements Pass {
             getRegName(p.rd);
         } else if (s instanceof ret) {
         } else if (s instanceof store) {
+        } else if (s instanceof bitcast) {
+            bitcast b = (bitcast) s;
+            getRegName(b.rd);
         }
     }
 
@@ -86,6 +87,10 @@ public class IRPrinter implements Pass {
         if (pg.globalVarDecls.size() != 0) out.println();
         for (funcDef funcDef : pg.funcDefs) {
             visitFuncDef(funcDef);
+        }
+        if (pg.declares.size() != 0) out.println();
+        for (declare declare : pg.declares) {
+            visitDeclare(declare);
         }
     }
 
@@ -127,12 +132,24 @@ public class IRPrinter implements Pass {
         }
         if (len>0) out.print(getType(f.members.get(len - 1)) + " }");
         else out.print("}");
+        out.println();
     }
 
     @Override
     public void visitGlobalVarDecl(globalVarDecl gv) {
         regGlobal.put(gv.rd,gv.name);
         out.println(getRegName(gv.rd)+" = global "+getType(gv.rsType)+" "+getEntityString(gv.rs)+", align "+gv.align);
+    }
+
+    @Override
+    public void visitDeclare(declare dec) {
+        out.print("declare "+ getType(dec.retType) + " @" + dec.funcName+"(");
+        int len = dec.parameters.size();
+        for (int i=0;i<len;++i) {
+            out.print(getType(dec.parameters.get(i)));
+            if (i!=len-1) out.print(", ");
+        }
+        out.println(")");
     }
 
     private String getType(IRType irType) {
@@ -189,7 +206,7 @@ public class IRPrinter implements Pass {
             if (constE.genre == constant.Genre.INT) return constE.getIntValue() + "";
             else if (constE.genre == constant.Genre.STRING) return constE.getStringValue();
             else if (constE.genre == constant.Genre.BOOL) return (constE.getBoolValue() ? "1" : "0");
-            else return "";
+            else return "null";
         }
     }
 
@@ -262,8 +279,6 @@ public class IRPrinter implements Pass {
         } else if (s instanceof convertOp) {
             convertOp con = (convertOp) s;
             out.print(getRegName(con.rd) + " = " + getConvertOp(con.convert) + " " + getType(con.rsType) + " " + getEntityString(con.rs) + " to " + getType(con.rdType));
-        } else if (s instanceof declare) {
-
         } else if (s instanceof getelementptr) {
             getelementptr g = (getelementptr) s;
             out.print(getRegName(g.rd) + " = getelementptr "+ getTypeWithoutPtr(g.rsType)+", "+getType(g.rsType) +" "+getRegName(g.rs) + ", i32 "+getEntityString(g.locator1)+", i32 "+getEntityString(g.locator2));
@@ -289,6 +304,9 @@ public class IRPrinter implements Pass {
         } else if (s instanceof store) {
             store t = (store) s;
             out.print("store " + getType(t.resourceType) + " " + getEntityString(t.resource) + ", " + getType(t.resourceType.getPtr()) + " " + getRegName(t.target) + ", align " + t.align);
+        } else if (s instanceof bitcast) {
+            bitcast b = (bitcast) s;
+            out.print(getRegName(b.rd)+" = bitcast "+getType(b.rsType)+" " + getRegName(b.rs)+" to "+getType(b.rdType));
         }
         if (s.Comments != null) {
             out.println(";" + s.Comments);
