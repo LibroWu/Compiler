@@ -481,6 +481,7 @@ public class SemanticChecker implements ASTVisitor {
         } else {
             it.type = new Type(gScope.getTypeFromName(it.typename, it.pos));
             it.type.assignable = true;
+            if (!it.type.isClass) throw new semanticError("can not new basic type",it.pos);
         }
     }
 

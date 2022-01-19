@@ -20,8 +20,8 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String name = "test.mx";
-        String nameOutput = "test.ll";
+        String name = "test\\test.mx";
+        String nameOutput = "test\\test.ll";
         //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\sema\\basic-package\\basic-5.mx";
         InputStream input = new FileInputStream(name);
         PrintStream out = new PrintStream(nameOutput);

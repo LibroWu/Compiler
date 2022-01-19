@@ -1,0 +1,2 @@
+%struct.string = type {i8*}
+

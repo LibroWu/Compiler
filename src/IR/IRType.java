@@ -60,4 +60,10 @@ public class IRType {
         if (cDef!=null) return 8;
         return iNum/8;
     }
+
+    public long getSize(){
+        if (ptrNum>0 || arrayLen>0) return 8;
+        if (cDef!=null) return cDef.getSize();
+        return iNum/8;
+    }
 }
