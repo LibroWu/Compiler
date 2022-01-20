@@ -9,6 +9,7 @@ public class program {
     public ArrayList<classDef> classDefs = new ArrayList<>();
     public ArrayList<globalVarDecl> globalVarDecls = new ArrayList<>();
     public ArrayList<declare> declares = new ArrayList<>();
+    public ArrayList<globalStringConstant> globalStringConstants = new ArrayList<>();
 
     public void push_back(funcDef gl) {
         funcDefs.add(gl);
@@ -22,7 +23,11 @@ public class program {
         globalVarDecls.add(gl);
     }
 
-    public void push_back(declare gl){
+    public void push_back(declare gl) {
         declares.add(gl);
+    }
+
+    public void push_back(globalStringConstant gl) {
+        globalStringConstants.add(gl);
     }
 }

@@ -713,35 +713,31 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.push_back(new bitcast((register) rd,receiveReg,irType,i8Star));
         }
         if (recursiveStep + 1 != exprList.size()) {
-            block body = new block(),checkBlock = new block(),exitBlock = new block(),incrBlock = new block();
-            body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = incrBlock.jumpTo = true;
+            block body = new block(),checkBlock = new block(),exitBlock = new block();
+            body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
             currentBlock.successors.add(checkBlock);
-            currentBlock.successors.add(incrBlock);
+            currentBlock.successors.add(body);
             currentBlock.successors.add(exitBlock);
-            register newLoopRd = new register(),iRd = new register(),cmpResult = new register();
-            alloca newLoop = new alloca(newLoopRd,i32);
+            register newLoopRd = new register(),iRd = new register(),cmpResult = new register(),addResult = new register();
+            alloca newLoop = new alloca(newLoopRd,i64);
             newLoop.Comments = "for new loop";
             //initialize
             currentFunc.push_back(newLoop);
-            currentBlock.push_back(new store(constZero,newLoopRd,i32));
+            currentBlock.push_back(new store(new constant(-1),newLoopRd,i64));
             currentBlock.push_back(new br(null,checkBlock,null));
             //checkBlock
             currentBlock = checkBlock;
-            currentBlock.push_back(new load(iRd,newLoopRd,i32));
-            currentBlock.push_back(new icmp(cmpResult,iRd,presentNode.rd,icmp.cmpOpType.SLT,i32));
+            currentBlock.push_back(new load(iRd,newLoopRd,i64));
+            currentBlock.push_back(new binary(binary.opTye.ADD,i64,addResult,iRd,constUnit));
+            currentBlock.push_back(new store(addResult,newLoopRd,i64));
+            currentBlock.push_back(new icmp(cmpResult,iRd,presentNode.rd,icmp.cmpOpType.SLT,i64));
             currentBlock.push_back(new br(cmpResult,body,exitBlock));
-            currentBlock = body;
             //loop body
+            currentBlock = body;
             register subPtr = new register(),subReceiver;
-            currentBlock.push_back(new getelementptr(subPtr,rd,i32,iRd,constZero));
+            currentBlock.push_back(new getelementptr(subPtr,rd,irType,iRd,constZero));
             subReceiver = recursiveNew(exprList,recursiveStep+1,presentIRType);
-            currentBlock.push_back(new store(subReceiver,subPtr,presentIRType.getPtr()));
-            //increase block
-            currentBlock = incrBlock;
-            register incLoad = new register(),incAdd = new register();
-            currentBlock.push_back(new load(incLoad,newLoopRd,i32));
-            currentBlock.push_back(new binary(binary.opTye.ADD,i32,incAdd,incLoad,constUnit));
-            currentBlock.push_back(new store(incAdd,newLoopRd,i32));
+            currentBlock.push_back(new store(subReceiver,subPtr,presentIRType));
             currentBlock.push_back(new br(null,checkBlock,null));
             //exit block
             currentBlock = exitBlock;
@@ -790,10 +786,13 @@ public class IRBuilder implements ASTVisitor {
             it.postfixExpr.accept(this);
             IRType irType = it.postfixExpr.irType;
             IRTypeWithCounter tmp = irType.cDef.memberType.get(((idExprNode)it.Expr).Id);
-            currentBlock.push_back(new getelementptr((register) it.rd,(register) it.postfixExpr.rd,it.postfixExpr.irType,constZero,new constant(tmp.counter)));
-            it.irType = tmp.irType;
+            register ptrReg = new register();
+            currentBlock.push_back(new getelementptr(ptrReg,(register) it.postfixExpr.rd,it.postfixExpr.irType,constZero,new constant(tmp.counter)));
             it.rd = new register();
-            it.idReg = null;
+            it.irType = new IRType(tmp.irType);
+            it.irType.ptrNum--;
+            it.idReg = ptrReg;
+            currentBlock.push_back(new load((register) it.rd,ptrReg,it.irType));
         } else if (it.isCallOp) {
             it.postfixExpr.accept(this);
             IRType ir =new IRType(lastCallFunc.returnType);
@@ -817,10 +816,12 @@ public class IRBuilder implements ASTVisitor {
             it.postfixExpr.accept(this);
             it.Expr.accept(this);
             it.rd = new register();
-            currentBlock.push_back(new getelementptr((register) it.rd,(register) it.postfixExpr.rd,it.postfixExpr.irType,it.Expr.rd,constZero));
+            register ptrReg = new register();
+            currentBlock.push_back(new getelementptr(ptrReg,(register) it.postfixExpr.rd,it.postfixExpr.irType,it.Expr.rd,constZero));
             it.irType = new IRType(it.postfixExpr.irType);
             it.irType.ptrNum --;
-            it.idReg = null;
+            currentBlock.push_back(new load((register) it.rd,ptrReg,it.irType));
+            it.idReg = ptrReg;
         } else {
             it.primaryExpr.accept(this);
             it.rd = it.primaryExpr.rd;
@@ -894,14 +895,14 @@ public class IRBuilder implements ASTVisitor {
             regType = currentScope.getEntity("this",true);
             register thisReg = new register(),ptrReg = new register();
             currentBlock.push_back(new load(thisReg,regType.reg,regType.irType));
-            it.rd = ptrReg;//it.rd = new register();
+            it.rd = new register();
             IRTypeWithCounter tmp = regType.irType.cDef.memberType.get(it.Id);
             //getelementptr's result is still pointer
-            currentBlock.push_back(new getelementptr(ptrReg,thisReg,regType.irType,constZero,new constant(tmp.counter)));
+            currentBlock.push_back(new getelementptr(ptrReg,thisReg,regType.irType,new constant(0),new constant(tmp.counter)));
             it.idReg = ptrReg;
             it.irType = new IRType(tmp.irType);
             it.irType.ptrNum--;
-            //currentBlock.push_back(new load((register) it.rd,ptrReg,it.irType,4));
+            currentBlock.push_back(new load((register) it.rd,ptrReg,it.irType));
             return;
         } else if (currentScope.containsVariable(it.Id,true)) {
             regType = currentScope.getEntity(it.Id,true);

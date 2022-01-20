@@ -168,7 +168,7 @@ public class IRPrinter implements Pass {
         return s.toString();
     }
 
-    private String getTypeWithoutPtr(IRType irType) {
+    private String getTypeWithPtrMinus1(IRType irType) {
         if (irType.isVoid) return "void";
         StringBuilder s;
         if (irType.cDef == null) {
@@ -176,7 +176,8 @@ public class IRPrinter implements Pass {
         } else {
             s = new StringBuilder("%struct."+irType.cDef.structName);
         }
-        int len = irType.ptrNum;
+        int len = irType.ptrNum-1;
+        s.append("*".repeat(Math.max(0, len)));
         if (irType.arrayLen > 0) {
             s = new StringBuilder("[" + irType.arrayLen + " x " + s.toString() + "]");
         }
@@ -281,7 +282,10 @@ public class IRPrinter implements Pass {
             out.print(getRegName(con.rd) + " = " + getConvertOp(con.convert) + " " + getType(con.rsType) + " " + getEntityString(con.rs) + " to " + getType(con.rdType));
         } else if (s instanceof getelementptr) {
             getelementptr g = (getelementptr) s;
-            out.print(getRegName(g.rd) + " = getelementptr "+ getTypeWithoutPtr(g.rsType)+", "+getType(g.rsType) +" "+getRegName(g.rs) + ", i32 "+getEntityString(g.locator1)+", i32 "+getEntityString(g.locator2));
+            if (g.rsType.cDef!=null)
+                out.print(getRegName(g.rd) + " = getelementptr "+ getTypeWithPtrMinus1(g.rsType)+", "+getType(g.rsType) +" "+getRegName(g.rs) + ", i64 "+getEntityString(g.locator1)+", i32 "+getEntityString(g.locator2));
+            else
+                out.print(getRegName(g.rd) + " = getelementptr "+ getTypeWithPtrMinus1(g.rsType)+", "+getType(g.rsType) +" "+getRegName(g.rs) + ", i64 "+getEntityString(g.locator1));
         } else if (s instanceof icmp) {
             icmp ic = (icmp) s;
             out.print(getRegName(ic.rd) + " = icmp " + getCmpOp(ic.cmpOp) + " " + getType(ic.rsType) + " " + getEntityString(ic.rs1) + ", " + getEntityString(ic.rs2));
@@ -300,7 +304,8 @@ public class IRPrinter implements Pass {
             out.print("[ " + getEntityString(enBl.en) + ", %" + getBlockName(enBl.bl) + " ]");
         } else if (s instanceof ret) {
             ret r = (ret) s;
-            out.print("ret " + getType(r.irType) + " " + getEntityString(r.value));
+            if (r.irType.isVoid) out.print("ret void");
+            else out.print("ret " + getType(r.irType) + " " + getEntityString(r.value));
         } else if (s instanceof store) {
             store t = (store) s;
             out.print("store " + getType(t.resourceType) + " " + getEntityString(t.resource) + ", " + getType(t.resourceType.getPtr()) + " " + getRegName(t.target) + ", align " + t.align);

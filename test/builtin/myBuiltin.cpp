@@ -60,3 +60,22 @@ char* toString(int i) {
     return cptr;
 }
 
+char* ___Libro___stringAppend(char* a,char* b,int lenA,int lenB) {
+    char* res = (char *) malloc(lenA+lenB+1);
+    strcpy(res,a);
+    strcpy(res+lenA,b);
+    return res;
+}
+
+bool ___Libro___stringLess(char* a,char* b){
+    return strcmp(a,b)<0;
+}
+
+char* ___Libro___stringSubString(char* a,int left,int right) {
+    char* res = (char *) malloc(right-left+1);
+    for (int i=left;i<right;i++) {
+        res[i-left] = a[i];
+    }
+    res[right] = 0;
+    return res;
+}
