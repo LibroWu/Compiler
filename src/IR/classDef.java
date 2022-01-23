@@ -13,8 +13,7 @@ public class classDef extends globalUnit {
         members.add(irType);
         IRTypeWithCounter irTypeWithCounter = new IRTypeWithCounter();
         irTypeWithCounter.counter = counter++;
-        irTypeWithCounter.irType  = new IRType(irType);
-        irTypeWithCounter.irType.ptrNum ++;
+        irTypeWithCounter.irType  = irType;
         memberType.put(Identifier,irTypeWithCounter);
         int align = irType.getAlign();
         if (align>this.align) this.align = irType.getAlign();

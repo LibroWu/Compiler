@@ -137,9 +137,9 @@ public class IRPrinter implements Pass {
         out.print("%struct." + f.structName + " = type { ");
         int len = f.members.size();
         for (int i = 0; i < len - 1; ++i) {
-            out.print(getType(f.members.get(i)) + ", ");
+            out.print(getType(f.members.get(i).reducePtr()) + ", ");
         }
-        if (len>0) out.print(getType(f.members.get(len - 1)) + " }");
+        if (len>0) out.print(getType(f.members.get(len - 1).reducePtr()) + " }");
         else out.print("}");
         out.println();
     }
@@ -152,7 +152,7 @@ public class IRPrinter implements Pass {
 
     @Override
     public void visitGlobalStringConstant(globalStringConstant gs) {
-        regGlobal.put(gs.rd,".str" + ((gs.counter==0)?"":"."+gs.counter));
+        regGlobal.put(gs.rd,".libro.str" + ((gs.counter==0)?"":"."+gs.counter));
         out.println(getRegName(gs.rd)+ " = constant " + getType(gs.irType)+" c"+gs.content+", align 1");
     }
 

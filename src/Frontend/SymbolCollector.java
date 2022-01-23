@@ -1,12 +1,11 @@
 package Frontend;
 
 import AST.*;
-import IR.IRType;
+import IR.*;
 import Util.Scope;
 import Util.Type.*;
 import Util.error.semanticError;
 import Util.globalScope;
-import IR.classDef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -158,7 +157,7 @@ public class SymbolCollector implements ASTVisitor {
                     if (currentStruct.members.containsKey(declarator.Identifier))
                         throw new semanticError("redefinition of member " + declarator.Identifier, declarator.pos);
                     currentStruct.members.put(declarator.Identifier, t);
-                    currentClassDef.addMember(tmpIrType,declarator.Identifier);
+                    currentClassDef.addMember(tmpIrType.getPtr(),declarator.Identifier);
                 }
             });
         }
@@ -203,11 +202,27 @@ public class SymbolCollector implements ASTVisitor {
                 func.parameter.add(t);
             });
         }
-
         if (currentStruct!=null) {
             if (currentStruct.methods.containsKey(it.id)) throw new semanticError("redefinition of method " + it.id,it.pos);
             currentStruct.methods.put(it.id,func);
         } else gScope.addFunction(it.id, func, it.pos);
+
+        funcDef currentFunc = new funcDef();
+        String idPrefix = ((currentStruct==null)? "": "_"+currentStruct.name+"_");
+        currentFunc.funcId = idPrefix+it.id;
+        gScope.addFuncDef(currentFunc.funcId,currentFunc);
+        if (currentStruct != null) {
+            IRType tmpIrType =new IRType(gScope.getClassDef(currentStruct.name),1,0);
+            currentFunc.parameters.add(tmpIrType);
+        }
+        if (it.parameters != null) {
+            int loopLen = it.parameters.Id.size();
+            for (int i = 0; i < loopLen;++i) {
+                Type t = func.parameter.get(i);
+                IRType tmpIrType = new IRType(t);
+                currentFunc.parameters.add(tmpIrType);
+            }
+        }
     }
 
     @Override
