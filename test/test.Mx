@@ -6,9 +6,13 @@ class strA{
     int t;
     strB b;
     strA getAofB(){
+        fffff();
         return b.a;
     }
 
+    int fffff(){
+        return 1;
+    }
     strA(){
         t=10;
     }
@@ -28,16 +32,13 @@ class strB{
 }*/
 
 int main(){
-    int t=getInt();
-    printlnInt(t);
-    printlnInt(t*t);
-    bool b;
-    b= false;
-    int []k = fff();
+    strA a;
+    a.fffff();
+    println("%c\n");
     return 0;
 }
 
-int[] fff(){
+/*int[] fff(){
     int [] a;
     int [][]k;
     a = new int[10];
@@ -49,4 +50,4 @@ int[] fff(){
     bool b = false;
     strA AAA=new strA;
     return  a;
-}
+}*/

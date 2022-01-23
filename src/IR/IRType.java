@@ -9,9 +9,14 @@ public class IRType {
     public int ptrNum = 0;
     public int arrayLen = 0;
     public classDef cDef = null;
+    public IRType arraySubIR = null;
     public boolean isVoid = false;
     public IRType getPtr(){
-        return new IRType(this.iNum,this.ptrNum+1,this.arrayLen,this.cDef);
+        return new IRType(this.iNum,this.ptrNum+1,this.arrayLen,this.cDef,this.arraySubIR);
+    }
+
+    public IRType reducePtr(){
+        return new IRType(this.iNum,this.ptrNum-1,this.arrayLen,this.cDef,this.arraySubIR);
     }
 
     public IRType(IRType irType) {
@@ -30,11 +35,26 @@ public class IRType {
         this.iNum = iNum;
     }
 
+    public IRType(int iNum,int ptrNum,int arrayLen,classDef cDef,IRType arraySubIR) {
+        this.iNum = iNum;
+        this.ptrNum = ptrNum;
+        this.arrayLen = arrayLen;
+        this.cDef = cDef;
+        this.arraySubIR = arraySubIR;
+    }
+
     public IRType(int iNum,int ptrNum,int arrayLen,classDef cDef) {
         this.iNum = iNum;
         this.ptrNum = ptrNum;
         this.arrayLen = arrayLen;
         this.cDef = cDef;
+        this.arraySubIR = arraySubIR;
+    }
+
+    public IRType(int ptrNum,int arrayLen,IRType arraySubIR) {
+        this.ptrNum = ptrNum;
+        this.arrayLen = arrayLen;
+        this.arraySubIR = arraySubIR;
     }
 
     public IRType(Type t){
@@ -65,5 +85,9 @@ public class IRType {
         if (ptrNum>0 || arrayLen>0) return 8;
         if (cDef!=null) return cDef.getSize();
         return iNum/8;
+    }
+
+    public boolean equal(IRType another) {
+        return  (ptrNum== another.ptrNum && arrayLen == another.arrayLen && iNum==another.iNum);
     }
 }

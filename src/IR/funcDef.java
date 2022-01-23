@@ -14,10 +14,16 @@ public class funcDef extends globalUnit {
     public ArrayList<alloca> allocas = new ArrayList<>();
     public block rootBlock = null;
     public register retReg = null;
-    public IRType retType = null;
 
     public funcDef(funcDef parentFunc) {
         this.parentFunc = parentFunc;
+    }
+
+    public funcDef(funcDef parentFunc,String funcId, IRType returnType,ArrayList<IRType> parameters) {
+        this.parentFunc = parentFunc;
+        this.funcId = funcId;
+        this.returnType = returnType;
+        this.parameters = parameters;
     }
 
     public funcDef parentFunc(){

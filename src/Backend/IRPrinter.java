@@ -2,7 +2,6 @@ package Backend;
 
 import IR.*;
 
-import javax.swing.plaf.InsetsUIResource;
 import java.io.PrintStream;
 import java.util.HashMap;
 
@@ -16,6 +15,35 @@ public class IRPrinter implements Pass {
 
     public IRPrinter(PrintStream out) {
         this.out = out;
+    }
+
+    @Override
+    public void visitProgram(program pg) {
+        //class definition
+        for (classDef classDef : pg.classDefs) {
+            visitClassDef(classDef);
+        }
+        if (pg.classDefs.size() != 0) out.println();
+        //global variable declaration
+        for (globalVarDecl globalVarDecl : pg.globalVarDecls) {
+            visitGlobalVarDecl(globalVarDecl);
+        }
+        if (pg.globalVarDecls.size() != 0) out.println();
+        //global string const
+        for (globalStringConstant globalStringConstant : pg.globalStringConstants) {
+            visitGlobalStringConstant(globalStringConstant);
+        }
+        if (pg.globalStringConstants.size() != 0) out.println();
+        //function definition
+        for (funcDef funcDef : pg.funcDefs) {
+            visitFuncDef(funcDef);
+        }
+        if (pg.funcDefs.size() != 0) out.println();
+        //declares
+        for (declare declare : pg.declares) {
+            visitDeclare(declare);
+        }
+        if (pg.declares.size() != 0) out.println();
     }
 
     @Override
@@ -76,25 +104,6 @@ public class IRPrinter implements Pass {
     }
 
     @Override
-    public void visitProgram(program pg) {
-        for (classDef classDef : pg.classDefs) {
-            visitClassDef(classDef);
-        }
-        if (pg.classDefs.size() != 0) out.println();
-        for (globalVarDecl globalVarDecl : pg.globalVarDecls) {
-            visitGlobalVarDecl(globalVarDecl);
-        }
-        if (pg.globalVarDecls.size() != 0) out.println();
-        for (funcDef funcDef : pg.funcDefs) {
-            visitFuncDef(funcDef);
-        }
-        if (pg.declares.size() != 0) out.println();
-        for (declare declare : pg.declares) {
-            visitDeclare(declare);
-        }
-    }
-
-    @Override
     public void visitFuncDef(funcDef f) {
         Cnt = 0;
         blockIndex = new HashMap<>();
@@ -142,6 +151,12 @@ public class IRPrinter implements Pass {
     }
 
     @Override
+    public void visitGlobalStringConstant(globalStringConstant gs) {
+        regGlobal.put(gs.rd,".str" + ((gs.counter==0)?"":"."+gs.counter));
+        out.println(getRegName(gs.rd)+ " = constant " + getType(gs.irType)+" c"+gs.content+", align 1");
+    }
+
+    @Override
     public void visitDeclare(declare dec) {
         out.print("declare "+ getType(dec.retType) + " @" + dec.funcName+"(");
         int len = dec.parameters.size();
@@ -155,16 +170,15 @@ public class IRPrinter implements Pass {
     private String getType(IRType irType) {
         if (irType.isVoid) return "void";
         StringBuilder s;
-        if (irType.cDef == null) {
+        if (irType.arrayLen > 0) {
+            s = new StringBuilder("[" + irType.arrayLen + " x " + getType(irType.arraySubIR) + "]");
+        } else if (irType.cDef == null) {
             s = new StringBuilder("i" + irType.iNum);
         } else {
             s = new StringBuilder("%struct."+irType.cDef.structName);
         }
         int len = irType.ptrNum;
         s.append("*".repeat(Math.max(0, len)));
-        if (irType.arrayLen > 0) {
-            s = new StringBuilder("[" + irType.arrayLen + " x " + s.toString() + "]");
-        }
         return s.toString();
     }
 
@@ -291,7 +305,7 @@ public class IRPrinter implements Pass {
             out.print(getRegName(ic.rd) + " = icmp " + getCmpOp(ic.cmpOp) + " " + getType(ic.rsType) + " " + getEntityString(ic.rs1) + ", " + getEntityString(ic.rs2));
         } else if (s instanceof load) {
             load l = (load) s;
-            out.print(getRegName(l.rd) + " = load " + getType(l.rdType) + ", " + getType(l.rdType.getPtr()) + " " + getRegName(l.ptr) + ", align " + l.align);
+            out.print(getRegName(l.rd) + " = load " + getType(l.rsType.reducePtr()) + ", " + getType(l.rsType) + " " + getRegName(l.ptr) + ", align " + l.align);
         } else if (s instanceof phi) {
             phi p = (phi) s;
             out.print(getRegName(p.rd) + " = phi " + getType(p.rdType) + " ");

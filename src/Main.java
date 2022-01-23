@@ -40,11 +40,13 @@ public class Main {
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             HashMap<String,classDef> idToDef = new HashMap<>();
+            HashMap<String,funcDef> idToFuncDef = new HashMap<>();
             gScope.setIdToDef(idToDef);
+            gScope.setIdToFuncDef(idToFuncDef);
             new SymbolCollector(gScope).visit(ASTRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
             program pg = new program();
-            new IRBuilder(pg, gScope,idToDef).visit(ASTRoot);
+            new IRBuilder(pg, gScope,idToDef,idToFuncDef).visit(ASTRoot);
             new IRPrinter(out).visitProgram(pg);
         } catch (error er) {
             System.err.println(er.toString());

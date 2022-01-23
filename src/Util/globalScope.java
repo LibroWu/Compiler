@@ -1,6 +1,7 @@
 package Util;
 
 import IR.classDef;
+import IR.funcDef;
 import Util.Type.*;
 import Util.error.semanticError;
 
@@ -12,6 +13,7 @@ public class globalScope extends Scope {
     private HashMap<String, Type> types = new HashMap<>();
     private HashMap<String, funcType> funcTypes = new HashMap<>();
     private HashMap<String, classDef> idToDef = null;
+    private HashMap<String, funcDef> idToFuncDef = null;
 
     public globalScope(Scope parentScope) {
         super(parentScope);
@@ -94,11 +96,23 @@ public class globalScope extends Scope {
         this.idToDef = idToDef;
     }
 
+    public void setIdToFuncDef( HashMap<String,funcDef> idToFuncDef ){
+        this.idToFuncDef = idToFuncDef;
+    }
+
     public classDef getClassDef(String name) {
         return idToDef.get(name);
     }
 
+    public funcDef getFuncDef(String name) {
+        return idToFuncDef.get(name);
+    }
+
     public void addClassDef(String name,classDef newDef) {
         idToDef.put(name,newDef);
+    }
+
+    public void addFuncDef(String name,funcDef newDef) {
+        idToFuncDef.put(name,newDef);
     }
 }

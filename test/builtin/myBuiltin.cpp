@@ -1,7 +1,10 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
-
+struct String{
+    char* cptr;
+    int len;
+};
 void print(char * c){
     printf("%s",c);
 }
@@ -18,13 +21,14 @@ void printlnInt(int n) {
     printf("%d\n",n);
 }
 
-char* getString(){
+String getString(){
+    String res;
     char carr[255];
     scanf("%s",carr);
-    int t = strlen(carr);
-    char* cptr = (char *) malloc(t+1);
-    strcpy(cptr,carr);
-    return cptr;
+    res.len = strlen(carr);
+    res.cptr = (char *) malloc(res.len+1);
+    strcpy(res.cptr,carr);
+    return res;
 }
 
 int getInt(){
@@ -33,7 +37,7 @@ int getInt(){
     return t;
 }
 
-char* toString(int i) {
+String toString(int i) {
     int t = 0,len=1;
     char * cptr;
     if (i==0) {
@@ -57,25 +61,34 @@ char* toString(int i) {
             t /= 10;
         }
     }
-    return cptr;
-}
-
-char* ___Libro___stringAppend(char* a,char* b,int lenA,int lenB) {
-    char* res = (char *) malloc(lenA+lenB+1);
-    strcpy(res,a);
-    strcpy(res+lenA,b);
+    String res;
+    res.cptr = cptr;
+    res.len = len;
     return res;
 }
 
-bool ___Libro___stringLess(char* a,char* b){
-    return strcmp(a,b)<0;
+String ___Libro___stringAppend(String a,String b) {
+    char* cptr = (char *) malloc(a.len+b.len+1);
+    strcpy(cptr,a.cptr);
+    strcpy(cptr+a.len,b.cptr);
+    String res;
+    res.cptr = cptr;
+    res.len = a.len + b.len;
+    return res;
 }
 
-char* ___Libro___stringSubString(char* a,int left,int right) {
-    char* res = (char *) malloc(right-left+1);
+bool ___Libro___stringLess(String a,String b){
+    return strcmp(a.cptr,b.cptr)<0;
+}
+
+String ___Libro___stringSubString(String a,int left,int right) {
+    char* cptr = (char *) malloc(right-left+1);
     for (int i=left;i<right;i++) {
-        res[i-left] = a[i];
+        cptr[i-left] = a.cptr[i];
     }
-    res[right] = 0;
+    cptr[right] = 0;
+    String res;
+    res.cptr = cptr;
+    res.len = right - left;
     return res;
 }
