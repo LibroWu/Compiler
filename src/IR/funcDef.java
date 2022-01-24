@@ -12,11 +12,12 @@ public class funcDef extends globalUnit {
     public ArrayList<alloca> allocas = new ArrayList<>();
     public block rootBlock = null;
     public register retReg = null;
+    public block returnBlock = null;
 
     public funcDef() {
     }
 
-    public funcDef(funcDef parentFunc,String funcId, IRType returnType,ArrayList<IRType> parameters) {
+    public funcDef(String funcId, IRType returnType,ArrayList<IRType> parameters) {
         this.funcId = funcId;
         this.returnType = returnType;
         this.parameters = parameters;

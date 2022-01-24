@@ -167,6 +167,17 @@ public class IRPrinter implements Pass {
         out.println(")");
     }
 
+    private String getUnnamedClassDef(classDef cDef){
+        StringBuilder s = new StringBuilder("{ ");
+        int len = cDef.members.size();
+        for (int i = 0; i < len - 1; ++i) {
+            s.append(getType(cDef.members.get(i).reducePtr()) + ", ");
+        }
+        if (len>0) s.append(getType(cDef.members.get(len - 1).reducePtr()) + " }");
+        else s.append("}");
+        return s.toString();
+    }
+
     private String getType(IRType irType) {
         if (irType.isVoid) return "void";
         StringBuilder s;
@@ -175,7 +186,8 @@ public class IRPrinter implements Pass {
         } else if (irType.cDef == null) {
             s = new StringBuilder("i" + irType.iNum);
         } else {
-            s = new StringBuilder("%struct."+irType.cDef.structName);
+            if (irType.cDef.structName!=null) s = new StringBuilder("%struct."+irType.cDef.structName);
+            else s = new StringBuilder(getUnnamedClassDef(irType.cDef));
         }
         int len = irType.ptrNum;
         s.append("*".repeat(Math.max(0, len)));

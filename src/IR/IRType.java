@@ -10,13 +10,19 @@ public class IRType {
     public int arrayLen = 0;
     public classDef cDef = null;
     public IRType arraySubIR = null;
-    public boolean isVoid = false;
+    public boolean isVoid = false,isString = false;
     public IRType getPtr(){
-        return new IRType(this.iNum,this.ptrNum+1,this.arrayLen,this.cDef,this.arraySubIR);
+        IRType irType =  new IRType(this.iNum,this.ptrNum+1,this.arrayLen,this.cDef,this.arraySubIR);
+        irType.isVoid = this.isVoid;
+        irType.isString = this.isString;
+        return irType;
     }
 
     public IRType reducePtr(){
-        return new IRType(this.iNum,this.ptrNum-1,this.arrayLen,this.cDef,this.arraySubIR);
+        IRType irType =  new IRType(this.iNum,this.ptrNum-1,this.arrayLen,this.cDef,this.arraySubIR);
+        irType.isVoid = this.isVoid;
+        irType.isString = this.isString;
+        return irType;
     }
 
     public IRType(IRType irType) {
@@ -25,6 +31,8 @@ public class IRType {
         arrayLen = irType.arrayLen;
         cDef = irType.cDef;
         isVoid = irType.isVoid;
+        isString = irType.isString;
+        arraySubIR = irType.arraySubIR;
     }
 
     public IRType(){

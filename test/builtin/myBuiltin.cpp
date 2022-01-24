@@ -2,8 +2,8 @@
 #include<string.h>
 #include<stdlib.h>
 struct String{
-    char* cptr;
     int len;
+    char* cptr;
 };
 void print(char * c){
     printf("%s",c);
@@ -21,13 +21,13 @@ void printlnInt(int n) {
     printf("%d\n",n);
 }
 
-String getString(){
-    String res;
+String* getString(){
+    String* res = (String *) malloc(12);
     char carr[255];
     scanf("%s",carr);
-    res.len = strlen(carr);
-    res.cptr = (char *) malloc(res.len+1);
-    strcpy(res.cptr,carr);
+    res->len = strlen(carr);
+    res->cptr = (char *) malloc(res->len+1);
+    strcpy(res->cptr,carr);
     return res;
 }
 
@@ -37,7 +37,7 @@ int getInt(){
     return t;
 }
 
-String toString(int i) {
+String* toString(int i) {
     int t = 0,len=1;
     char * cptr;
     if (i==0) {
@@ -61,34 +61,52 @@ String toString(int i) {
             t /= 10;
         }
     }
-    String res;
-    res.cptr = cptr;
-    res.len = len;
+    String* res = (String *) malloc(12);
+    res->cptr = cptr;
+    res->len = len;
     return res;
 }
 
-String ___Libro___stringAppend(String a,String b) {
-    char* cptr = (char *) malloc(a.len+b.len+1);
-    strcpy(cptr,a.cptr);
-    strcpy(cptr+a.len,b.cptr);
-    String res;
-    res.cptr = cptr;
-    res.len = a.len + b.len;
+String* _string_stringAppend(String* a,String* b) {
+    char* cptr = (char *) malloc(a->len+b->len+1);
+    strcpy(cptr,a->cptr);
+    strcpy(cptr+a->len,b->cptr);
+    String* res = (String *) malloc(12);
+    res->cptr = cptr;
+    res->len = a->len + b->len;
     return res;
 }
 
-bool ___Libro___stringLess(String a,String b){
-    return strcmp(a.cptr,b.cptr)<0;
-}
-
-String ___Libro___stringSubString(String a,int left,int right) {
+String* _string_stringSubString(String* a,int left,int right) {
     char* cptr = (char *) malloc(right-left+1);
     for (int i=left;i<right;i++) {
-        cptr[i-left] = a.cptr[i];
+        cptr[i-left] = a->cptr[i];
     }
     cptr[right] = 0;
-    String res;
-    res.cptr = cptr;
-    res.len = right - left;
+    String* res = (String *) malloc(12);
+    res->cptr = cptr;
+    res->len = right - left;
     return res;
+}
+
+int _string_stringParseInt(String* s){
+    int res=0,len = s->len;
+    for (int i=0;i<len;++i) {
+        char c = s->cptr[i];
+        if (c<='9' && c>='0') res=res*10+c-'0';
+        else break;
+    }
+    return res;
+}
+
+int _string_stringOrd(String* s,int pos){
+    return s->cptr[pos];
+}
+
+int _string_stringLength(String* s){
+    return s->len;
+}
+
+int _string_getStrcmp(String* a,String* b){
+    return strcmp(a->cptr,b->cptr);
 }

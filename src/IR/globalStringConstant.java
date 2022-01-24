@@ -6,7 +6,7 @@ public class globalStringConstant extends globalUnit{
     public register rd;
     public IRType irType;
 
-    public globalStringConstant(String content,int counter,int length,register rd,IRType irType){
+    public globalStringConstant(String content,int counter,register rd,IRType irType){
         this.content = content;
         this.counter = counter;
         this.rd      = rd;
