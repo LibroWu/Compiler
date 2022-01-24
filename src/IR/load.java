@@ -9,6 +9,6 @@ public class load extends statement{
         this.rd = rd;
         this.ptr = ptr;
         this.rsType = rsType;
-        this.align = rsType.getAlign();
+        this.align = rsType.reducePtr().getAlign();
     }
 }

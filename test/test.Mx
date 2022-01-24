@@ -1,13 +1,7 @@
 int main(){
-    string s,ss;
-    s="hello world"+"!";
-    ss = s+s;
-    printInt(ss.length());
-    println("%c\n");
-    println(ss);
-    printlnInt(ss.ord(4));
-    ss="123"+ss;
-    printlnInt(ss.parseInt());
-    if ("a">="b") return 10;
+    int[] a = new int[5];
+    for (int i=0;i<5;++i) a[i] = i;
+    for (int i=0;i<5;++i) printlnInt(a[4-i]);
+    printlnInt(a.size());
     return 0;
 }
