@@ -12,6 +12,11 @@ public class block {
     public terminalStmt tailStmt = null;
     public boolean jumpTo = false;
     public block() {}
+
+    public void push_front(statement stmt){
+        stmts.push(stmt);
+    }
+
     public void push_back(statement stmt) {
         if (stmt instanceof terminalStmt) {
             if (tailStmt != null) return;//todo throw new internalError("multiple tails of a block",new position(0,0));

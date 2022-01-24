@@ -1,7 +1,27 @@
+/*
+Test Package: Codegen
+Author: Pikachu
+Time: 2020-02-02
+Input:
+=== input ===
+8
+11 12 1 2 13 14 3 4
+=== end ===
+Output:
+=== output ===
+2
+=== end ===
+ExitCode: 0
+InstLimit: -1
+Origin Package: Codeforces 1145A #52445759
+*/
+int n;
+int[] a = new int[20];
+
+int i;
 int main(){
-    int[] a = new int[5];
-    for (int i=0;i<5;++i) a[i] = i;
-    for (int i=0;i<5;++i) printlnInt(a[4-i]);
-    printlnInt(a.size());
-    return 0;
+    if (true | false) {
+        println("abc");
+    }
+	return 0;
 }
