@@ -17,11 +17,14 @@ Origin Package: Codeforces 1145A #52445759
 */
 int n;
 int[] a = new int[20];
-
 int i;
 int main(){
-    if (true | false) {
-        println("abc");
+    bool flag = false;
+    if (false || false || true && true && true && (flag = true)) {
+        println("hello");
+    }
+    if (flag) {
+        println("error shortcut");
     }
 	return 0;
 }
