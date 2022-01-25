@@ -47,16 +47,16 @@ String* toString(int i) {
         cptr[1] = 0;
     }
     else {
+        t = i;
         while (i>0) {
-            t = t*10 + i%10;
             i /= 10;
             len++;
         }
         cptr = (char *) malloc(len);
-        int cnt = 0;
+        int cnt = 1;
         while (t>0)
         {
-            cptr[cnt] = t%10 + '0';
+            cptr[len-cnt-1] = t%10 + '0';
             cnt++;
             t /= 10;
         }
@@ -77,19 +77,19 @@ String* _string_stringAppend(String* a,String* b) {
     return res;
 }
 
-String* _string_stringSubString(String* a,int left,int right) {
+String* _string_substring(String* a,int left,int right) {
     char* cptr = (char *) malloc(right-left+1);
     for (int i=left;i<right;i++) {
         cptr[i-left] = a->cptr[i];
     }
-    cptr[right] = 0;
+    cptr[right-left] = 0;
     String* res = (String *) malloc(12);
     res->cptr = cptr;
     res->len = right - left;
     return res;
 }
 
-int _string_stringParseInt(String* s){
+int _string_parseInt(String* s){
     int res=0,len = s->len;
     for (int i=0;i<len;++i) {
         char c = s->cptr[i];
@@ -99,11 +99,11 @@ int _string_stringParseInt(String* s){
     return res;
 }
 
-int _string_stringOrd(String* s,int pos){
+int _string_ord(String* s,int pos){
     return s->cptr[pos];
 }
 
-int _string_stringLength(String* s){
+int _string_length(String* s){
     return s->len;
 }
 
