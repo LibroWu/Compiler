@@ -100,6 +100,13 @@ public class SymbolCollector implements ASTVisitor {
         toStringFunc.parameter = new ArrayList<>();
         toStringFunc.parameter.add(intType);
 
+        classDef stringDef =  new classDef();
+        gScope.addClassDef("string",stringDef);
+        stringDef.structName = "string";
+        stringDef.addMember(new IRType(32,1,0,null),null);
+        stringDef.addMember(new IRType(8,2,0,null),null);
+        gScope.addClassDef("string",stringDef);
+
         //add build in functions into globalScope
         gScope.addFunction("print", printFunc, it.pos);
         gScope.addFunction("println", printlnFunc, it.pos);
@@ -211,6 +218,10 @@ public class SymbolCollector implements ASTVisitor {
         String idPrefix = ((currentStruct==null)? "": "_"+currentStruct.name+"_");
         currentFunc.funcId = idPrefix+it.id;
         gScope.addFuncDef(currentFunc.funcId,currentFunc);
+        if (func.returnType.isClass) {
+            currentFunc.returnType = new IRType(gScope.getClassDef(func.returnType.name),func.returnType.dimension+1,0);
+            if (Objects.equals(func.returnType.name, "string")) currentFunc.returnType.isString = true;
+        } else currentFunc.returnType = new IRType(func.returnType);
         if (currentStruct != null) {
             IRType tmpIrType =new IRType(gScope.getClassDef(currentStruct.name),1,0);
             currentFunc.parameters.add(tmpIrType);
@@ -219,7 +230,11 @@ public class SymbolCollector implements ASTVisitor {
             int loopLen = it.parameters.Id.size();
             for (int i = 0; i < loopLen;++i) {
                 Type t = func.parameter.get(i);
-                IRType tmpIrType = new IRType(t);
+                IRType tmpIrType;
+                if (t.isClass) {
+                    tmpIrType = new IRType(gScope.getClassDef(t.name),t.dimension+1,0);
+                    if (Objects.equals(t.name, "string")) tmpIrType.isString = true;
+                }else tmpIrType = new IRType(t);
                 currentFunc.parameters.add(tmpIrType);
             }
         }

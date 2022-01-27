@@ -39,6 +39,11 @@ int getInt(){
 
 String* toString(int i) {
     int t = 0,len=1;
+    bool isNeg = (i<0);
+    if (isNeg) {
+        len++;
+        i = -i;
+    }
     char * cptr;
     if (i==0) {
         len=2;
@@ -54,6 +59,9 @@ String* toString(int i) {
         }
         cptr = (char *) malloc(len);
         int cnt = 1;
+        if (isNeg) {
+            cptr[0] = '-';
+        }
         while (t>0)
         {
             cptr[len-cnt-1] = t%10 + '0';

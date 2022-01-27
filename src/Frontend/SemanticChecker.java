@@ -111,7 +111,7 @@ public class SemanticChecker implements ASTVisitor {
                 if (declarator.expr != null) {
                     declarator.expr.accept(this);
                     if (declarator.expr.type.typeType == Type.Types.CONST_NULL) {
-                        if (!t.isClass && t.dimension == 0)
+                        if (!t.isClass && t.dimension == 0 || Objects.equals(t.name, "string"))
                             throw new semanticError("can not assign null to primitive type variable", it.pos);
                     } else {
                         if (!Objects.equals(declarator.expr.type.name, t.name) || declarator.expr.type.dimension != t.dimension)
@@ -250,9 +250,9 @@ public class SemanticChecker implements ASTVisitor {
             exprNode expr = it.exprList.get(it.exprList.size() - 1);
             expr.accept(this);
             if (expr.type.typeType != Type.Types.CONST_NULL) {
-                if (expr.type.name != it.logicExpr.type.name || expr.type.dimension != it.type.dimension)
+                if (!Objects.equals(expr.type.name, it.logicExpr.type.name) || expr.type.dimension != it.type.dimension)
                     throw new semanticError("type mismatch on assignment", expr.pos);
-            } else if (it.logicExpr.type.typeType != Type.Types.CLASS_TYPE && it.logicExpr.type.dimension == 0)
+            } else if (it.logicExpr.type.typeType != Type.Types.CLASS_TYPE && it.logicExpr.type.dimension == 0 || Objects.equals(it.logicExpr.type.name, "string"))
                 throw new semanticError("can not assign null to primitive type variable", it.pos);
         }
     }

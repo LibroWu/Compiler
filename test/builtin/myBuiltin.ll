@@ -100,107 +100,136 @@ define i32 @getInt()  {
   ret i32 %3
 }
 
-
 ; Function Attrs: noinline nounwind optnone uwtable
 define %struct.String* @toString(i32 %0) {
   %2 = alloca i32, align 4
   %3 = alloca i32, align 4
   %4 = alloca i32, align 4
-  %5 = alloca i8*, align 8
-  %6 = alloca i32, align 4
-  %7 = alloca %struct.String*, align 8
+  %5 = alloca i8, align 1
+  %6 = alloca i8*, align 8
+  %7 = alloca i32, align 4
+  %8 = alloca %struct.String*, align 8
   store i32 %0, i32* %2, align 4
   store i32 0, i32* %3, align 4
   store i32 1, i32* %4, align 4
-  %8 = load i32, i32* %2, align 4
-  %9 = icmp eq i32 %8, 0
-  br i1 %9, label %10, label %18
+  %9 = load i32, i32* %2, align 4
+  %10 = icmp slt i32 %9, 0
+  %11 = zext i1 %10 to i8
+  store i8 %11, i8* %5, align 1
+  %12 = load i8, i8* %5, align 1
+  %13 = trunc i8 %12 to i1
+  br i1 %13, label %14, label %19
 
-10:                                               ; preds = %1
+14:                                               ; preds = %1
+  %15 = load i32, i32* %4, align 4
+  %16 = add nsw i32 %15, 1
+  store i32 %16, i32* %4, align 4
+  %17 = load i32, i32* %2, align 4
+  %18 = sub nsw i32 0, %17
+  store i32 %18, i32* %2, align 4
+  br label %19
+
+19:                                               ; preds = %14, %1
+  %20 = load i32, i32* %2, align 4
+  %21 = icmp eq i32 %20, 0
+  br i1 %21, label %22, label %30
+
+22:                                               ; preds = %19
   store i32 2, i32* %4, align 4
-  %11 = load i32, i32* %4, align 4
-  %12 = sext i32 %11 to i64
-  %13 = call noalias i8* @malloc(i64 %12) #5
-  store i8* %13, i8** %5, align 8
-  %14 = load i8*, i8** %5, align 8
-  %15 = getelementptr inbounds i8, i8* %14, i64 0
-  store i8 48, i8* %15, align 1
-  %16 = load i8*, i8** %5, align 8
-  %17 = getelementptr inbounds i8, i8* %16, i64 1
-  store i8 0, i8* %17, align 1
-  br label %52
+  %23 = load i32, i32* %4, align 4
+  %24 = sext i32 %23 to i64
+  %25 = call noalias i8* @malloc(i64 %24) #5
+  store i8* %25, i8** %6, align 8
+  %26 = load i8*, i8** %6, align 8
+  %27 = getelementptr inbounds i8, i8* %26, i64 0
+  store i8 48, i8* %27, align 1
+  %28 = load i8*, i8** %6, align 8
+  %29 = getelementptr inbounds i8, i8* %28, i64 1
+  store i8 0, i8* %29, align 1
+  br label %70
 
-18:                                               ; preds = %1
-  %19 = load i32, i32* %2, align 4
-  store i32 %19, i32* %3, align 4
-  br label %20
-
-20:                                               ; preds = %23, %18
-  %21 = load i32, i32* %2, align 4
-  %22 = icmp sgt i32 %21, 0
-  br i1 %22, label %23, label %28
-
-23:                                               ; preds = %20
-  %24 = load i32, i32* %2, align 4
-  %25 = sdiv i32 %24, 10
-  store i32 %25, i32* %2, align 4
-  %26 = load i32, i32* %4, align 4
-  %27 = add nsw i32 %26, 1
-  store i32 %27, i32* %4, align 4
-  br label %20
-
-28:                                               ; preds = %20
-  %29 = load i32, i32* %4, align 4
-  %30 = sext i32 %29 to i64
-  %31 = call noalias i8* @malloc(i64 %30) #5
-  store i8* %31, i8** %5, align 8
-  store i32 1, i32* %6, align 4
+30:                                               ; preds = %19
+  %31 = load i32, i32* %2, align 4
+  store i32 %31, i32* %3, align 4
   br label %32
 
-32:                                               ; preds = %35, %28
-  %33 = load i32, i32* %3, align 4
+32:                                               ; preds = %35, %30
+  %33 = load i32, i32* %2, align 4
   %34 = icmp sgt i32 %33, 0
-  br i1 %34, label %35, label %51
+  br i1 %34, label %35, label %40
 
 35:                                               ; preds = %32
-  %36 = load i32, i32* %3, align 4
-  %37 = srem i32 %36, 10
-  %38 = add nsw i32 %37, 48
-  %39 = trunc i32 %38 to i8
-  %40 = load i8*, i8** %5, align 8
-  %41 = load i32, i32* %4, align 4
-  %42 = load i32, i32* %6, align 4
-  %43 = sub nsw i32 %41, %42
-  %44 = sub nsw i32 %43, 1
-  %45 = sext i32 %44 to i64
-  %46 = getelementptr inbounds i8, i8* %40, i64 %45
-  store i8 %39, i8* %46, align 1
-  %47 = load i32, i32* %6, align 4
-  %48 = add nsw i32 %47, 1
-  store i32 %48, i32* %6, align 4
-  %49 = load i32, i32* %3, align 4
-  %50 = sdiv i32 %49, 10
-  store i32 %50, i32* %3, align 4
+  %36 = load i32, i32* %2, align 4
+  %37 = sdiv i32 %36, 10
+  store i32 %37, i32* %2, align 4
+  %38 = load i32, i32* %4, align 4
+  %39 = add nsw i32 %38, 1
+  store i32 %39, i32* %4, align 4
   br label %32
 
-51:                                               ; preds = %32
-  br label %52
+40:                                               ; preds = %32
+  %41 = load i32, i32* %4, align 4
+  %42 = sext i32 %41 to i64
+  %43 = call noalias i8* @malloc(i64 %42) #5
+  store i8* %43, i8** %6, align 8
+  store i32 1, i32* %7, align 4
+  %44 = load i8, i8* %5, align 1
+  %45 = trunc i8 %44 to i1
+  br i1 %45, label %46, label %49
 
-52:                                               ; preds = %51, %10
-  %53 = call noalias i8* @malloc(i64 12) #5
-  %54 = bitcast i8* %53 to %struct.String*
-  store %struct.String* %54, %struct.String** %7, align 8
-  %55 = load i8*, i8** %5, align 8
-  %56 = load %struct.String*, %struct.String** %7, align 8
-  %57 = getelementptr inbounds %struct.String, %struct.String* %56, i32 0, i32 1
-  store i8* %55, i8** %57, align 8
-  %58 = load i32, i32* %4, align 4
-  %59 = sub nsw i32 %58, 1
-  %60 = load %struct.String*, %struct.String** %7, align 8
-  %61 = getelementptr inbounds %struct.String, %struct.String* %60, i32 0, i32 0
-  store i32 %59, i32* %61, align 8
-  %62 = load %struct.String*, %struct.String** %7, align 8
-  ret %struct.String* %62
+46:                                               ; preds = %40
+  %47 = load i8*, i8** %6, align 8
+  %48 = getelementptr inbounds i8, i8* %47, i64 0
+  store i8 45, i8* %48, align 1
+  br label %49
+
+49:                                               ; preds = %46, %40
+  br label %50
+
+50:                                               ; preds = %53, %49
+  %51 = load i32, i32* %3, align 4
+  %52 = icmp sgt i32 %51, 0
+  br i1 %52, label %53, label %69
+
+53:                                               ; preds = %50
+  %54 = load i32, i32* %3, align 4
+  %55 = srem i32 %54, 10
+  %56 = add nsw i32 %55, 48
+  %57 = trunc i32 %56 to i8
+  %58 = load i8*, i8** %6, align 8
+  %59 = load i32, i32* %4, align 4
+  %60 = load i32, i32* %7, align 4
+  %61 = sub nsw i32 %59, %60
+  %62 = sub nsw i32 %61, 1
+  %63 = sext i32 %62 to i64
+  %64 = getelementptr inbounds i8, i8* %58, i64 %63
+  store i8 %57, i8* %64, align 1
+  %65 = load i32, i32* %7, align 4
+  %66 = add nsw i32 %65, 1
+  store i32 %66, i32* %7, align 4
+  %67 = load i32, i32* %3, align 4
+  %68 = sdiv i32 %67, 10
+  store i32 %68, i32* %3, align 4
+  br label %50
+
+69:                                               ; preds = %50
+  br label %70
+
+70:                                               ; preds = %69, %22
+  %71 = call noalias i8* @malloc(i64 12) #5
+  %72 = bitcast i8* %71 to %struct.String*
+  store %struct.String* %72, %struct.String** %8, align 8
+  %73 = load i8*, i8** %6, align 8
+  %74 = load %struct.String*, %struct.String** %8, align 8
+  %75 = getelementptr inbounds %struct.String, %struct.String* %74, i32 0, i32 1
+  store i8* %73, i8** %75, align 8
+  %76 = load i32, i32* %4, align 4
+  %77 = sub nsw i32 %76, 1
+  %78 = load %struct.String*, %struct.String** %8, align 8
+  %79 = getelementptr inbounds %struct.String, %struct.String* %78, i32 0, i32 0
+  store i32 %77, i32* %79, align 8
+  %80 = load %struct.String*, %struct.String** %8, align 8
+  ret %struct.String* %80
 }
 
 ; Function Attrs: noinline nounwind optnone uwtable

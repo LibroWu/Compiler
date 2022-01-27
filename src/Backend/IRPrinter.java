@@ -242,11 +242,14 @@ public class IRPrinter implements Pass {
             case ADD -> "add";
             case SUB -> "sub";
             case OR -> "or";
+            case XOR -> "xor";
             case MUL -> "mul";
             case SDIV -> "sdiv";
             case MOD -> "srem";
             case ASHR -> "ashr";
             case SHL -> "shl";
+            case AND -> "and";
+            case LSHR -> "lshr";
             default -> "";
         };
     }
@@ -258,7 +261,7 @@ public class IRPrinter implements Pass {
             case SGE -> "sge";
             case SGT -> "sgt";
             case EQ -> "eq";
-            case NEQ -> "neq";
+            case NEQ -> "ne";
             default -> "";
         };
     }

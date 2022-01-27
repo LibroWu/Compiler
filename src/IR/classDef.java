@@ -11,12 +11,13 @@ public class classDef extends globalUnit {
     private long sizeAlign1=0,sizeAlign2=0,sizeAlign8=0,sizeAlign4=0,currentAlign2,currentAlign4,currentAlign8;
     public void addMember(IRType irType,String Identifier){
         members.add(irType);
+        IRType reduceIR = irType.reducePtr();
         IRTypeWithCounter irTypeWithCounter = new IRTypeWithCounter();
         irTypeWithCounter.counter = counter++;
         irTypeWithCounter.irType  = irType;
         memberType.put(Identifier,irTypeWithCounter);
-        int align = irType.getAlign();
-        if (align>this.align) this.align = irType.getAlign();
+        int align = reduceIR.getAlign();
+        if (align>this.align) this.align = align;
         sizeAlign1 += align;
 
         if (align > 2-currentAlign2) {
