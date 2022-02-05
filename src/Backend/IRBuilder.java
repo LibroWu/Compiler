@@ -1058,7 +1058,7 @@ public class IRBuilder implements ASTVisitor {
         } else {
             register middleReg = new register();
             mallocSize = new register();
-            if (presentNode.irType.iNum != 64) {
+            if (presentNode.irType.iNum != 32) {
                 rs = new register();
                 currentBlock.push_back(new convertOp((register) rs, presentNode.rd, convertOp.convertType.SEXT, i64, i32));
             } else rs = presentNode.rd;
@@ -1272,8 +1272,8 @@ public class IRBuilder implements ASTVisitor {
             it.rd = new register();
             register ptrReg = new register(), i8ptr = new register(), middlePtr = new register(), locate = new register(), locateMiddle = new register(), afterConvert = new register();
             IRType ptrIRType = it.postfixExpr.irType;
-            currentBlock.push_back(new convertOp(afterConvert, it.Expr.rd, convertOp.convertType.SEXT, i64, i32));
-            currentBlock.push_back(new binary(binary.opTye.MUL, i64, locateMiddle, afterConvert, new constant(ptrIRType.reducePtr().getSize())));
+            //currentBlock.push_back(new convertOp(afterConvert, it.Expr.rd, convertOp.convertType.SEXT, i64, i32));
+            currentBlock.push_back(new binary(binary.opTye.MUL, i64, locateMiddle, it.Expr.rd, new constant(ptrIRType.reducePtr().getSize())));
             currentBlock.push_back(new binary(binary.opTye.ADD, i64, locate, locateMiddle, new constant(4)));
             if (!ptrIRType.equal(i8Star))
                 currentBlock.push_back(new bitcast(i8ptr, (register) it.postfixExpr.rd, i8Star, ptrIRType));
