@@ -21,15 +21,15 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        //String name = "test\\test.mx";
+        String name = "test\\test.mx";
         String llvmOutput = "test.ll";
         String asmOutput = "test.s";
         //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\e2.mx";
-        //InputStream input = new FileInputStream(name);
+        InputStream input = new FileInputStream(name);
         PrintStream out_llvm = new PrintStream(llvmOutput);
         PrintStream out_asm = new PrintStream(asmOutput);
         //OutputStream out = System.out;
-        InputStream input = System.in;
+        //InputStream input = System.in;
         try {
             RootNode ASTRoot;
             globalScope gScope = new globalScope(null);
@@ -47,7 +47,9 @@ public class Main {
             gScope.setIdToDef(idToDef);
             gScope.setIdToFuncDef(idToFuncDef);
             new SymbolCollector(gScope).visit(ASTRoot);
-            new SemanticChecker(gScope).visit(ASTRoot);
+            SemanticChecker semanticChecker = new SemanticChecker(gScope);
+            semanticChecker.visit(ASTRoot);
+            if (semanticChecker.hasLambda) return;
             program pg = new program();
             new IRBuilder(pg, gScope,idToDef,idToFuncDef).visit(ASTRoot);
             new IRPrinter(out_llvm).visitProgram(pg);

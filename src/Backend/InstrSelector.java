@@ -331,17 +331,20 @@ public class InstrSelector implements Pass {
                     entity en = entityBlockPair.en;
                     AsmBlock from = getAsmBlock(entityBlockPair.bl);
                     Inst i = asmBlock.JumpFrom.get(from);
-                    if (en instanceof constant) {
-                        rs = t3;
-                        int constValue = getImmValue((constant) en);
-                        if (constValue > 4095) {
-                            from.insert_before(i, new Lui(rs, new Imm(constValue >>> 12)));
-                            from.insert_before(i, new IType(rs, rs, new Imm(constValue & 4095), Inst.CalCategory.add));
-                        } else from.insert_before(i, new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
-                    } else {
-                        rs = getAsmReg((register) en);
+                    if (i!=null) {
+                        if (en instanceof constant) {
+                            rs = t3;
+                            int constValue = getImmValue((constant) en);
+                            if (constValue > 4095) {
+                                from.insert_before(i, new Lui(rs, new Imm(constValue >>> 12)));
+                                from.insert_before(i, new IType(rs, rs, new Imm(constValue & 4095), Inst.CalCategory.add));
+                            } else
+                                from.insert_before(i, new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
+                        } else {
+                            rs = getAsmReg((register) en);
+                        }
+                        from.insert_before(i, new Mv(rd, rs));
                     }
-                    from.insert_before(i, new Mv(rd, rs));
                 }
             } else if (s instanceof ret) {
                 ret r = (ret) s;

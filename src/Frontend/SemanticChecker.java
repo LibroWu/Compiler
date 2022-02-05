@@ -24,6 +24,7 @@ public class SemanticChecker implements ASTVisitor {
     private funcType arraySize = new funcType("size", new Type(Type.Types.INT_TYPE));
     private int inLoop = 0, inLambdaFunction = 0;
     private boolean funcSuite = false;
+    public boolean hasLambda = false;
 
     public SemanticChecker(globalScope gScope) {
         currentScope = this.gScope = gScope;
@@ -617,6 +618,7 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(lambdaExprNode it) {
+        hasLambda = true;
         funcType lambdaFunc = new funcType();
         ++inLambdaFunction;
         currentScope = new Scope(currentScope);
