@@ -84,13 +84,13 @@ public class IRType {
     }
 
     public int getAlign(){
-        if (ptrNum>0 || arrayLen>0) return 8;
-        if (cDef!=null) return 8;
+        if (ptrNum>0 || arrayLen>0) return 4;
+        if (cDef!=null) return 4;
         return iNum/8;
     }
 
-    public long getSize(){
-        if (ptrNum>0 || arrayLen>0) return 8;
+    public int getSize(){
+        if (ptrNum>0 || arrayLen>0) return 4;
         if (cDef!=null) return cDef.getSize();
         return iNum/8;
     }

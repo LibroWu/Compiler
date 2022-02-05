@@ -1,6 +1,7 @@
 import AST.RootNode;
 import Backend.*;
 import IR.*;
+import Assembly.*;
 import Backend.IRBuilder;
 import Frontend.ASTBuilder;
 import Frontend.SemanticChecker;
@@ -20,13 +21,15 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String name = "test\\test.mx";
-        String nameOutput = "test\\test.ll";
-        //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\t62.mx";
-        InputStream input = new FileInputStream(name);
-        PrintStream out = new PrintStream(nameOutput);
+        //String name = "test\\test.mx";
+        String llvmOutput = "test.ll";
+        String asmOutput = "test.s";
+        //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\e2.mx";
+        //InputStream input = new FileInputStream(name);
+        PrintStream out_llvm = new PrintStream(llvmOutput);
+        PrintStream out_asm = new PrintStream(asmOutput);
         //OutputStream out = System.out;
-        //InputStream input = System.in;
+        InputStream input = System.in;
         try {
             RootNode ASTRoot;
             globalScope gScope = new globalScope(null);
@@ -47,7 +50,11 @@ public class Main {
             new SemanticChecker(gScope).visit(ASTRoot);
             program pg = new program();
             new IRBuilder(pg, gScope,idToDef,idToFuncDef).visit(ASTRoot);
-            new IRPrinter(out).visitProgram(pg);
+            new IRPrinter(out_llvm).visitProgram(pg);
+            AsmPg asmPg = new AsmPg();
+            new InstrSelector(asmPg).visitProgram(pg);
+            new RegAlloc(asmPg).work();
+            new AsmPrinter(asmPg,out_asm).print();
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

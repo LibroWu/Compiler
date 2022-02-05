@@ -6,9 +6,9 @@ import java.util.Set;
 
 public class program {
     public ArrayList<funcDef> funcDefs = new ArrayList<>();
-    public ArrayList<classDef> classDefs = new ArrayList<>();
+    public ArrayList<classDef> classDefs = new ArrayList<>();//useless in asm?
     public ArrayList<globalVarDecl> globalVarDecls = new ArrayList<>();
-    public ArrayList<declare> declares = new ArrayList<>();
+    public ArrayList<declare> declares = new ArrayList<>();//useless in asm
     public ArrayList<globalStringConstant> globalStringConstants = new ArrayList<>();
 
     public void push_back(funcDef gl) {

@@ -6,10 +6,11 @@ public class binary extends statement{
     }
 
     public opTye op;
-    public entity rd,rs1,rs2;
+    public entity rs1,rs2;
+    public register rd;
     public IRType irType;
 
-    public binary(opTye op,IRType irType,entity rd,entity rs1,entity rs2){
+    public binary(opTye op,IRType irType,register rd,entity rs1,entity rs2){
         this.op  = op;
         this.rd  = rd;
         this.rs1 = rs1;

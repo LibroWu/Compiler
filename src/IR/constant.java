@@ -5,7 +5,7 @@ public class constant extends entity{
         STRING,INT,VOID,BOOL
     }
     public Genre genre;
-    private long intValue;
+    private int intValue;
     private boolean boolValue;
     private String stringValue;
 
@@ -19,7 +19,7 @@ public class constant extends entity{
         this.genre = Genre.BOOL;
         this.boolValue = flag;
     }
-    public constant(long value) {
+    public constant(int value) {
         super();
         this.intValue = value;
         genre = Genre.INT;
@@ -31,7 +31,7 @@ public class constant extends entity{
         genre = Genre.STRING;
     }
 
-    public long getIntValue() { return intValue;}
+    public int getIntValue() { return intValue;}
     public String getStringValue() { return stringValue;}
     public boolean getBoolValue() {return boolValue;}
     public void setBoolValue(boolean flag) { boolValue = flag;}

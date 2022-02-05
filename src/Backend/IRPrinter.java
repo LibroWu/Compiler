@@ -11,7 +11,7 @@ public class IRPrinter implements Pass {
     private int Cnt = 0;
     private HashMap<block, Integer> blockIndex = null;
     private HashMap<register, Integer> regIndex = new HashMap<>();
-    private HashMap<register,String> regGlobal = new HashMap<>();
+    private HashMap<register, String> regGlobal = new HashMap<>();
 
     public IRPrinter(PrintStream out) {
         this.out = out;
@@ -77,9 +77,7 @@ public class IRPrinter implements Pass {
         } else if (s instanceof br) {
         } else if (s instanceof call) {
             call c = (call) s;
-            if (c.rd!=null) getRegName(c.rd);
-        } else if (s instanceof constStmt) {
-
+            if (c.rd != null) getRegName(c.rd);
         } else if (s instanceof convertOp) {
             convertOp con = (convertOp) s;
             getRegName(con.rd);
@@ -139,41 +137,41 @@ public class IRPrinter implements Pass {
         for (int i = 0; i < len - 1; ++i) {
             out.print(getType(f.members.get(i).reducePtr()) + ", ");
         }
-        if (len>0) out.print(getType(f.members.get(len - 1).reducePtr()) + " }");
+        if (len > 0) out.print(getType(f.members.get(len - 1).reducePtr()) + " }");
         else out.print("}");
         out.println();
     }
 
     @Override
     public void visitGlobalVarDecl(globalVarDecl gv) {
-        regGlobal.put(gv.rd,gv.name);
-        out.println(getRegName(gv.rd)+" = global "+getType(gv.rsType)+" "+getEntityString(gv.rs)+", align "+gv.align);
+        regGlobal.put(gv.rd, gv.name);
+        out.println(getRegName(gv.rd) + " = global " + getType(gv.rsType) + " " + getEntityString(gv.rs) + ", align " + gv.align);
     }
 
     @Override
     public void visitGlobalStringConstant(globalStringConstant gs) {
-        regGlobal.put(gs.rd,".libro.str" + ((gs.counter==0)?"":"."+gs.counter));
-        out.println(getRegName(gs.rd)+ " = constant " + getType(gs.irType)+" c"+gs.content+", align 1");
+        regGlobal.put(gs.rd, ".libro.str" + ((gs.counter == 0) ? "" : "." + gs.counter));
+        out.println(getRegName(gs.rd) + " = constant " + getType(gs.irType) + " c" + gs.content + ", align 1");
     }
 
     @Override
     public void visitDeclare(declare dec) {
-        out.print("declare "+ getType(dec.retType) + " @" + dec.funcName+"(");
+        out.print("declare " + getType(dec.retType) + " @" + dec.funcName + "(");
         int len = dec.parameters.size();
-        for (int i=0;i<len;++i) {
+        for (int i = 0; i < len; ++i) {
             out.print(getType(dec.parameters.get(i)));
-            if (i!=len-1) out.print(", ");
+            if (i != len - 1) out.print(", ");
         }
         out.println(")");
     }
 
-    private String getUnnamedClassDef(classDef cDef){
+    private String getUnnamedClassDef(classDef cDef) {
         StringBuilder s = new StringBuilder("{ ");
         int len = cDef.members.size();
         for (int i = 0; i < len - 1; ++i) {
             s.append(getType(cDef.members.get(i).reducePtr()) + ", ");
         }
-        if (len>0) s.append(getType(cDef.members.get(len - 1).reducePtr()) + " }");
+        if (len > 0) s.append(getType(cDef.members.get(len - 1).reducePtr()) + " }");
         else s.append("}");
         return s.toString();
     }
@@ -186,7 +184,7 @@ public class IRPrinter implements Pass {
         } else if (irType.cDef == null) {
             s = new StringBuilder("i" + irType.iNum);
         } else {
-            if (irType.cDef.structName!=null) s = new StringBuilder("%struct."+irType.cDef.structName);
+            if (irType.cDef.structName != null) s = new StringBuilder("%struct." + irType.cDef.structName);
             else s = new StringBuilder(getUnnamedClassDef(irType.cDef));
         }
         int len = irType.ptrNum;
@@ -200,9 +198,9 @@ public class IRPrinter implements Pass {
         if (irType.cDef == null) {
             s = new StringBuilder("i" + irType.iNum);
         } else {
-            s = new StringBuilder("%struct."+irType.cDef.structName);
+            s = new StringBuilder("%struct." + irType.cDef.structName);
         }
-        int len = irType.ptrNum-1;
+        int len = irType.ptrNum - 1;
         s.append("*".repeat(Math.max(0, len)));
         if (irType.arrayLen > 0) {
             s = new StringBuilder("[" + irType.arrayLen + " x " + s.toString() + "]");
@@ -226,7 +224,7 @@ public class IRPrinter implements Pass {
     }
 
     private String getEntityString(entity e) {
-        if (e==null) return "";
+        if (e == null) return "";
         if (e instanceof register) return getRegName((register) e);
         else {
             constant constE = (constant) e;
@@ -293,28 +291,26 @@ public class IRPrinter implements Pass {
             }
         } else if (s instanceof call) {
             call c = (call) s;
-            if (c.rd!=null) out.print(getRegName(c.rd) + " = call " + getType(c.rdType) + " @" + c.funcName + "(");
+            if (c.rd != null) out.print(getRegName(c.rd) + " = call " + getType(c.rdType) + " @" + c.funcName + "(");
             else out.print("call " + getType(c.rdType) + " @" + c.funcName + "(");
             int len = c.parameters.size();
             for (int i = 0; i < len - 1; ++i) {
                 entityTypePair para = c.parameters.get(i);
                 out.print(getType(para.ir) + " " + getEntityString(para.en) + ", ");
             }
-            if (len>0) {
+            if (len > 0) {
                 entityTypePair para = c.parameters.get(len - 1);
                 out.print(getType(para.ir) + " " + getEntityString(para.en) + ")");
             } else out.print(")");
-        } else if (s instanceof constStmt) {
-
         } else if (s instanceof convertOp) {
             convertOp con = (convertOp) s;
             out.print(getRegName(con.rd) + " = " + getConvertOp(con.convert) + " " + getType(con.rsType) + " " + getEntityString(con.rs) + " to " + getType(con.rdType));
         } else if (s instanceof getelementptr) {
             getelementptr g = (getelementptr) s;
-            if (g.rsType.cDef!=null)
-                out.print(getRegName(g.rd) + " = getelementptr "+ getTypeWithPtrMinus1(g.rsType)+", "+getType(g.rsType) +" "+getRegName(g.rs) + ", i64 "+getEntityString(g.locator1)+", i32 "+getEntityString(g.locator2));
+            if (g.rsType.cDef != null)
+                out.print(getRegName(g.rd) + " = getelementptr " + getTypeWithPtrMinus1(g.rsType) + ", " + getType(g.rsType) + " " + getRegName(g.rs) + ", i32 " + getEntityString(g.locator1) + ", i32 " + getEntityString(g.locator2));
             else
-                out.print(getRegName(g.rd) + " = getelementptr "+ getTypeWithPtrMinus1(g.rsType)+", "+getType(g.rsType) +" "+getRegName(g.rs) + ", i64 "+getEntityString(g.locator1));
+                out.print(getRegName(g.rd) + " = getelementptr " + getTypeWithPtrMinus1(g.rsType) + ", " + getType(g.rsType) + " " + getRegName(g.rs) + ", i32 " + getEntityString(g.locator1));
         } else if (s instanceof icmp) {
             icmp ic = (icmp) s;
             out.print(getRegName(ic.rd) + " = icmp " + getCmpOp(ic.cmpOp) + " " + getType(ic.rsType) + " " + getEntityString(ic.rs1) + ", " + getEntityString(ic.rs2));
@@ -340,7 +336,7 @@ public class IRPrinter implements Pass {
             out.print("store " + getType(t.resourceType) + " " + getEntityString(t.resource) + ", " + getType(t.resourceType.getPtr()) + " " + getRegName(t.target) + ", align " + t.align);
         } else if (s instanceof bitcast) {
             bitcast b = (bitcast) s;
-            out.print(getRegName(b.rd)+" = bitcast "+getType(b.rsType)+" " + getRegName(b.rs)+" to "+getType(b.rdType));
+            out.print(getRegName(b.rd) + " = bitcast " + getType(b.rsType) + " " + getRegName(b.rs) + " to " + getType(b.rdType));
         }
         if (s.Comments != null) {
             out.println(";" + s.Comments);
