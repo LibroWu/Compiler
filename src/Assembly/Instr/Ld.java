@@ -26,10 +26,10 @@ public class Ld extends Inst {
     public String toString() {
         String op;
         switch (byteLen) {
-            case 4 -> op = "lw ";
-            case 2 -> op = "lh ";
-            case 1 -> op = "lb ";
-            default -> op = null;
+            case 4: op = "lw ";break;
+            case 2: op = "lh ";break;
+            case 1: op = "lb ";break;
+            default: op = null;
         }
         return op + rd + ", " + offset + "(" + addr + ")";
     }

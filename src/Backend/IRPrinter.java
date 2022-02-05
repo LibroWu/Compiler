@@ -236,42 +236,93 @@ public class IRPrinter implements Pass {
     }
 
     private String getOp(binary.opTye op) {
-        return switch (op) {
-            case ADD -> "add";
-            case SUB -> "sub";
-            case OR -> "or";
-            case XOR -> "xor";
-            case MUL -> "mul";
-            case SDIV -> "sdiv";
-            case MOD -> "srem";
-            case ASHR -> "ashr";
-            case SHL -> "shl";
-            case AND -> "and";
-            case LSHR -> "lshr";
-            default -> "";
-        };
+        String s;
+        switch (op) {
+            case ADD:
+                s = "add";
+                break;
+            case SUB:
+                s = "sub";
+                break;
+            case OR:
+                s = "or";
+                break;
+            case XOR:
+                s = "xor";
+                break;
+            case MUL:
+                s = "mul";
+                break;
+            case SDIV:
+                s = "sdiv";
+                break;
+            case MOD:
+                s = "srem";
+                break;
+            case ASHR:
+                s = "ashr";
+                break;
+            case SHL:
+                s = "shl";
+                break;
+            case AND:
+                s = "and";
+                break;
+            case LSHR:
+                s = "lshr";
+                break;
+            default:
+                s = "";
+                break;
+        }
+        return s;
     }
 
     private String getCmpOp(icmp.cmpOpType op) {
-        return switch (op) {
-            case SLE -> "sle";
-            case SLT -> "slt";
-            case SGE -> "sge";
-            case SGT -> "sgt";
-            case EQ -> "eq";
-            case NEQ -> "ne";
-            default -> "";
-        };
+        String s;
+        switch (op) {
+            case SLE:
+                s = "sle";
+                break;
+            case SLT:
+                s = "slt";
+                break;
+            case SGE:
+                s = "sge";
+                break;
+            case SGT:
+                s = "sgt";
+                break;
+            case EQ:
+                s = "eq";
+                break;
+            case NEQ:
+                s = "ne";
+                break;
+            default:
+                s = "";
+        }
+        return s;
     }
 
     private String getConvertOp(convertOp.convertType op) {
-        return switch (op) {
-            case TRUNC -> "trunc";
-            case SEXT -> "sext";
-            case ZEXT -> "zext";
-            default -> "";
-        };
+        String s;
+        switch (op) {
+            case TRUNC:
+                s = "trunc";
+                break;
+            case SEXT:
+                s = "sext";
+                break;
+            case ZEXT:
+                s = "zext";
+                break;
+            default:
+                s = "";
+        }
+        return s;
     }
+
 
     private void print(statement s) {
         out.print("\t");

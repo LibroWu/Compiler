@@ -63,7 +63,8 @@ public class RegAlloc {
 
     public void workInBlock(AsmBlock b) {
         for (Inst i = b.headInst; i != null; i = i.next) {
-            if (i instanceof Br br) {
+            if (i instanceof Br) {
+                Br br = (Br) i;
                 if (br.src1 instanceof virtualReg) {
                     b.insert_before(i, loadVirtualReg((virtualReg) br.src1, t0));
                     br.src1 = t0;
@@ -72,7 +73,8 @@ public class RegAlloc {
                     b.insert_before(i, loadVirtualReg((virtualReg) br.src2, t1));
                     br.src2 = t1;
                 }
-            } else if (i instanceof IType it) {
+            } else if (i instanceof IType) {
+                IType it = (IType) i;
                 if (it.rs instanceof virtualReg) {
                     b.insert_before(i, loadVirtualReg((virtualReg) it.rs, t0));
                     it.rs = t0;
@@ -81,11 +83,13 @@ public class RegAlloc {
                     b.insert_after(i, storeVirtualReg((virtualReg) it.rd));
                     it.rd = t2;
                 }
-            } else if (i instanceof Li l) {
+            } else if (i instanceof Li) {
+                Li l = (Li) i;
                 if (l.rd instanceof virtualReg) //return 0;
                     b.insert_after(i, storeVirtualReg((virtualReg) l.rd));
                 l.rd = t2;
-            } else if (i instanceof Mv m) {
+            } else if (i instanceof Mv) {
+                Mv m = (Mv) i;
                 if (m.rs1 instanceof virtualReg) {
                     b.insert_before(i, loadVirtualReg((virtualReg) m.rs1, t0));
                     m.rs1 = t0;
@@ -94,7 +98,8 @@ public class RegAlloc {
                     b.insert_after(i, storeVirtualReg((virtualReg) m.rd));
                     m.rd = t2;
                 }
-            } else if (i instanceof RType r) {
+            } else if (i instanceof RType) {
+                RType r = (RType) i;
                 if (r.rs1 instanceof virtualReg) {
                     b.insert_before(i, loadVirtualReg((virtualReg) r.rs1, t0));
                     r.rs1 = t0;
@@ -107,14 +112,16 @@ public class RegAlloc {
                     b.insert_after(i, storeVirtualReg((virtualReg) r.rd));
                     r.rd = t2;
                 }
-            } else if (i instanceof Lui lui) {
+            } else if (i instanceof Lui) {
+                Lui lui = (Lui) i;
                 if (lui.rd instanceof virtualReg) {
                     b.insert_after(i, storeVirtualReg((virtualReg) lui.rd));
                     lui.rd = t2;
                 }
             } else if (i instanceof Ret) {
                 tailBlock = b;
-            } else if (i instanceof Ld ld) {
+            } else if (i instanceof Ld ) {
+                Ld ld =(Ld) i;
                 if (ld.addr instanceof virtualReg) {
                     b.insert_before(i,loadVirtualReg((virtualReg) ld.addr, t0));
                     ld.addr = t0;
@@ -123,7 +130,8 @@ public class RegAlloc {
                     b.insert_after(i,storeVirtualReg((virtualReg) ld.rd));
                     ld.rd = t2;
                 }
-            } else if (i instanceof St st) {
+            } else if (i instanceof St) {
+                St st = (St) i;
                 if (st.addr instanceof virtualReg) {
                     b.insert_before(i,loadVirtualReg((virtualReg) st.addr, t0));
                     st.addr = t0;
@@ -132,7 +140,8 @@ public class RegAlloc {
                     b.insert_before(i,loadVirtualReg((virtualReg) st.rs, t1));
                     st.rs = t1;
                 }
-            } else if (i instanceof La la) {
+            } else if (i instanceof La ) {
+                La la = (La) i;
                 if (la.rd instanceof virtualReg) {
                     b.insert_after(i,storeVirtualReg((virtualReg) la.rd));
                     la.rd = t2;

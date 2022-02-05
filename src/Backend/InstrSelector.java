@@ -13,7 +13,7 @@ public class InstrSelector implements Pass {
     private HashMap<block, AsmBlock> blockMap = new HashMap<>();
     private HashMap<register, virtualReg> regMap = new HashMap<>();
     private int cnt = 0, reserveCnt = 0;
-    private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5,a0;
+    private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5, a0;
     private Imm ImmZero = new Imm(0);
 
     public AsmPg asmPg;
@@ -50,10 +50,16 @@ public class InstrSelector implements Pass {
     private int getImmValue(constant c) {
         int value;
         switch (c.genre) {
-            case BOOL -> value = c.getBoolValue() ? 1 : 0;
-            case INT -> value = c.getIntValue();
-            case VOID -> value = 0;
-            default -> {
+            case BOOL:
+                value = c.getBoolValue() ? 1 : 0;
+                break;
+            case INT:
+                value = c.getIntValue();
+                break;
+            case VOID:
+                value = 0;
+                break;
+            default: {
                 return 0;
             }
         }
@@ -80,8 +86,8 @@ public class InstrSelector implements Pass {
         AsmBlock rootBlock = getAsmBlock(f.rootBlock);
         int parameterCnt = 0;
         for (register parameterReg : f.parameterRegs) {
-            if (parameterCnt < 8 ) {
-                rootBlock.push_back(new Mv(getAsmReg(parameterReg),asmPg.phyRegs.get(10+parameterCnt)));
+            if (parameterCnt < 8) {
+                rootBlock.push_back(new Mv(getAsmReg(parameterReg), asmPg.phyRegs.get(10 + parameterCnt)));
             } else {
 
             }
@@ -98,21 +104,45 @@ public class InstrSelector implements Pass {
     public void visitBlock(block b) {
         AsmBlock asmBlock = getAsmBlock(b);
         b.stmts().forEach(s -> {
-            if (s instanceof binary bi) {
+            if (s instanceof binary) {
+                binary bi = (binary) s;
                 Inst.CalCategory op;
                 switch (bi.op) {
-                    case ADD -> op = Inst.CalCategory.add;
-                    case SUB -> op = Inst.CalCategory.sub;
-                    case MUL -> op = Inst.CalCategory.mul;
-                    case SDIV -> op = Inst.CalCategory.div;
-                    case MOD -> op = Inst.CalCategory.rem;
-                    case AND -> op = Inst.CalCategory.and;
-                    case OR -> op = Inst.CalCategory.or;
-                    case XOR -> op = Inst.CalCategory.xor;
-                    case ASHR -> op = Inst.CalCategory.sra;
-                    case LSHR -> op = Inst.CalCategory.srl;
-                    case SHL -> op = Inst.CalCategory.sll;
-                    default -> op = null;
+                    case ADD:
+                        op = Inst.CalCategory.add;
+                        break;
+                    case SUB:
+                        op = Inst.CalCategory.sub;
+                        break;
+                    case MUL:
+                        op = Inst.CalCategory.mul;
+                        break;
+                    case SDIV:
+                        op = Inst.CalCategory.div;
+                        break;
+                    case MOD:
+                        op = Inst.CalCategory.rem;
+                        break;
+                    case AND:
+                        op = Inst.CalCategory.and;
+                        break;
+                    case OR:
+                        op = Inst.CalCategory.or;
+                        break;
+                    case XOR:
+                        op = Inst.CalCategory.xor;
+                        break;
+                    case ASHR:
+                        op = Inst.CalCategory.sra;
+                        break;
+                    case LSHR:
+                        op = Inst.CalCategory.srl;
+                        break;
+                    case SHL:
+                        op = Inst.CalCategory.sll;
+                        break;
+                    default:
+                        op = null;
                 }
                 Reg rd = getAsmReg(bi.rd);
                 if (bi.rs1 instanceof constant) {
@@ -146,22 +176,24 @@ public class InstrSelector implements Pass {
                         asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), getAsmReg((register) bi.rs2), op));
                     }
                 }
-            } else if (s instanceof br branch) {
+            } else if (s instanceof br) {
+                br branch = (br) s;
                 if (branch.val == null) {
                     AsmBlock target = getAsmBlock(branch.trueBranch);
                     Jp jp = new Jp(target);
-                    target.JumpFrom.put(asmBlock,jp);
+                    target.JumpFrom.put(asmBlock, jp);
                     asmBlock.push_back(jp);
                 } else {
-                    AsmBlock targetT = getAsmBlock(branch.trueBranch),targetF=getAsmBlock(branch.falseBranch);
+                    AsmBlock targetT = getAsmBlock(branch.trueBranch), targetF = getAsmBlock(branch.falseBranch);
                     Jp jpT = new Jp(targetT);
-                    targetT.JumpFrom.put(asmBlock,jpT);
+                    targetT.JumpFrom.put(asmBlock, jpT);
                     Br brF = new Br(Inst.CompareCategory.eq, getAsmReg(branch.val), null, targetF);
-                    targetF.JumpFrom.put(asmBlock,brF);
+                    targetF.JumpFrom.put(asmBlock, brF);
                     asmBlock.push_back(brF);
                     asmBlock.push_back(jpT);
                 }
-            } else if (s instanceof call c) {
+            } else if (s instanceof call) {
+                call c = (call) s;
                 int parameterCnt = 0;
                 for (entityTypePair parameter : c.parameters) {
                     Reg rs;
@@ -174,9 +206,9 @@ public class InstrSelector implements Pass {
                             asmBlock.push_back(new IType(rs, rs, new Imm(constValue & 4095), Inst.CalCategory.add));
                         } else asmBlock.push_back(new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
                     } else {
-                        rs= getAsmReg((register) en);
+                        rs = getAsmReg((register) en);
                     }
-                    if (parameterCnt<8) {
+                    if (parameterCnt < 8) {
                         asmBlock.push_back(new Mv(asmPg.phyRegs.get(parameterCnt + 10), rs));
                     } else {
 
@@ -184,8 +216,9 @@ public class InstrSelector implements Pass {
                     parameterCnt++;
                 }
                 asmBlock.push_back(new FuncCall(c.funcName));
-                if (c.rd != null) asmBlock.push_back(new Mv(getAsmReg(c.rd),a0));
-            } else if (s instanceof convertOp con) {
+                if (c.rd != null) asmBlock.push_back(new Mv(getAsmReg(c.rd), a0));
+            } else if (s instanceof convertOp) {
+                convertOp con = (convertOp) s;
                 if (con.rs instanceof constant) {
                     Reg rs = t3;
                     int constValue = getImmValue((constant) con.rs);
@@ -194,28 +227,30 @@ public class InstrSelector implements Pass {
                         asmBlock.push_back(new IType(rs, rs, new Imm(constValue & 4095), Inst.CalCategory.add));
                     } else asmBlock.push_back(new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
                     virtualReg vr = getAsmReg(con.rd);
-                    asmBlock.push_back(new Mv(vr,rs));
+                    asmBlock.push_back(new Mv(vr, rs));
                 } else {
-                    regMap.put(con.rd,getAsmReg((register) con.rs));
+                    regMap.put(con.rd, getAsmReg((register) con.rs));
                 }
-            } else if (s instanceof getelementptr getelem) {
+            } else if (s instanceof getelementptr) {
+                getelementptr getelem = (getelementptr) s;
                 IRType irType = getelem.rsType;
-                Reg rd = getAsmReg(getelem.rd),rs = getAsmReg(getelem.rs);
-                if (irType.cDef==null){
+                Reg rd = getAsmReg(getelem.rd), rs = getAsmReg(getelem.rs);
+                if (irType.cDef == null) {
                     //array
                     int atomSize = irType.reducePtr().getSize();
                     entity en = getelem.locator1;
                     if (en instanceof constant) {
-                        int constValue = getImmValue((constant) en)*atomSize;
+                        int constValue = getImmValue((constant) en) * atomSize;
                         if (constValue > 4095) {
                             asmBlock.push_back(new Lui(t3, new Imm(constValue >>> 12)));
                             asmBlock.push_back(new IType(t3, t3, new Imm(constValue & 4095), Inst.CalCategory.add));
-                            asmBlock.push_back(new RType(rd,rs,t3, Inst.CalCategory.add));
+                            asmBlock.push_back(new RType(rd, rs, t3, Inst.CalCategory.add));
                         } else asmBlock.push_back(new IType(rd, rs, new Imm(constValue), Inst.CalCategory.add));
                     } else {
-                        Reg tmp= getAsmReg((register) en);
-                        if (atomSize>1) asmBlock.push_back(new IType(tmp,tmp,new Imm(atomSize), Inst.CalCategory.mul));
-                        asmBlock.push_back(new RType(rd,rs,tmp, Inst.CalCategory.add));
+                        Reg tmp = getAsmReg((register) en);
+                        if (atomSize > 1)
+                            asmBlock.push_back(new IType(tmp, tmp, new Imm(atomSize), Inst.CalCategory.mul));
+                        asmBlock.push_back(new RType(rd, rs, tmp, Inst.CalCategory.add));
                     }
                 } else {
                     //class
@@ -223,11 +258,12 @@ public class InstrSelector implements Pass {
                     constant con = (constant) getelem.locator2;
                     IRTypeWithCounter irTypeWithCounter = cDef.memberForAsm.get(con.getIntValue());
                     int offset;
-                    if (cDef.align==1) offset = irTypeWithCounter.offset1;
+                    if (cDef.align == 1) offset = irTypeWithCounter.offset1;
                     else offset = irTypeWithCounter.offset4;
-                    asmBlock.push_back(new IType(rd,rs,new Imm(offset), Inst.CalCategory.add));
+                    asmBlock.push_back(new IType(rd, rs, new Imm(offset), Inst.CalCategory.add));
                 }
-            } else if (s instanceof icmp ic) {
+            } else if (s instanceof icmp) {
+                icmp ic = (icmp) s;
                 Reg rd = getAsmReg(ic.rd), rs1, rs2;
                 if (ic.rs1 instanceof constant) {
                     rs1 = t3;
@@ -250,37 +286,47 @@ public class InstrSelector implements Pass {
                     rs2 = getAsmReg((register) ic.rs2);
                 }
                 switch (ic.cmpOp) {
-                    case SLT -> asmBlock.push_back(new RType(rd, rs1, rs2, Inst.CalCategory.slt));
-                    case SLE -> {
+                    case SLT:
+                        asmBlock.push_back(new RType(rd, rs1, rs2, Inst.CalCategory.slt));
+                        break;
+                    case SLE: {
                         asmBlock.push_back(new RType(t5, rs2, rs1, Inst.CalCategory.slt));
-                        asmBlock.push_back(new IType(rd,t5,ImmZero, Inst.CalCategory.seq));
+                        asmBlock.push_back(new IType(rd, t5, ImmZero, Inst.CalCategory.seq));
+                        break;
                     }
-                    case SGT -> asmBlock.push_back(new RType(rd, rs2, rs1, Inst.CalCategory.slt));
-                    case SGE -> {
+                    case SGT:
+                        asmBlock.push_back(new RType(rd, rs2, rs1, Inst.CalCategory.slt));
+                        break;
+                    case SGE: {
                         asmBlock.push_back(new RType(t5, rs1, rs2, Inst.CalCategory.slt));
-                        asmBlock.push_back(new IType(rd,t5,ImmZero, Inst.CalCategory.seq));
+                        asmBlock.push_back(new IType(rd, t5, ImmZero, Inst.CalCategory.seq));
+                        break;
                     }
-                    case EQ -> {
-                        asmBlock.push_back(new RType(t5,rs1,rs2, Inst.CalCategory.xor));
-                        asmBlock.push_back(new IType(rd,t5,ImmZero, Inst.CalCategory.seq));
+                    case EQ: {
+                        asmBlock.push_back(new RType(t5, rs1, rs2, Inst.CalCategory.xor));
+                        asmBlock.push_back(new IType(rd, t5, ImmZero, Inst.CalCategory.seq));
+                        break;
                     }
-                    case NEQ -> {
-                        asmBlock.push_back(new RType(t5,rs1,rs2, Inst.CalCategory.xor));
-                        asmBlock.push_back(new IType(rd,t5,ImmZero, Inst.CalCategory.sne));
+                    case NEQ: {
+                        asmBlock.push_back(new RType(t5, rs1, rs2, Inst.CalCategory.xor));
+                        asmBlock.push_back(new IType(rd, t5, ImmZero, Inst.CalCategory.sne));
+                        break;
                     }
                 }
-            } else if (s instanceof load l) {
+            } else if (s instanceof load) {
+                load l = (load) s;
                 if (l.ptr.label != null) {
                     asmBlock.push_back(new La(t3, l.ptr.label));
                     asmBlock.push_back(new Ld(getAsmReg(l.rd), t3, ImmZero));
                 } else {
                     virtualReg vr = getAsmReg(l.ptr);
-                    if (vr.index<0)
-                    asmBlock.push_back(new Ld(getAsmReg(l.rd), s0, new Imm(vr.index * 4)));
+                    if (vr.index < 0)
+                        asmBlock.push_back(new Ld(getAsmReg(l.rd), s0, new Imm(vr.index * 4)));
                     else asmBlock.push_back(new Ld(getAsmReg(l.rd), vr, ImmZero));
                 }
-            } else if (s instanceof phi p) {
-                Reg rd = getAsmReg(p.rd),rs;
+            } else if (s instanceof phi) {
+                phi p = (phi) s;
+                Reg rd = getAsmReg(p.rd), rs;
                 for (entityBlockPair entityBlockPair : p.entityBlockPairs) {
                     entity en = entityBlockPair.en;
                     AsmBlock from = getAsmBlock(entityBlockPair.bl);
@@ -289,15 +335,16 @@ public class InstrSelector implements Pass {
                         rs = t3;
                         int constValue = getImmValue((constant) en);
                         if (constValue > 4095) {
-                            from.insert_before(i,new Lui(rs, new Imm(constValue >>> 12)));
-                            from.insert_before(i,new IType(rs, rs, new Imm(constValue & 4095), Inst.CalCategory.add));
-                        } else from.insert_before(i,new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
+                            from.insert_before(i, new Lui(rs, new Imm(constValue >>> 12)));
+                            from.insert_before(i, new IType(rs, rs, new Imm(constValue & 4095), Inst.CalCategory.add));
+                        } else from.insert_before(i, new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
                     } else {
-                        rs= getAsmReg((register) en);
+                        rs = getAsmReg((register) en);
                     }
-                    from.insert_before(i,new Mv(rd,rs));
+                    from.insert_before(i, new Mv(rd, rs));
                 }
-            } else if (s instanceof ret r) {
+            } else if (s instanceof ret) {
+                ret r = (ret) s;
                 if (r.value != null) {
                     if (r.value instanceof register)
                         asmBlock.push_back(
@@ -308,7 +355,8 @@ public class InstrSelector implements Pass {
                     );
                 }   // First move the return value to x10, then return
                 asmBlock.push_back(new Ret());
-            } else if (s instanceof store st) {
+            } else if (s instanceof store) {
+                store st = (store) s;
                 Reg rs;
                 if (st.resource instanceof constant) {
                     rs = t4;
@@ -325,14 +373,15 @@ public class InstrSelector implements Pass {
                     asmBlock.push_back(new St(rs, t3, ImmZero));
                 } else {
                     virtualReg vr = getAsmReg(st.target);
-                    if (vr.index<0)
+                    if (vr.index < 0)
                         asmBlock.push_back(new St(rs, s0, new Imm(vr.index * 4)));
                     else asmBlock.push_back(new St(rs, vr, ImmZero));
                 }
-            } else if (s instanceof bitcast bit) {
-                if (bit.rs.label!=null) {
-                    asmBlock.push_back(new La(getAsmReg(bit.rd),bit.rs.label));
-                }else regMap.put(bit.rd,getAsmReg(bit.rs));
+            } else if (s instanceof bitcast) {
+                bitcast bit = (bitcast) s;
+                if (bit.rs.label != null) {
+                    asmBlock.push_back(new La(getAsmReg(bit.rd), bit.rs.label));
+                } else regMap.put(bit.rd, getAsmReg(bit.rs));
             }
         });
         b.successors.forEach(succ -> {
@@ -343,12 +392,12 @@ public class InstrSelector implements Pass {
 
     @Override
     public void visitGlobalVarDecl(globalVarDecl gv) {
-        asmPg.globals.add(new AsmGlobal(gv.name,gv.align,""+getImmValue((constant) gv.rs),false));
+        asmPg.globals.add(new AsmGlobal(gv.name, gv.align, "" + getImmValue((constant) gv.rs), false));
     }
 
     @Override
     public void visitGlobalStringConstant(globalStringConstant gs) {
-        asmPg.globals.add(new AsmGlobal(".libro.str" + ((gs.counter == 0) ? "" : "." + gs.counter),gs.irType.arrayLen,gs.content, true));
+        asmPg.globals.add(new AsmGlobal(".libro.str" + ((gs.counter == 0) ? "" : "." + gs.counter), gs.irType.arrayLen, gs.content, true));
     }
 
     @Override
