@@ -24,11 +24,11 @@ public class RegAlloc {
     }
 
     private Inst loadVirtualReg(virtualReg r, PhyReg rd) {
-        return new Ld(rd, sp, new Imm(r.index * 4));
+        return new Ld(rd, sp, new Imm(r.index * 4),4);
     }
 
     private Inst storeVirtualReg(virtualReg r) {
-        return new St(t2, sp, new Imm(r.index * 4));
+        return new St(t2, sp, new Imm(r.index * 4),4);
     }
 
     public void work() {
@@ -42,19 +42,19 @@ public class RegAlloc {
                 new IType(s0, sp, new Imm(func.stackLength), Inst.CalCategory.add)
         );
         func.rootBlock.insert_before(func.rootBlock.headInst,
-                new St(s0, sp, new Imm(func.stackLength - 8))
+                new St(s0, sp, new Imm(func.stackLength - 8),4)
         );
         func.rootBlock.insert_before(func.rootBlock.headInst,
-                new St(ra, sp, new Imm(func.stackLength - 4))
+                new St(ra, sp, new Imm(func.stackLength - 4),4)
         );
         func.rootBlock.insert_before(func.rootBlock.headInst,
                 new IType(sp, sp, new Imm(func.stackLength * -1), Inst.CalCategory.add)
         );
         tailBlock.insert_before(tailBlock.tailInst,
-                new Ld(s0, sp, new Imm(func.stackLength - 8))
+                new Ld(s0, sp, new Imm(func.stackLength - 8),4)
         );
         tailBlock.insert_before(tailBlock.tailInst,
-                new Ld(ra, sp, new Imm(func.stackLength - 4))
+                new Ld(ra, sp, new Imm(func.stackLength - 4),4)
         );
         tailBlock.insert_before(tailBlock.tailInst,
                 new IType(sp, sp, new Imm(func.stackLength), Inst.CalCategory.add)

@@ -8,13 +8,6 @@ public class Ld extends Inst {
     public Imm offset;
     public int byteLen;
 
-    public Ld(Reg rd, Reg addr, Imm offset) {
-        this.rd = rd;
-        this.addr = addr;
-        this.offset = offset;
-        byteLen = 4;
-    }
-
     public Ld(Reg rd, Reg addr, Imm offset,int byteLen) {
         this.rd = rd;
         this.addr = addr;

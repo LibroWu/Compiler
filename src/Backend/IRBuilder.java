@@ -1354,7 +1354,7 @@ public class IRBuilder implements ASTVisitor {
             irType.isString = true;
             int tmpCnt = pg.globalStringConstants.size();
             rd.label = ".libro.str"+((tmpCnt>0)?"."+tmpCnt:"");
-            pg.push_back(new globalStringConstant(content, tmpCnt, (register) it.rd, irType));
+            pg.push_back(new globalStringConstant(content,it.literal, tmpCnt, (register) it.rd, irType));
             it.irType = irType.getPtr();
             it.idReg = (register) it.rd;
         } else if (it.isNull) {

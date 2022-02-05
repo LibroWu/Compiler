@@ -330,12 +330,12 @@ public class InstrSelector implements Pass {
                 load l = (load) s;
                 if (l.ptr.label != null) {
                     asmBlock.push_back(new La(t3, l.ptr.label));
-                    asmBlock.push_back(new Ld(getAsmReg(l.rd), t3, ImmZero));
+                    asmBlock.push_back(new Ld(getAsmReg(l.rd), t3, ImmZero,l.align));
                 } else {
                     virtualReg vr = getAsmReg(l.ptr);
                     if (vr.index < 0)
-                        asmBlock.push_back(new Ld(getAsmReg(l.rd), s0, new Imm(vr.index * 4)));
-                    else asmBlock.push_back(new Ld(getAsmReg(l.rd), vr, ImmZero));
+                        asmBlock.push_back(new Ld(getAsmReg(l.rd), s0, new Imm(vr.index * 4),l.align));
+                    else asmBlock.push_back(new Ld(getAsmReg(l.rd), vr, ImmZero,l.align));
                 }
             } else if (s instanceof phi) {
                 phi p = (phi) s;
@@ -388,12 +388,12 @@ public class InstrSelector implements Pass {
                 }
                 if (st.target.label != null) {
                     asmBlock.push_back(new La(t3, st.target.label));
-                    asmBlock.push_back(new St(rs, t3, ImmZero));
+                    asmBlock.push_back(new St(rs, t3, ImmZero,st.align));
                 } else {
                     virtualReg vr = getAsmReg(st.target);
                     if (vr.index < 0)
-                        asmBlock.push_back(new St(rs, s0, new Imm(vr.index * 4)));
-                    else asmBlock.push_back(new St(rs, vr, ImmZero));
+                        asmBlock.push_back(new St(rs, s0, new Imm(vr.index * 4),st.align));
+                    else asmBlock.push_back(new St(rs, vr, ImmZero,st.align));
                 }
             } else if (s instanceof bitcast) {
                 bitcast bit = (bitcast) s;
@@ -415,7 +415,7 @@ public class InstrSelector implements Pass {
 
     @Override
     public void visitGlobalStringConstant(globalStringConstant gs) {
-        asmPg.globals.add(new AsmGlobal(".libro.str" + ((gs.counter == 0) ? "" : "." + gs.counter), gs.irType.arrayLen, gs.content, true));
+        asmPg.globals.add(new AsmGlobal(".libro.str" + ((gs.counter == 0) ? "" : "." + gs.counter), gs.irType.arrayLen, gs.rawString, true));
     }
 
     @Override
