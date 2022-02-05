@@ -358,7 +358,6 @@ public class IRBuilder implements ASTVisitor {
         it.cond.accept(this);
         block TBlock = new block(), FBlock, ConvergeBlock = new block();
         if (it.falseStmt != null) {
-            currentScope = new globalScope(currentScope);
             FBlock = new block();
             if (it.cond.rd instanceof constant) {
                 constant con = (constant) it.cond.rd;
@@ -368,13 +367,17 @@ public class IRBuilder implements ASTVisitor {
                     currentBlock.successors.add(TBlock);
                     TBlock.jumpTo = true;
                     currentBlock = TBlock;
+                    currentScope = new globalScope(currentScope);
                     it.trueStmt.accept(this);
+                    currentScope = currentScope.parentScope();
                 } else {
                     currentBlock.push_back(new br(null, FBlock, null));
                     currentBlock.successors.add(FBlock);
                     FBlock.jumpTo = true;
                     currentBlock = FBlock;
+                    currentScope = new globalScope(currentScope);
                     it.falseStmt.accept(this);
+                    currentScope = currentScope.parentScope();
                 }
                 currentBlock.push_back(new br(null, ConvergeBlock, null));
                 currentBlock.successors.add(ConvergeBlock);
@@ -390,14 +393,17 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.successors.add(ConvergeBlock);
                 TBlock.jumpTo = FBlock.jumpTo = ConvergeBlock.jumpTo = true;
                 currentBlock = TBlock;
+                currentScope = new globalScope(currentScope);
                 it.trueStmt.accept(this);
+                currentScope = currentScope.parentScope();
                 currentBlock.push_back(new br(null, ConvergeBlock, null));
                 currentBlock = FBlock;
+                currentScope = new globalScope(currentScope);
                 it.falseStmt.accept(this);
+                currentScope = currentScope.parentScope();
                 currentBlock.push_back(new br(null, ConvergeBlock, null));
             }
             currentBlock = ConvergeBlock;
-            currentScope = currentScope.parentScope();
         } else {
             currentScope = new globalScope(currentScope);
             if (it.cond.rd instanceof constant) {
