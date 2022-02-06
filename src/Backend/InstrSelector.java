@@ -19,8 +19,7 @@ public class InstrSelector implements Pass {
     public AsmPg asmPg;
 
     private int getLo(int con){
-        int tmp =   (0xfffff800)* ((con>>11)&1)+(con&2047);
-        return tmp;
+        return (0xfffff800)* ((con>>11)&1)+(con&2047);
     }
 
     public InstrSelector(AsmPg asmPg) {
@@ -153,7 +152,7 @@ public class InstrSelector implements Pass {
                 if (bi.rs1 instanceof constant) {
                     int constValue = getImmValue((constant) bi.rs1);
                     if (constValue > 2047 || constValue <-2048) {
-                        constValue += 1<<12;
+                        if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
                         asmBlock.push_back(new Lui(rd, new Imm(constValue >>> 12)));
                         asmBlock.push_back(new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
                     } else asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
@@ -163,7 +162,7 @@ public class InstrSelector implements Pass {
                         rs = new virtualReg(cnt++);
                         int constValue1 = getImmValue((constant) bi.rs2);
                         if (constValue1 > 2047 || constValue1 <-2048) {
-                            constValue1 += 1<<12;
+                            if (((constValue1 >> 11) & 1)>0)constValue1 += 1 << 12;
                             asmBlock.push_back(new Lui(rs, new Imm(constValue1 >>> 12)));
                             asmBlock.push_back(new IType(rs, rs, new Imm(getLo(constValue1)), Inst.CalCategory.add));
                         } else asmBlock.push_back(new IType(rs, zero, new Imm(constValue1), Inst.CalCategory.add));
@@ -175,7 +174,7 @@ public class InstrSelector implements Pass {
                     if (bi.rs2 instanceof constant) {
                         int constValue = getImmValue((constant) bi.rs2);
                         if (constValue > 2047 || constValue <-2048) {
-                            constValue += 1<<12;
+                            if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
                             asmBlock.push_back(new Lui(rd, new Imm(constValue >>> 12)));
                             asmBlock.push_back(new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
                         } else asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
@@ -210,7 +209,7 @@ public class InstrSelector implements Pass {
                         rs = t3;
                         int constValue = getImmValue((constant) en);
                         if (constValue > 2047 || constValue <-2048) {
-                            constValue += 1<<12;
+                            if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
                             asmBlock.push_back(new Lui(rs, new Imm(constValue >>> 12)));
                             asmBlock.push_back(new IType(rs, rs, new Imm(getLo(constValue)), Inst.CalCategory.add));
                         } else asmBlock.push_back(new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
@@ -232,7 +231,7 @@ public class InstrSelector implements Pass {
                     Reg rs = t3;
                     int constValue = getImmValue((constant) con.rs);
                     if (constValue > 2047 || constValue <-2048) {
-                        constValue += 1<<12;
+                        if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
                         asmBlock.push_back(new Lui(rs, new Imm(constValue >>> 12)));
                         asmBlock.push_back(new IType(rs, rs, new Imm(getLo(constValue)), Inst.CalCategory.add));
                     } else asmBlock.push_back(new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
@@ -252,7 +251,7 @@ public class InstrSelector implements Pass {
                     if (en instanceof constant) {
                         int constValue = getImmValue((constant) en) * atomSize;
                         if (constValue > 2047 || constValue <-2048) {
-                            constValue += 1<<12;
+                            if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
                             asmBlock.push_back(new Lui(t3, new Imm(constValue >>> 12)));
                             asmBlock.push_back(new IType(t3, t3, new Imm(getLo(constValue)), Inst.CalCategory.add));
                             asmBlock.push_back(new RType(rd, rs, t3, Inst.CalCategory.add));
@@ -280,7 +279,7 @@ public class InstrSelector implements Pass {
                     rs1 = t3;
                     int constValue = getImmValue((constant) ic.rs1);
                     if (constValue > 2047 || constValue <-2048) {
-                        constValue += 1<<12;
+                        if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
                         asmBlock.push_back(new Lui(rs1, new Imm(constValue >>> 12)));
                         asmBlock.push_back(new IType(rs1, rs1, new Imm(getLo(constValue)), Inst.CalCategory.add));
                     } else asmBlock.push_back(new IType(rs1, zero, new Imm(constValue), Inst.CalCategory.add));
@@ -291,7 +290,7 @@ public class InstrSelector implements Pass {
                     rs2 = t4;
                     int constValue1 = getImmValue((constant) ic.rs2);
                     if (constValue1 > 2047 || constValue1 <-2048) {
-                        constValue1 += 1<<12;
+                        if (((constValue1 >> 11) & 1)>0)constValue1 += 1 << 12;
                         asmBlock.push_back(new Lui(rs2, new Imm(constValue1 >>> 12)));
                         asmBlock.push_back(new IType(rs2, rs2, new Imm(getLo(constValue1)), Inst.CalCategory.add));
                     } else asmBlock.push_back(new IType(rs2, zero, new Imm(constValue1), Inst.CalCategory.add));
@@ -349,7 +348,7 @@ public class InstrSelector implements Pass {
                             rs = t3;
                             int constValue = getImmValue((constant) en);
                             if (constValue > 2047 || constValue <-2048) {
-                                constValue += 1<<12;
+                                if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
                                 from.insert_before(i, new Lui(rs, new Imm(constValue >>> 12)));
                                 from.insert_before(i, new IType(rs, rs, new Imm(getLo(constValue)), Inst.CalCategory.add));
                             } else
@@ -379,7 +378,7 @@ public class InstrSelector implements Pass {
                     rs = t4;
                     int constValue = getImmValue((constant) st.resource);
                     if (constValue > 2047 || constValue <-2048) {
-                        constValue += 1<<12;
+                        if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
                         asmBlock.push_back(new Lui(rs, new Imm(constValue >>> 12)));
                         asmBlock.push_back(new IType(rs, rs, new Imm(getLo(constValue)), Inst.CalCategory.add));
                     } else asmBlock.push_back(new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
