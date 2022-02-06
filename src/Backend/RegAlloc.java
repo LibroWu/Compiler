@@ -4,12 +4,11 @@ import Assembly.*;
 import Assembly.Instr.*;
 import Assembly.Operand.Imm;
 import Assembly.Operand.PhyReg;
-import Assembly.Operand.Reg;
 import Assembly.Operand.virtualReg;
 
 public class RegAlloc {
     public AsmPg f;
-    private final PhyReg sp, t0, t1, t2, s0, ra, zero, t3, t4;
+    private final PhyReg sp, t0, t1, t2, s0, ra, zero, t3, t6;
     private AsmBlock tailBlock;
 
     private int getLo(int con) {
@@ -23,7 +22,7 @@ public class RegAlloc {
         t1 = asmPg.phyRegs.get(6);
         t2 = asmPg.phyRegs.get(7);
         t3 = asmPg.phyRegs.get(28);
-        t4 = asmPg.phyRegs.get(29);
+        t6 = asmPg.phyRegs.get(31);
         ra = asmPg.phyRegs.get(1);
         s0 = asmPg.phyRegs.get(8);
         zero = asmPg.phyRegs.get(0);
@@ -32,9 +31,9 @@ public class RegAlloc {
     private void loadVirtualReg(AsmBlock b, Inst i, virtualReg r, PhyReg rd) {
         int constValue = r.index * 4;
         if (constValue > 2047 || constValue<-2048) {
-            b.insert_before(i, new Li(t4, new Imm(constValue)));
-            b.insert_before(i, new RType(t4, t4, sp, Inst.CalCategory.add));
-            b.insert_before(i, new Ld(rd, t4, new Imm(0), 4));
+            b.insert_before(i, new Li(t6, new Imm(constValue)));
+            b.insert_before(i, new RType(t6, t6, sp, Inst.CalCategory.add));
+            b.insert_before(i, new Ld(rd, t6, new Imm(0), 4));
             /*if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
             b.insert_before(i, new Lui(t4, new Imm(constValue >>> 12)));
             b.insert_before(i, new RType(t4, t4, sp, Inst.CalCategory.add));
@@ -46,9 +45,9 @@ public class RegAlloc {
     private void storeVirtualReg(AsmBlock b, Inst i, virtualReg r) {
         int constValue = r.index * 4;
         if (constValue > 2047 || constValue<-2048) {
-            b.insert_after(i, new St(t2, t4, new Imm(0), 4));
-            b.insert_after(i, new RType(t4, t4, sp, Inst.CalCategory.add));
-            b.insert_after(i, new Li(t4, new Imm(constValue)));
+            b.insert_after(i, new St(t2, t6, new Imm(0), 4));
+            b.insert_after(i, new RType(t6, t6, sp, Inst.CalCategory.add));
+            b.insert_after(i, new Li(t6, new Imm(constValue)));
             /*if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
             b.insert_after(i, new St(t2, t4, new Imm(getLo(constValue)), 4));
             b.insert_after(i, new RType(t4, t4, sp, Inst.CalCategory.add));
@@ -69,16 +68,16 @@ public class RegAlloc {
         int constValue = -func.stackLength;
         if (constValue > 2047 || constValue < -2048) {
             if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
-            rootBlock.insert_before(headInst, new Lui(t4, new Imm(constValue >>> 12)));
-            rootBlock.insert_before(headInst, new IType(t4, t4, new Imm(getLo(constValue)), Inst.CalCategory.add));
-            rootBlock.insert_before(headInst, new RType(sp, sp, t4, Inst.CalCategory.add));
+            rootBlock.insert_before(headInst, new Lui(t6, new Imm(constValue >>> 12)));
+            rootBlock.insert_before(headInst, new IType(t6, t6, new Imm(getLo(constValue)), Inst.CalCategory.add));
+            rootBlock.insert_before(headInst, new RType(sp, sp, t6, Inst.CalCategory.add));
         } else rootBlock.insert_before(headInst, new IType(sp, sp, new Imm(constValue), Inst.CalCategory.add));
         constValue = func.stackLength-8;
         if (constValue > 2047 || constValue < -2048) {
             if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
-            rootBlock.insert_before(headInst, new Lui(t4, new Imm(constValue >>> 12)));
-            rootBlock.insert_before(headInst, new RType(t4, sp, t4, Inst.CalCategory.add));
-            rootBlock.insert_before(headInst, new St(s0, t4, new Imm(getLo(constValue)), 4));
+            rootBlock.insert_before(headInst, new Lui(t6, new Imm(constValue >>> 12)));
+            rootBlock.insert_before(headInst, new RType(t6, sp, t6, Inst.CalCategory.add));
+            rootBlock.insert_before(headInst, new St(s0, t6, new Imm(getLo(constValue)), 4));
         } else rootBlock.insert_before(headInst, new St(s0, sp, new Imm(constValue), 4));
         /*rootBlock.insert_before(headInst,
                 new St(s0, sp, new Imm(func.stackLength - 8), 4)
@@ -86,9 +85,9 @@ public class RegAlloc {
         constValue = func.stackLength-4;
         if (constValue > 2047 || constValue < -2048) {
             if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
-            rootBlock.insert_before(headInst, new Lui(t4, new Imm(constValue >>> 12)));
-            rootBlock.insert_before(headInst, new RType(t4, sp, t4, Inst.CalCategory.add));
-            rootBlock.insert_before(headInst, new St(ra, t4, new Imm(getLo(constValue)), 4));
+            rootBlock.insert_before(headInst, new Lui(t6, new Imm(constValue >>> 12)));
+            rootBlock.insert_before(headInst, new RType(t6, sp, t6, Inst.CalCategory.add));
+            rootBlock.insert_before(headInst, new St(ra, t6, new Imm(getLo(constValue)), 4));
         } else rootBlock.insert_before(headInst, new St(ra, sp, new Imm(constValue), 4));
         /*rootBlock.insert_before(headInst,
                 new St(ra, sp, new Imm(func.stackLength - 4), 4)
@@ -96,9 +95,9 @@ public class RegAlloc {
         constValue = func.stackLength;
         if (constValue > 2047 || constValue < -2048) {
             if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
-            rootBlock.insert_before(headInst, new Lui(t4, new Imm(constValue >>> 12)));
-            rootBlock.insert_before(headInst, new IType(t4, t4, new Imm(getLo(constValue)), Inst.CalCategory.add));
-            rootBlock.insert_before(headInst, new RType(s0, sp, t4, Inst.CalCategory.add));
+            rootBlock.insert_before(headInst, new Lui(t6, new Imm(constValue >>> 12)));
+            rootBlock.insert_before(headInst, new IType(t6, t6, new Imm(getLo(constValue)), Inst.CalCategory.add));
+            rootBlock.insert_before(headInst, new RType(s0, sp, t6, Inst.CalCategory.add));
         } else rootBlock.insert_before(headInst, new IType(s0, sp, new Imm(func.stackLength), Inst.CalCategory.add));
         ;
         /*rootBlock.insert_before(headInst,
@@ -107,9 +106,9 @@ public class RegAlloc {
         constValue = func.stackLength-8;
         if (constValue > 2047 || constValue < -2048) {
             if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
-            tailBlock.insert_before(tailInst, new Lui(t4, new Imm(constValue >>> 12)));
-            tailBlock.insert_before(tailInst, new RType(t4, sp, t4, Inst.CalCategory.add));
-            tailBlock.insert_before(tailInst, new Ld(s0, t4, new Imm(getLo(constValue)), 4));
+            tailBlock.insert_before(tailInst, new Lui(t6, new Imm(constValue >>> 12)));
+            tailBlock.insert_before(tailInst, new RType(t6, sp, t6, Inst.CalCategory.add));
+            tailBlock.insert_before(tailInst, new Ld(s0, t6, new Imm(getLo(constValue)), 4));
         } else tailBlock.insert_before(tailInst, new Ld(s0, sp, new Imm(constValue), 4));
         /*tailBlock.insert_before(tailInst,
                 new Ld(s0, sp, new Imm(func.stackLength - 8), 4)
@@ -117,9 +116,9 @@ public class RegAlloc {
         constValue = func.stackLength-4;
         if (constValue > 2047 || constValue < -2048) {
             if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
-            tailBlock.insert_before(tailInst, new Lui(t4, new Imm(constValue >>> 12)));
-            tailBlock.insert_before(tailInst, new RType(t4, sp, t4, Inst.CalCategory.add));
-            tailBlock.insert_before(tailInst, new Ld(ra, t4, new Imm(getLo(constValue)), 4));
+            tailBlock.insert_before(tailInst, new Lui(t6, new Imm(constValue >>> 12)));
+            tailBlock.insert_before(tailInst, new RType(t6, sp, t6, Inst.CalCategory.add));
+            tailBlock.insert_before(tailInst, new Ld(ra, t6, new Imm(getLo(constValue)), 4));
         } else tailBlock.insert_before(tailInst, new Ld(ra, sp, new Imm(constValue), 4));
 /*        tailBlock.insert_before(tailInst,
                 new Ld(ra, sp, new Imm(func.stackLength - 4), 4)
@@ -127,9 +126,9 @@ public class RegAlloc {
         constValue = func.stackLength;
         if (constValue > 2047 || constValue < -2048) {
             if (((constValue >> 11) & 1)>0)constValue += 1 << 12;
-            tailBlock.insert_before(tailInst, new Lui(t4, new Imm(constValue >>> 12)));
-            tailBlock.insert_before(tailInst, new IType(t4, t4, new Imm(getLo(constValue)), Inst.CalCategory.add));
-            tailBlock.insert_before(tailInst, new RType(sp, sp, t4, Inst.CalCategory.add));
+            tailBlock.insert_before(tailInst, new Lui(t6, new Imm(constValue >>> 12)));
+            tailBlock.insert_before(tailInst, new IType(t6, t6, new Imm(getLo(constValue)), Inst.CalCategory.add));
+            tailBlock.insert_before(tailInst, new RType(sp, sp, t6, Inst.CalCategory.add));
         } else tailBlock.insert_before(tailInst, new IType(sp, sp, new Imm(constValue), Inst.CalCategory.add));
         /*tailBlock.insert_before(tailInst,
                 new IType(sp, sp, new Imm(func.stackLength), Inst.CalCategory.add)

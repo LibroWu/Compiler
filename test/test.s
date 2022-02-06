@@ -58,18 +58,18 @@ check:
 	ret
 
 main: 
-	lui t4, 1048575
-	addi t4, t4, 936
-	add sp, sp, t4
-	lui t4, 1
-	add t4, sp, t4
-	sw s0, -944(t4)
-	lui t4, 1
-	add t4, sp, t4
-	sw ra, -940(t4)
-	lui t4, 1
-	addi t4, t4, -936
-	add s0, sp, t4
+	lui t6, 1048575
+	addi t6, t6, 936
+	add sp, sp, t6
+	lui t6, 1
+	add t6, sp, t6
+	sw s0, -944(t6)
+	lui t6, 1
+	add t6, sp, t6
+	sw ra, -940(t6)
+	lui t6, 1
+	addi t6, t6, -936
+	add s0, sp, t6
 	addi t4, zero, 0
 	sw t4, -12(s0)
 	call getInt
@@ -800,21 +800,21 @@ main:
 	j .LibroBB1_20
 .LibroBB1_18: 
 	lw t2, -44(s0)
-	li t4, 3012
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 3012
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t4, zero, 1
-	li t4, 3012
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3012
+	add t6, t6, sp
+	lw t0, 0(t6)
 	xor t5, t0, t4
 	seqz t2, t5
-	li t4, 3016
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3016
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3016
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3016
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_22
 	j .LibroBB1_21
 .LibroBB1_19: 
@@ -850,144 +850,144 @@ main:
 	j .LibroBB1_24
 .LibroBB1_21: 
 	lw t2, -68(s0)
-	li t4, 3020
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 3020
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -32(s0)
-	li t4, 3024
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 3024
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 3028
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3024
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 3028
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 3028
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3024
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 3028
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 3028
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 3028
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 3032
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3028
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 3032
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 3032
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3028
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 3032
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 3032
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3020
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 3032
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 3032
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3020
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 3032
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 3036
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3036
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3036
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3036
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 3040
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 3040
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -36(s0)
-	li t4, 3044
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 3044
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 3048
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3044
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 3048
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 3048
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3044
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 3048
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 3048
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 3048
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 3052
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3048
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 3052
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 3052
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3048
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 3052
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 3052
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3040
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 3052
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 3052
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3040
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 3052
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 3056
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3056
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3056
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3056
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 3060
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3060
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3060
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3060
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
 	call toString
 	mv t2, a0
-	li t4, 3064
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3064
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3064
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3064
+	add t6, t6, sp
+	lw t0, 0(t6)
 	addi t2, t0, 4
-	li t4, 3068
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3068
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3068
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3068
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 3072
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3072
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3072
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3072
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
 	call println
 	j .LibroBB1_23
 .LibroBB1_22: 
 	la t2, .libro.str
-	li t4, 3076
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3076
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3076
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3076
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
 	call print
 	j .LibroBB1_23
@@ -1059,22 +1059,22 @@ main:
 	j .LibroBB1_26
 .LibroBB1_25: 
 	lw t2, -12(s0)
-	li t4, 3080
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3080
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 3080
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3080
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
-	lui t4, 1
-	add t4, sp, t4
-	lw s0, -944(t4)
-	lui t4, 1
-	add t4, sp, t4
-	lw ra, -940(t4)
-	lui t4, 1
-	addi t4, t4, -936
-	add sp, sp, t4
+	lui t6, 1
+	add t6, sp, t6
+	lw s0, -944(t6)
+	lui t6, 1
+	add t6, sp, t6
+	lw ra, -940(t6)
+	lui t6, 1
+	addi t6, t6, -936
+	add sp, sp, t6
 	ret
 
 .LibroBB1_26: 
@@ -2415,184 +2415,184 @@ main:
 	j .LibroBB1_64
 .LibroBB1_63: 
 	lw t2, -60(s0)
-	li t4, 2092
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2092
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -20(s0)
-	li t4, 2096
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2096
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2100
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2096
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2100
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2100
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2096
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2100
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2100
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2100
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2104
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2100
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2104
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2104
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2100
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2104
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2104
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2092
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2104
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2104
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2092
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2104
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2108
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2108
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2108
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2108
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2112
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2112
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 2
-	li t4, 2116
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2112
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2116
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2116
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2112
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2116
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sub t2, t0, t1
-	li t4, 2116
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2116
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -52(s0)
-	li t4, 2120
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2116
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2120
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2116
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -52(s0)
 	lw t2, -64(s0)
-	li t4, 2124
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2124
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -20(s0)
-	li t4, 2128
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2128
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2132
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2128
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2132
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2132
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2128
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2132
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2132
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2132
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2136
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2132
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2136
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2136
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2132
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2136
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2136
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2124
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2136
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2136
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2124
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2136
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2140
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2140
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2140
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2140
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2144
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2144
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2148
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2144
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2148
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2148
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2144
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2148
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2148
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2148
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -56(s0)
-	li t4, 2152
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2148
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2152
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2148
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -56(s0)
 	lw t2, -52(s0)
-	li t4, 2156
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2156
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -16(s0)
-	li t4, 2160
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2156
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2160
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2156
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
-	li t4, 2160
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2160
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a1, t0
 	call check
 	mv t2, a0
-	li t4, 2164
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2164
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2236
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2164
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2236
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2164
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_69
 	j .LibroBB1_65
 .LibroBB1_64: 
@@ -2704,283 +2704,283 @@ main:
 	mul t2, t0, t1
 	sw t2, 2044(sp)
 	addi t2, zero, 4
-	li t4, 2048
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2048
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t0, 2044(sp)
-	li t4, 2048
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2048
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2048
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2048
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t0, 2036(sp)
-	li t4, 2048
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2048
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2052
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2052
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2052
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2052
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2056
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2052
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2056
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2052
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t1, 2012(sp)
 	sw t1, 0(t0)
 	lw t2, -52(s0)
-	li t4, 2060
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2060
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -32(s0)
-	li t4, 2064
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2060
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2064
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2064
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2060
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2064
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2068
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2068
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2084
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2068
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2084
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2068
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_68
 	j .LibroBB1_66
 .LibroBB1_65: 
 	lw t2, -56(s0)
-	li t4, 2168
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2168
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -16(s0)
-	li t4, 2172
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2168
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2172
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2168
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
-	li t4, 2172
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2172
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a1, t0
 	call check
 	mv t2, a0
-	li t4, 2176
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2176
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2236
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2176
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2236
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2176
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_69
 	j .LibroBB1_67
 .LibroBB1_66: 
 	lw t2, -56(s0)
-	li t4, 2072
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2072
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -36(s0)
-	li t4, 2076
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2072
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2076
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2076
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2072
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2076
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2080
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2080
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2080
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2080
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv t2, t0
-	li t4, 2084
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2084
+	add t6, t6, sp
+	sw t2, 0(t6)
 	j .LibroBB1_68
 .LibroBB1_67: 
 	lw t2, -68(s0)
-	li t4, 2180
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2180
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -52(s0)
-	li t4, 2184
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2184
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2188
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2184
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2188
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2188
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2184
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2188
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2188
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2188
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2192
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2188
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2192
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2192
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2188
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2192
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2192
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2180
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2192
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2192
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2180
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2192
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2196
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2196
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2196
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2196
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2200
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2200
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -56(s0)
-	li t4, 2204
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2204
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2208
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2204
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2208
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2208
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2204
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2208
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2208
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2208
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2212
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2208
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2212
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2212
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2208
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2212
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2212
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2200
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2212
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2212
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2200
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2212
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2216
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2216
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2216
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2216
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2220
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2220
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 0
-	li t4, 2224
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2224
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2228
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2224
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2228
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2228
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2224
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2228
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sub t2, t0, t1
-	li t4, 2224
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2220
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2224
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2224
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2220
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2224
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2232
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2232
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2232
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2232
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv t2, t0
-	li t4, 2236
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2236
+	add t6, t6, sp
+	sw t2, 0(t6)
 	j .LibroBB1_69
 .LibroBB1_68: 
-	li t4, 2084
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2084
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_71
 	j .LibroBB1_70
 .LibroBB1_69: 
-	li t4, 2236
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2236
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_73
 	j .LibroBB1_72
 .LibroBB1_70: 
 	lw t2, -44(s0)
-	li t4, 2088
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2088
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t4, zero, 1
 	sw t4, -44(s0)
 	j .LibroBB1_71
@@ -2988,1833 +2988,1833 @@ main:
 	j .LibroBB1_63
 .LibroBB1_72: 
 	lw t2, -40(s0)
-	li t4, 2240
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2240
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2244
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2240
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2244
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2244
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2240
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2244
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2244
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2244
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -40(s0)
-	li t4, 2248
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2244
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2248
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2244
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -40(s0)
 	lw t2, -52(s0)
-	li t4, 2252
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2252
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -60(s0)
-	li t4, 2256
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2256
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -40(s0)
-	li t4, 2260
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2260
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2264
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2260
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2264
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2264
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2260
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2264
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2264
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2264
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2268
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2264
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2268
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2268
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2264
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2268
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2268
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2256
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2268
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2268
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2256
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2268
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2272
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2272
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2272
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2272
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2276
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2272
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2252
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2276
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2272
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2252
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, 0(t0)
 	lw t2, -56(s0)
-	li t4, 2280
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2280
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -64(s0)
-	li t4, 2284
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2284
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -40(s0)
-	li t4, 2288
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2288
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2292
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2288
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2292
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2292
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2288
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2292
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2292
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2292
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2296
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2292
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2296
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2296
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2292
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2296
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2296
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2284
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2296
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2296
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2284
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2296
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2300
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2300
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2300
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2300
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2304
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2300
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2280
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2304
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2300
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2280
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, 0(t0)
 	lw t2, -48(s0)
-	li t4, 2308
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2308
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2312
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2308
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2312
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2312
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2308
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2312
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2312
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2312
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -68(s0)
-	li t4, 2316
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2316
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -52(s0)
-	li t4, 2320
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2320
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2324
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2320
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2324
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2324
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2320
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2324
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2324
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2324
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2328
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2324
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2328
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2328
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2324
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2328
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2328
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2316
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2328
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2328
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2316
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2328
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2332
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2332
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2332
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2332
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2336
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2336
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -56(s0)
-	li t4, 2340
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2340
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2344
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2340
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2344
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2344
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2340
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2344
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2344
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2344
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2348
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2344
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2348
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2348
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2344
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2348
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2348
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2336
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2348
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2348
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2336
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2348
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2352
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2352
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2352
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2352
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2356
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2352
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2312
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2356
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2352
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2312
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, 0(t0)
 	lw t2, -52(s0)
-	li t4, 2360
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2360
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -32(s0)
-	li t4, 2364
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2360
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2364
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2364
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2360
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2364
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2368
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2368
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2384
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2368
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2384
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2368
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_76
 	j .LibroBB1_74
 .LibroBB1_73: 
 	lw t2, -60(s0)
-	li t4, 2392
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2392
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -20(s0)
-	li t4, 2396
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2396
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2400
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2396
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2400
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2400
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2396
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2400
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2400
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2400
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2404
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2400
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2404
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2404
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2400
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2404
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2404
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2392
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2404
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2404
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2392
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2404
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2408
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2408
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2408
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2408
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2412
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2412
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 2
-	li t4, 2416
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2412
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2416
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2416
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2412
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2416
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2416
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2416
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -52(s0)
-	li t4, 2420
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2416
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2420
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2416
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -52(s0)
 	lw t2, -64(s0)
-	li t4, 2424
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2424
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -20(s0)
-	li t4, 2428
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2428
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2432
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2428
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2432
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2432
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2428
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2432
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2432
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2432
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2436
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2432
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2436
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2436
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2432
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2436
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2436
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2424
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2436
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2436
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2424
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2436
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2440
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2440
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2440
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2440
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2444
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2444
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2448
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2444
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2448
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2448
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2444
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2448
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sub t2, t0, t1
-	li t4, 2448
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2448
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -56(s0)
-	li t4, 2452
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2448
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2452
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2448
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -56(s0)
 	lw t2, -52(s0)
-	li t4, 2456
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2456
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -16(s0)
-	li t4, 2460
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2456
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2460
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2456
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
-	li t4, 2460
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2460
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a1, t0
 	call check
 	mv t2, a0
-	li t4, 2464
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2464
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2536
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2464
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2536
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2464
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_80
 	j .LibroBB1_75
 .LibroBB1_74: 
 	lw t2, -56(s0)
-	li t4, 2372
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2372
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -36(s0)
-	li t4, 2376
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2372
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2376
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2376
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2372
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2376
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2380
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2380
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2380
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2380
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv t2, t0
-	li t4, 2384
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2384
+	add t6, t6, sp
+	sw t2, 0(t6)
 	j .LibroBB1_76
 .LibroBB1_75: 
 	lw t2, -56(s0)
-	li t4, 2468
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2468
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -16(s0)
-	li t4, 2472
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2468
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2472
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2468
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
-	li t4, 2472
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2472
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a1, t0
 	call check
 	mv t2, a0
-	li t4, 2476
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2476
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2536
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2476
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2536
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2476
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_80
 	j .LibroBB1_77
 .LibroBB1_76: 
-	li t4, 2384
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2384
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_79
 	j .LibroBB1_78
 .LibroBB1_77: 
 	lw t2, -68(s0)
-	li t4, 2480
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2480
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -52(s0)
-	li t4, 2484
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2484
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2488
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2484
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2488
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2488
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2484
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2488
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2488
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2488
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2492
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2488
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2492
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2492
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2488
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2492
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2492
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2480
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2492
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2492
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2480
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2492
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2496
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2496
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2496
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2496
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2500
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2500
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -56(s0)
-	li t4, 2504
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2504
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2508
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2504
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2508
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2508
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2504
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2508
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2508
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2508
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2512
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2508
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2512
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2512
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2508
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2512
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2512
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2500
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2512
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2512
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2500
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2512
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2516
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2516
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2516
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2516
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2520
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2520
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 0
-	li t4, 2524
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2524
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2528
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2524
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2528
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2528
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2524
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2528
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sub t2, t0, t1
-	li t4, 2524
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2520
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2524
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2524
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2520
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2524
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2532
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2532
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2532
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2532
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv t2, t0
-	li t4, 2536
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2536
+	add t6, t6, sp
+	sw t2, 0(t6)
 	j .LibroBB1_80
 .LibroBB1_78: 
 	lw t2, -44(s0)
-	li t4, 2388
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2388
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t4, zero, 1
 	sw t4, -44(s0)
 	j .LibroBB1_79
 .LibroBB1_79: 
 	j .LibroBB1_73
 .LibroBB1_80: 
-	li t4, 2536
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2536
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_82
 	j .LibroBB1_81
 .LibroBB1_81: 
 	lw t2, -40(s0)
-	li t4, 2540
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2540
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2544
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2540
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2544
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2544
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2540
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2544
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2544
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2544
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -40(s0)
-	li t4, 2548
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2544
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2548
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2544
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -40(s0)
 	lw t2, -52(s0)
-	li t4, 2552
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2552
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -60(s0)
-	li t4, 2556
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2556
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -40(s0)
-	li t4, 2560
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2560
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2564
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2560
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2564
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2564
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2560
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2564
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2564
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2564
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2568
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2564
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2568
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2568
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2564
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2568
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2568
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2556
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2568
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2568
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2556
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2568
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2572
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2572
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2572
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2572
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2576
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2572
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2552
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2576
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2572
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2552
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, 0(t0)
 	lw t2, -56(s0)
-	li t4, 2580
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2580
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -64(s0)
-	li t4, 2584
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2584
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -40(s0)
-	li t4, 2588
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2588
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2592
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2588
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2592
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2592
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2588
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2592
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2592
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2592
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2596
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2592
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2596
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2596
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2592
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2596
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2596
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2584
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2596
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2596
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2584
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2596
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2600
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2600
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2600
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2600
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2604
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2600
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2580
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2604
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2600
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2580
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, 0(t0)
 	lw t2, -48(s0)
-	li t4, 2608
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2608
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2612
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2608
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2612
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2612
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2608
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2612
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2612
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2612
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -68(s0)
-	li t4, 2616
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2616
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -52(s0)
-	li t4, 2620
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2620
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2624
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2620
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2624
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2624
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2620
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2624
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2624
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2624
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2628
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2624
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2628
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2628
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2624
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2628
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2628
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2616
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2628
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2628
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2616
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2628
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2632
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2632
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2632
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2632
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2636
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2636
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -56(s0)
-	li t4, 2640
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2640
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2644
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2640
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2644
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2644
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2640
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2644
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2644
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2644
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2648
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2644
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2648
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2648
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2644
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2648
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2648
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2636
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2648
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2648
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2636
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2648
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2652
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2652
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2652
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2652
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2656
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2652
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2612
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2656
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2652
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2612
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, 0(t0)
 	lw t2, -52(s0)
-	li t4, 2660
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2660
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -32(s0)
-	li t4, 2664
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2660
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2664
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2664
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2660
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2664
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2668
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2668
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2684
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2668
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2684
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2668
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_85
 	j .LibroBB1_83
 .LibroBB1_82: 
 	lw t2, -60(s0)
-	li t4, 2692
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2692
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -20(s0)
-	li t4, 2696
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2696
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2700
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2696
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2700
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2700
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2696
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2700
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2700
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2700
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2704
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2700
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2704
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2704
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2700
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2704
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2704
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2692
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2704
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2704
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2692
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2704
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2708
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2708
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2708
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2708
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2712
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2712
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 2
-	li t4, 2716
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2712
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2716
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2716
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2712
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2716
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2716
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2716
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -52(s0)
-	li t4, 2720
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2716
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2720
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2716
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -52(s0)
 	lw t2, -64(s0)
-	li t4, 2724
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2724
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -20(s0)
-	li t4, 2728
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2728
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2732
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2728
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2732
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2732
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2728
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2732
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2732
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2732
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2736
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2732
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2736
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2736
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2732
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2736
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2736
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2724
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2736
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2736
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2724
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2736
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2740
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2740
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2740
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2740
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2744
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2744
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2748
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2744
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2748
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2748
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2744
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2748
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2748
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2748
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -56(s0)
-	li t4, 2752
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2748
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2752
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2748
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -56(s0)
 	lw t2, -52(s0)
-	li t4, 2756
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2756
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -16(s0)
-	li t4, 2760
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2756
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2760
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2756
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
-	li t4, 2760
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2760
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a1, t0
 	call check
 	mv t2, a0
-	li t4, 2764
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2764
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2836
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2764
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2836
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2764
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_89
 	j .LibroBB1_84
 .LibroBB1_83: 
 	lw t2, -56(s0)
-	li t4, 2672
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2672
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -36(s0)
-	li t4, 2676
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2672
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2676
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2676
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2672
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2676
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2680
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2680
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2680
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2680
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv t2, t0
-	li t4, 2684
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2684
+	add t6, t6, sp
+	sw t2, 0(t6)
 	j .LibroBB1_85
 .LibroBB1_84: 
 	lw t2, -56(s0)
-	li t4, 2768
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2768
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -16(s0)
-	li t4, 2772
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2768
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2772
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2768
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a0, t0
-	li t4, 2772
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2772
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv a1, t0
 	call check
 	mv t2, a0
-	li t4, 2776
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2776
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2836
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2776
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2836
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2776
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_89
 	j .LibroBB1_86
 .LibroBB1_85: 
-	li t4, 2684
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2684
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_88
 	j .LibroBB1_87
 .LibroBB1_86: 
 	lw t2, -68(s0)
-	li t4, 2780
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2780
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -52(s0)
-	li t4, 2784
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2784
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2788
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2784
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2788
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2788
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2784
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2788
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2788
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2788
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2792
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2788
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2792
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2792
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2788
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2792
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2792
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2780
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2792
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2792
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2780
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2792
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2796
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2796
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2796
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2796
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2800
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2800
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -56(s0)
-	li t4, 2804
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2804
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2808
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2804
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2808
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2808
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2804
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2808
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2808
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2808
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2812
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2808
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2812
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2812
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2808
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2812
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2812
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2800
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2812
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2812
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2800
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2812
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2816
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2816
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2816
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2816
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2820
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2820
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 0
-	li t4, 2824
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2824
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2828
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2824
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2828
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2828
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2824
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2828
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sub t2, t0, t1
-	li t4, 2824
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2820
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2824
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2824
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2820
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2824
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2832
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2832
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2832
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2832
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv t2, t0
-	li t4, 2836
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2836
+	add t6, t6, sp
+	sw t2, 0(t6)
 	j .LibroBB1_89
 .LibroBB1_87: 
 	lw t2, -44(s0)
-	li t4, 2688
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2688
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t4, zero, 1
 	sw t4, -44(s0)
 	j .LibroBB1_88
 .LibroBB1_88: 
 	j .LibroBB1_82
 .LibroBB1_89: 
-	li t4, 2836
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2836
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_90
 	j .LibroBB1_91
 .LibroBB1_90: 
 	lw t2, -44(s0)
-	li t4, 2992
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2992
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t4, zero, 1
-	li t4, 2992
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2992
+	add t6, t6, sp
+	lw t0, 0(t6)
 	xor t5, t0, t4
 	seqz t2, t5
-	li t4, 2996
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2996
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2996
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2996
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_93
 	j .LibroBB1_92
 .LibroBB1_91: 
 	lw t2, -40(s0)
-	li t4, 2840
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2840
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2844
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2840
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2844
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2844
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2840
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2844
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2844
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2844
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -40(s0)
-	li t4, 2848
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2844
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2848
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2844
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -40(s0)
 	lw t2, -52(s0)
-	li t4, 2852
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2852
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -60(s0)
-	li t4, 2856
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2856
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -40(s0)
-	li t4, 2860
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2860
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2864
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2860
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2864
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2864
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2860
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2864
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2864
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2864
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2868
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2864
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2868
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2868
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2864
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2868
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2868
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2856
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2868
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2868
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2856
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2868
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2872
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2872
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2872
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2872
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2876
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2872
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2852
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2876
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2872
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2852
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, 0(t0)
 	lw t2, -56(s0)
-	li t4, 2880
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2880
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -64(s0)
-	li t4, 2884
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2884
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -40(s0)
-	li t4, 2888
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2888
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2892
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2888
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2892
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2892
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2888
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2892
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2892
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2892
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2896
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2892
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2896
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2896
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2892
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2896
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2896
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2884
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2896
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2896
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2884
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2896
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2900
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2900
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2900
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2900
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2904
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2900
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2880
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2904
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2900
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2880
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, 0(t0)
 	lw t2, -48(s0)
-	li t4, 2908
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2908
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 2912
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2908
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2912
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2912
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2908
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2912
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2912
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2912
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -68(s0)
-	li t4, 2916
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2916
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -52(s0)
-	li t4, 2920
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2920
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2924
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2920
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2924
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2924
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2920
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2924
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2924
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2924
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2928
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2924
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2928
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2928
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2924
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2928
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2928
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2916
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2928
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2928
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2916
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2928
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2932
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2932
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2932
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2932
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2936
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2936
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -56(s0)
-	li t4, 2940
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2940
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2944
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2940
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2944
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2944
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2940
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2944
+	add t6, t6, sp
+	lw t1, 0(t6)
 	mul t2, t0, t1
-	li t4, 2944
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2944
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 4
-	li t4, 2948
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2944
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2948
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2948
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2944
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2948
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2948
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2936
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2948
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2948
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2936
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2948
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 2952
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2952
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2952
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2952
+	add t6, t6, sp
+	lw t0, 0(t6)
 	lw t2, 0(t0)
-	li t4, 2956
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2952
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2912
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2956
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2952
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2912
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, 0(t0)
 	lw t2, -52(s0)
-	li t4, 2960
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2960
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -32(s0)
-	li t4, 2964
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2960
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2964
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2964
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2960
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2964
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2968
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2968
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t3, zero, 0
 	mv t2, t3
-	li t4, 2984
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2968
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2984
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2968
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_95
 	j .LibroBB1_94
 .LibroBB1_92: 
 	j .LibroBB1_18
 .LibroBB1_93: 
 	lw t2, -20(s0)
-	li t4, 3000
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 3000
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t2, zero, 1
-	li t4, 3004
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3000
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 3004
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 3004
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3000
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 3004
+	add t6, t6, sp
+	lw t1, 0(t6)
 	add t2, t0, t1
-	li t4, 3004
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 3004
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -20(s0)
-	li t4, 3008
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 3004
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 3008
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 3004
+	add t6, t6, sp
+	lw t1, 0(t6)
 	sw t1, -20(s0)
 	j .LibroBB1_19
 .LibroBB1_94: 
 	lw t2, -56(s0)
-	li t4, 2972
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2972
+	add t6, t6, sp
+	sw t2, 0(t6)
 	lw t2, -36(s0)
-	li t4, 2976
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2972
-	add t4, t4, sp
-	lw t0, 0(t4)
-	li t4, 2976
-	add t4, t4, sp
-	lw t1, 0(t4)
+	li t6, 2976
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2972
+	add t6, t6, sp
+	lw t0, 0(t6)
+	li t6, 2976
+	add t6, t6, sp
+	lw t1, 0(t6)
 	xor t5, t0, t1
 	seqz t2, t5
-	li t4, 2980
-	add t4, t4, sp
-	sw t2, 0(t4)
-	li t4, 2980
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2980
+	add t6, t6, sp
+	sw t2, 0(t6)
+	li t6, 2980
+	add t6, t6, sp
+	lw t0, 0(t6)
 	mv t2, t0
-	li t4, 2984
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2984
+	add t6, t6, sp
+	sw t2, 0(t6)
 	j .LibroBB1_95
 .LibroBB1_95: 
-	li t4, 2984
-	add t4, t4, sp
-	lw t0, 0(t4)
+	li t6, 2984
+	add t6, t6, sp
+	lw t0, 0(t6)
 	beqz t0, .LibroBB1_97
 	j .LibroBB1_96
 .LibroBB1_96: 
 	lw t2, -44(s0)
-	li t4, 2988
-	add t4, t4, sp
-	sw t2, 0(t4)
+	li t6, 2988
+	add t6, t6, sp
+	sw t2, 0(t6)
 	addi t4, zero, 1
 	sw t4, -44(s0)
 	j .LibroBB1_97
