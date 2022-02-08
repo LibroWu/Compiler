@@ -47,12 +47,10 @@ public class Optimizer_Base implements Pass {
             return false;
         } else if (s instanceof call) {
             call c = (call) s;
-            if (hasUsedReg.contains(c.rd)) {
-                c.parameters.forEach( para -> {
-                    if (para.en instanceof register) hasUsedReg.add((register) para.en);
-                });
-                return false;
-            } else return true;
+            c.parameters.forEach( para -> {
+                if (para.en instanceof register) hasUsedReg.add((register) para.en);
+            });
+            return false;
         } else if (s instanceof convertOp) {
             convertOp con = (convertOp) s;
             if (hasUsedReg.contains(con.rd)) {
