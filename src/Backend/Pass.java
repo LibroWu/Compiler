@@ -12,7 +12,7 @@ public interface Pass {
     void visitBlock(block b);
     void visitProgram(program pg);
     void visitFuncDef(funcDef f);
-    void visitClassDef(classDef f);
+    void visitClassDef(classDef c);
     void visitGlobalVarDecl(globalVarDecl gv);
     void visitGlobalStringConstant(globalStringConstant gs);
     void visitDeclare(declare dec);
