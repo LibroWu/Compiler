@@ -3,964 +3,565 @@
 	.p2align	2
 	.type	main,@function
 main: 
-	addi sp, sp, -712
-	sw s0, 704(sp)
-	sw ra, 708(sp)
-	addi s0, sp, 712
 	call _GLOBAL_
-	addi t4, zero, 0
-	sw t4, -12(s0)
+	addi %0, zero, 0
+	sw %0, -12(s0)
 	call getInt
-	mv t2, a0
-	sw t2, 0(sp)
-	la t3, N
-	lw t2, 0(t3)
-	sw t2, 4(sp)
-	la t3, N
-	lw t1, 0(sp)
-	sw t1, 0(t3)
-	lw t2, -16(s0)
-	sw t2, 8(sp)
-	addi t4, zero, 1
-	sw t4, -16(s0)
+	mv %1, a0
+	la %2, N
+	lw %3, 0(%2)
+	la %4, N
+	sw %1, 0(%4)
+	lw %5, -16(s0)
+	addi %6, zero, 1
+	sw %6, -16(s0)
 	j .LibroBB0_3
 .LibroBB0_1: 
-	lw t2, -20(s0)
-	sw t2, 24(sp)
-	addi t4, zero, 1
-	sw t4, -20(s0)
+	lw %12, -20(s0)
+	addi %13, zero, 1
+	sw %13, -20(s0)
 	j .LibroBB0_7
 .LibroBB0_2: 
-	lw t2, -16(s0)
-	sw t2, 648(sp)
-	addi t2, zero, 1
-	sw t2, 652(sp)
-	lw t0, 648(sp)
-	lw t1, 652(sp)
-	add t2, t0, t1
-	sw t2, 652(sp)
-	lw t1, 652(sp)
-	sw t1, -16(s0)
+	lw %294, -16(s0)
+	addi %295, zero, 1
+	add %295, %294, %295
+	sw %295, -16(s0)
 	j .LibroBB0_3
 .LibroBB0_3: 
-	lw t2, -16(s0)
-	sw t2, 12(sp)
-	la t3, N
-	lw t2, 0(t3)
-	sw t2, 16(sp)
-	lw t0, 16(sp)
-	lw t1, 12(sp)
-	slt t5, t0, t1
-	seqz t2, t5
-	sw t2, 20(sp)
-	lw t0, 20(sp)
-	beqz t0, .LibroBB0_4
+	lw %7, -16(s0)
+	la %8, N
+	lw %9, 0(%8)
+	slt %11, %9, %7
+	seqz %10, %11
+	beqz %10, .LibroBB0_4
 	j .LibroBB0_1
 .LibroBB0_4: 
-	la t3, total
-	lw t2, 0(t3)
-	sw t2, 656(sp)
-	lw t0, 656(sp)
-	mv a0, t0
+	la %296, total
+	lw %297, 0(%296)
+	mv a0, %297
 	call toString
-	mv t2, a0
-	sw t2, 660(sp)
-	lw t0, 660(sp)
-	addi t2, t0, 4
-	sw t2, 664(sp)
-	lw t0, 664(sp)
-	lw t2, 0(t0)
-	sw t2, 668(sp)
-	lw t0, 668(sp)
-	mv a0, t0
+	mv %298, a0
+	addi %299, %298, 4
+	lw %300, 0(%299)
+	mv a0, %300
 	call println
-	addi t4, zero, 0
-	sw t4, -12(s0)
+	addi %301, zero, 0
+	sw %301, -12(s0)
 	j .LibroBB0_9
 .LibroBB0_5: 
-	lw t2, -24(s0)
-	sw t2, 40(sp)
-	addi t4, zero, 1
-	sw t4, -24(s0)
+	lw %19, -24(s0)
+	addi %20, zero, 1
+	sw %20, -24(s0)
 	j .LibroBB0_10
 .LibroBB0_6: 
-	lw t2, -20(s0)
-	sw t2, 640(sp)
-	addi t2, zero, 1
-	sw t2, 644(sp)
-	lw t0, 640(sp)
-	lw t1, 644(sp)
-	add t2, t0, t1
-	sw t2, 644(sp)
-	lw t1, 644(sp)
-	sw t1, -20(s0)
+	lw %292, -20(s0)
+	addi %293, zero, 1
+	add %293, %292, %293
+	sw %293, -20(s0)
 	j .LibroBB0_7
 .LibroBB0_7: 
-	lw t2, -20(s0)
-	sw t2, 28(sp)
-	la t3, N
-	lw t2, 0(t3)
-	sw t2, 32(sp)
-	lw t0, 32(sp)
-	lw t1, 28(sp)
-	slt t5, t0, t1
-	seqz t2, t5
-	sw t2, 36(sp)
-	lw t0, 36(sp)
-	beqz t0, .LibroBB0_8
+	lw %14, -20(s0)
+	la %15, N
+	lw %16, 0(%15)
+	slt %18, %16, %14
+	seqz %17, %18
+	beqz %17, .LibroBB0_8
 	j .LibroBB0_5
 .LibroBB0_8: 
 	j .LibroBB0_2
 .LibroBB0_9: 
-	lw t2, -12(s0)
-	sw t2, 672(sp)
-	lw t0, 672(sp)
-	mv a0, t0
-	lw s0, 704(sp)
-	lw ra, 708(sp)
-	addi sp, sp, 712
+	lw %302, -12(s0)
+	mv a0, %302
 	ret
 
 .LibroBB0_10: 
-	lw t2, -24(s0)
-	sw t2, 44(sp)
-	la t3, N
-	lw t2, 0(t3)
-	sw t2, 48(sp)
-	lw t0, 48(sp)
-	lw t1, 44(sp)
-	slt t5, t0, t1
-	seqz t2, t5
-	sw t2, 52(sp)
-	lw t0, 52(sp)
-	beqz t0, .LibroBB0_12
+	lw %21, -24(s0)
+	la %22, N
+	lw %23, 0(%22)
+	slt %25, %23, %21
+	seqz %24, %25
+	beqz %24, .LibroBB0_12
 	j .LibroBB0_13
 .LibroBB0_11: 
-	lw t2, -24(s0)
-	sw t2, 632(sp)
-	addi t2, zero, 1
-	sw t2, 636(sp)
-	lw t0, 632(sp)
-	lw t1, 636(sp)
-	add t2, t0, t1
-	sw t2, 636(sp)
-	lw t1, 636(sp)
-	sw t1, -24(s0)
+	lw %290, -24(s0)
+	addi %291, zero, 1
+	add %291, %290, %291
+	sw %291, -24(s0)
 	j .LibroBB0_10
 .LibroBB0_12: 
 	j .LibroBB0_6
 .LibroBB0_13: 
-	lw t2, -28(s0)
-	sw t2, 56(sp)
-	addi t4, zero, 1
-	sw t4, -28(s0)
+	lw %26, -28(s0)
+	addi %27, zero, 1
+	sw %27, -28(s0)
 	j .LibroBB0_15
 .LibroBB0_14: 
-	lw t2, -32(s0)
-	sw t2, 72(sp)
-	addi t4, zero, 1
-	sw t4, -32(s0)
+	lw %33, -32(s0)
+	addi %34, zero, 1
+	sw %34, -32(s0)
 	j .LibroBB0_18
 .LibroBB0_15: 
-	lw t2, -28(s0)
-	sw t2, 60(sp)
-	la t3, N
-	lw t2, 0(t3)
-	sw t2, 64(sp)
-	lw t0, 64(sp)
-	lw t1, 60(sp)
-	slt t5, t0, t1
-	seqz t2, t5
-	sw t2, 68(sp)
-	lw t0, 68(sp)
-	beqz t0, .LibroBB0_16
+	lw %28, -28(s0)
+	la %29, N
+	lw %30, 0(%29)
+	slt %32, %30, %28
+	seqz %31, %32
+	beqz %31, .LibroBB0_16
 	j .LibroBB0_14
 .LibroBB0_16: 
 	j .LibroBB0_11
 .LibroBB0_17: 
-	lw t2, -28(s0)
-	sw t2, 624(sp)
-	addi t2, zero, 1
-	sw t2, 628(sp)
-	lw t0, 624(sp)
-	lw t1, 628(sp)
-	add t2, t0, t1
-	sw t2, 628(sp)
-	lw t1, 628(sp)
-	sw t1, -28(s0)
+	lw %288, -28(s0)
+	addi %289, zero, 1
+	add %289, %288, %289
+	sw %289, -28(s0)
 	j .LibroBB0_15
 .LibroBB0_18: 
-	lw t2, -32(s0)
-	sw t2, 76(sp)
-	la t3, N
-	lw t2, 0(t3)
-	sw t2, 80(sp)
-	lw t0, 80(sp)
-	lw t1, 76(sp)
-	slt t5, t0, t1
-	seqz t2, t5
-	sw t2, 84(sp)
-	lw t0, 84(sp)
-	beqz t0, .LibroBB0_19
+	lw %35, -32(s0)
+	la %36, N
+	lw %37, 0(%36)
+	slt %39, %37, %35
+	seqz %38, %39
+	beqz %38, .LibroBB0_19
 	j .LibroBB0_21
 .LibroBB0_19: 
 	j .LibroBB0_17
 .LibroBB0_20: 
-	lw t2, -32(s0)
-	sw t2, 616(sp)
-	addi t2, zero, 1
-	sw t2, 620(sp)
-	lw t0, 616(sp)
-	lw t1, 620(sp)
-	add t2, t0, t1
-	sw t2, 620(sp)
-	lw t1, 620(sp)
-	sw t1, -32(s0)
+	lw %286, -32(s0)
+	addi %287, zero, 1
+	add %287, %286, %287
+	sw %287, -32(s0)
 	j .LibroBB0_18
 .LibroBB0_21: 
-	lw t2, -36(s0)
-	sw t2, 88(sp)
-	addi t4, zero, 1
-	sw t4, -36(s0)
+	lw %40, -36(s0)
+	addi %41, zero, 1
+	sw %41, -36(s0)
 	j .LibroBB0_24
 .LibroBB0_22: 
-	lw t2, -16(s0)
-	sw t2, 104(sp)
-	lw t2, -20(s0)
-	sw t2, 108(sp)
-	lw t0, 104(sp)
-	lw t1, 108(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 112(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 112(sp)
-	beqz t0, .LibroBB0_66
+	lw %47, -16(s0)
+	lw %48, -20(s0)
+	xor %50, %47, %48
+	snez %49, %50
+	addi %240, zero, 0
+	mv %239, %240
+	beqz %49, .LibroBB0_66
 	j .LibroBB0_26
 .LibroBB0_23: 
-	lw t2, -36(s0)
-	sw t2, 608(sp)
-	addi t2, zero, 1
-	sw t2, 612(sp)
-	lw t0, 608(sp)
-	lw t1, 612(sp)
-	add t2, t0, t1
-	sw t2, 612(sp)
-	lw t1, 612(sp)
-	sw t1, -36(s0)
+	lw %284, -36(s0)
+	addi %285, zero, 1
+	add %285, %284, %285
+	sw %285, -36(s0)
 	j .LibroBB0_24
 .LibroBB0_24: 
-	lw t2, -36(s0)
-	sw t2, 92(sp)
-	la t3, N
-	lw t2, 0(t3)
-	sw t2, 96(sp)
-	lw t0, 96(sp)
-	lw t1, 92(sp)
-	slt t5, t0, t1
-	seqz t2, t5
-	sw t2, 100(sp)
-	lw t0, 100(sp)
-	beqz t0, .LibroBB0_25
+	lw %42, -36(s0)
+	la %43, N
+	lw %44, 0(%43)
+	slt %46, %44, %42
+	seqz %45, %46
+	beqz %45, .LibroBB0_25
 	j .LibroBB0_22
 .LibroBB0_25: 
 	j .LibroBB0_20
 .LibroBB0_26: 
-	lw t2, -16(s0)
-	sw t2, 116(sp)
-	lw t2, -24(s0)
-	sw t2, 120(sp)
-	lw t0, 116(sp)
-	lw t1, 120(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 124(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 124(sp)
-	beqz t0, .LibroBB0_66
+	lw %51, -16(s0)
+	lw %52, -24(s0)
+	xor %54, %51, %52
+	snez %53, %54
+	addi %241, zero, 0
+	mv %239, %241
+	beqz %53, .LibroBB0_66
 	j .LibroBB0_27
 .LibroBB0_27: 
-	lw t2, -16(s0)
-	sw t2, 128(sp)
-	lw t2, -28(s0)
-	sw t2, 132(sp)
-	lw t0, 128(sp)
-	lw t1, 132(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 136(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 136(sp)
-	beqz t0, .LibroBB0_66
+	lw %55, -16(s0)
+	lw %56, -28(s0)
+	xor %58, %55, %56
+	snez %57, %58
+	addi %242, zero, 0
+	mv %239, %242
+	beqz %57, .LibroBB0_66
 	j .LibroBB0_28
 .LibroBB0_28: 
-	lw t2, -16(s0)
-	sw t2, 140(sp)
-	lw t2, -32(s0)
-	sw t2, 144(sp)
-	lw t0, 140(sp)
-	lw t1, 144(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 148(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 148(sp)
-	beqz t0, .LibroBB0_66
+	lw %59, -16(s0)
+	lw %60, -32(s0)
+	xor %62, %59, %60
+	snez %61, %62
+	addi %243, zero, 0
+	mv %239, %243
+	beqz %61, .LibroBB0_66
 	j .LibroBB0_29
 .LibroBB0_29: 
-	lw t2, -16(s0)
-	sw t2, 152(sp)
-	lw t2, -36(s0)
-	sw t2, 156(sp)
-	lw t0, 152(sp)
-	lw t1, 156(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 160(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 160(sp)
-	beqz t0, .LibroBB0_66
+	lw %63, -16(s0)
+	lw %64, -36(s0)
+	xor %66, %63, %64
+	snez %65, %66
+	addi %244, zero, 0
+	mv %239, %244
+	beqz %65, .LibroBB0_66
 	j .LibroBB0_30
 .LibroBB0_30: 
-	lw t2, -16(s0)
-	sw t2, 164(sp)
-	la t3, h
-	lw t2, 0(t3)
-	sw t2, 168(sp)
-	lw t0, 164(sp)
-	lw t1, 168(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 172(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 172(sp)
-	beqz t0, .LibroBB0_66
+	lw %67, -16(s0)
+	la %68, h
+	lw %69, 0(%68)
+	xor %71, %67, %69
+	snez %70, %71
+	addi %245, zero, 0
+	mv %239, %245
+	beqz %70, .LibroBB0_66
 	j .LibroBB0_31
 .LibroBB0_31: 
-	lw t2, -16(s0)
-	sw t2, 176(sp)
-	la t3, i
-	lw t2, 0(t3)
-	sw t2, 180(sp)
-	lw t0, 176(sp)
-	lw t1, 180(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 184(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 184(sp)
-	beqz t0, .LibroBB0_66
+	lw %72, -16(s0)
+	la %73, i
+	lw %74, 0(%73)
+	xor %76, %72, %74
+	snez %75, %76
+	addi %246, zero, 0
+	mv %239, %246
+	beqz %75, .LibroBB0_66
 	j .LibroBB0_32
 .LibroBB0_32: 
-	lw t2, -16(s0)
-	sw t2, 188(sp)
-	la t3, j
-	lw t2, 0(t3)
-	sw t2, 192(sp)
-	lw t0, 188(sp)
-	lw t1, 192(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 196(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 196(sp)
-	beqz t0, .LibroBB0_66
+	lw %77, -16(s0)
+	la %78, j
+	lw %79, 0(%78)
+	xor %81, %77, %79
+	snez %80, %81
+	addi %247, zero, 0
+	mv %239, %247
+	beqz %80, .LibroBB0_66
 	j .LibroBB0_33
 .LibroBB0_33: 
-	lw t2, -16(s0)
-	sw t2, 200(sp)
-	la t3, k
-	lw t2, 0(t3)
-	sw t2, 204(sp)
-	lw t0, 200(sp)
-	lw t1, 204(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 208(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 208(sp)
-	beqz t0, .LibroBB0_66
+	lw %82, -16(s0)
+	la %83, k
+	lw %84, 0(%83)
+	xor %86, %82, %84
+	snez %85, %86
+	addi %248, zero, 0
+	mv %239, %248
+	beqz %85, .LibroBB0_66
 	j .LibroBB0_34
 .LibroBB0_34: 
-	lw t2, -20(s0)
-	sw t2, 212(sp)
-	lw t2, -24(s0)
-	sw t2, 216(sp)
-	lw t0, 212(sp)
-	lw t1, 216(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 220(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 220(sp)
-	beqz t0, .LibroBB0_66
+	lw %87, -20(s0)
+	lw %88, -24(s0)
+	xor %90, %87, %88
+	snez %89, %90
+	addi %249, zero, 0
+	mv %239, %249
+	beqz %89, .LibroBB0_66
 	j .LibroBB0_35
 .LibroBB0_35: 
-	lw t2, -20(s0)
-	sw t2, 224(sp)
-	lw t2, -28(s0)
-	sw t2, 228(sp)
-	lw t0, 224(sp)
-	lw t1, 228(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 232(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 232(sp)
-	beqz t0, .LibroBB0_66
+	lw %91, -20(s0)
+	lw %92, -28(s0)
+	xor %94, %91, %92
+	snez %93, %94
+	addi %250, zero, 0
+	mv %239, %250
+	beqz %93, .LibroBB0_66
 	j .LibroBB0_36
 .LibroBB0_36: 
-	lw t2, -20(s0)
-	sw t2, 236(sp)
-	lw t2, -32(s0)
-	sw t2, 240(sp)
-	lw t0, 236(sp)
-	lw t1, 240(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 244(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 244(sp)
-	beqz t0, .LibroBB0_66
+	lw %95, -20(s0)
+	lw %96, -32(s0)
+	xor %98, %95, %96
+	snez %97, %98
+	addi %251, zero, 0
+	mv %239, %251
+	beqz %97, .LibroBB0_66
 	j .LibroBB0_37
 .LibroBB0_37: 
-	lw t2, -20(s0)
-	sw t2, 248(sp)
-	lw t2, -36(s0)
-	sw t2, 252(sp)
-	lw t0, 248(sp)
-	lw t1, 252(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 256(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 256(sp)
-	beqz t0, .LibroBB0_66
+	lw %99, -20(s0)
+	lw %100, -36(s0)
+	xor %102, %99, %100
+	snez %101, %102
+	addi %252, zero, 0
+	mv %239, %252
+	beqz %101, .LibroBB0_66
 	j .LibroBB0_38
 .LibroBB0_38: 
-	lw t2, -20(s0)
-	sw t2, 260(sp)
-	la t3, h
-	lw t2, 0(t3)
-	sw t2, 264(sp)
-	lw t0, 260(sp)
-	lw t1, 264(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 268(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 268(sp)
-	beqz t0, .LibroBB0_66
+	lw %103, -20(s0)
+	la %104, h
+	lw %105, 0(%104)
+	xor %107, %103, %105
+	snez %106, %107
+	addi %253, zero, 0
+	mv %239, %253
+	beqz %106, .LibroBB0_66
 	j .LibroBB0_39
 .LibroBB0_39: 
-	lw t2, -20(s0)
-	sw t2, 272(sp)
-	la t3, i
-	lw t2, 0(t3)
-	sw t2, 276(sp)
-	lw t0, 272(sp)
-	lw t1, 276(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 280(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 280(sp)
-	beqz t0, .LibroBB0_66
+	lw %108, -20(s0)
+	la %109, i
+	lw %110, 0(%109)
+	xor %112, %108, %110
+	snez %111, %112
+	addi %254, zero, 0
+	mv %239, %254
+	beqz %111, .LibroBB0_66
 	j .LibroBB0_40
 .LibroBB0_40: 
-	lw t2, -20(s0)
-	sw t2, 284(sp)
-	la t3, j
-	lw t2, 0(t3)
-	sw t2, 288(sp)
-	lw t0, 284(sp)
-	lw t1, 288(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 292(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 292(sp)
-	beqz t0, .LibroBB0_66
+	lw %113, -20(s0)
+	la %114, j
+	lw %115, 0(%114)
+	xor %117, %113, %115
+	snez %116, %117
+	addi %255, zero, 0
+	mv %239, %255
+	beqz %116, .LibroBB0_66
 	j .LibroBB0_41
 .LibroBB0_41: 
-	lw t2, -20(s0)
-	sw t2, 296(sp)
-	la t3, k
-	lw t2, 0(t3)
-	sw t2, 300(sp)
-	lw t0, 296(sp)
-	lw t1, 300(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 304(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 304(sp)
-	beqz t0, .LibroBB0_66
+	lw %118, -20(s0)
+	la %119, k
+	lw %120, 0(%119)
+	xor %122, %118, %120
+	snez %121, %122
+	addi %256, zero, 0
+	mv %239, %256
+	beqz %121, .LibroBB0_66
 	j .LibroBB0_42
 .LibroBB0_42: 
-	lw t2, -24(s0)
-	sw t2, 308(sp)
-	lw t2, -28(s0)
-	sw t2, 312(sp)
-	lw t0, 308(sp)
-	lw t1, 312(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 316(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 316(sp)
-	beqz t0, .LibroBB0_66
+	lw %123, -24(s0)
+	lw %124, -28(s0)
+	xor %126, %123, %124
+	snez %125, %126
+	addi %257, zero, 0
+	mv %239, %257
+	beqz %125, .LibroBB0_66
 	j .LibroBB0_43
 .LibroBB0_43: 
-	lw t2, -24(s0)
-	sw t2, 320(sp)
-	lw t2, -32(s0)
-	sw t2, 324(sp)
-	lw t0, 320(sp)
-	lw t1, 324(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 328(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 328(sp)
-	beqz t0, .LibroBB0_66
+	lw %127, -24(s0)
+	lw %128, -32(s0)
+	xor %130, %127, %128
+	snez %129, %130
+	addi %258, zero, 0
+	mv %239, %258
+	beqz %129, .LibroBB0_66
 	j .LibroBB0_44
 .LibroBB0_44: 
-	lw t2, -24(s0)
-	sw t2, 332(sp)
-	lw t2, -36(s0)
-	sw t2, 336(sp)
-	lw t0, 332(sp)
-	lw t1, 336(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 340(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 340(sp)
-	beqz t0, .LibroBB0_66
+	lw %131, -24(s0)
+	lw %132, -36(s0)
+	xor %134, %131, %132
+	snez %133, %134
+	addi %259, zero, 0
+	mv %239, %259
+	beqz %133, .LibroBB0_66
 	j .LibroBB0_45
 .LibroBB0_45: 
-	lw t2, -24(s0)
-	sw t2, 344(sp)
-	la t3, h
-	lw t2, 0(t3)
-	sw t2, 348(sp)
-	lw t0, 344(sp)
-	lw t1, 348(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 352(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 352(sp)
-	beqz t0, .LibroBB0_66
+	lw %135, -24(s0)
+	la %136, h
+	lw %137, 0(%136)
+	xor %139, %135, %137
+	snez %138, %139
+	addi %260, zero, 0
+	mv %239, %260
+	beqz %138, .LibroBB0_66
 	j .LibroBB0_46
 .LibroBB0_46: 
-	lw t2, -24(s0)
-	sw t2, 356(sp)
-	la t3, i
-	lw t2, 0(t3)
-	sw t2, 360(sp)
-	lw t0, 356(sp)
-	lw t1, 360(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 364(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 364(sp)
-	beqz t0, .LibroBB0_66
+	lw %140, -24(s0)
+	la %141, i
+	lw %142, 0(%141)
+	xor %144, %140, %142
+	snez %143, %144
+	addi %261, zero, 0
+	mv %239, %261
+	beqz %143, .LibroBB0_66
 	j .LibroBB0_47
 .LibroBB0_47: 
-	lw t2, -24(s0)
-	sw t2, 368(sp)
-	la t3, j
-	lw t2, 0(t3)
-	sw t2, 372(sp)
-	lw t0, 368(sp)
-	lw t1, 372(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 376(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 376(sp)
-	beqz t0, .LibroBB0_66
+	lw %145, -24(s0)
+	la %146, j
+	lw %147, 0(%146)
+	xor %149, %145, %147
+	snez %148, %149
+	addi %262, zero, 0
+	mv %239, %262
+	beqz %148, .LibroBB0_66
 	j .LibroBB0_48
 .LibroBB0_48: 
-	lw t2, -24(s0)
-	sw t2, 380(sp)
-	la t3, k
-	lw t2, 0(t3)
-	sw t2, 384(sp)
-	lw t0, 380(sp)
-	lw t1, 384(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 388(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 388(sp)
-	beqz t0, .LibroBB0_66
+	lw %150, -24(s0)
+	la %151, k
+	lw %152, 0(%151)
+	xor %154, %150, %152
+	snez %153, %154
+	addi %263, zero, 0
+	mv %239, %263
+	beqz %153, .LibroBB0_66
 	j .LibroBB0_49
 .LibroBB0_49: 
-	lw t2, -28(s0)
-	sw t2, 392(sp)
-	lw t2, -32(s0)
-	sw t2, 396(sp)
-	lw t0, 392(sp)
-	lw t1, 396(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 400(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 400(sp)
-	beqz t0, .LibroBB0_66
+	lw %155, -28(s0)
+	lw %156, -32(s0)
+	xor %158, %155, %156
+	snez %157, %158
+	addi %264, zero, 0
+	mv %239, %264
+	beqz %157, .LibroBB0_66
 	j .LibroBB0_50
 .LibroBB0_50: 
-	lw t2, -28(s0)
-	sw t2, 404(sp)
-	lw t2, -36(s0)
-	sw t2, 408(sp)
-	lw t0, 404(sp)
-	lw t1, 408(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 412(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 412(sp)
-	beqz t0, .LibroBB0_66
+	lw %159, -28(s0)
+	lw %160, -36(s0)
+	xor %162, %159, %160
+	snez %161, %162
+	addi %265, zero, 0
+	mv %239, %265
+	beqz %161, .LibroBB0_66
 	j .LibroBB0_51
 .LibroBB0_51: 
-	lw t2, -28(s0)
-	sw t2, 416(sp)
-	la t3, h
-	lw t2, 0(t3)
-	sw t2, 420(sp)
-	lw t0, 416(sp)
-	lw t1, 420(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 424(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 424(sp)
-	beqz t0, .LibroBB0_66
+	lw %163, -28(s0)
+	la %164, h
+	lw %165, 0(%164)
+	xor %167, %163, %165
+	snez %166, %167
+	addi %266, zero, 0
+	mv %239, %266
+	beqz %166, .LibroBB0_66
 	j .LibroBB0_52
 .LibroBB0_52: 
-	lw t2, -28(s0)
-	sw t2, 428(sp)
-	la t3, i
-	lw t2, 0(t3)
-	sw t2, 432(sp)
-	lw t0, 428(sp)
-	lw t1, 432(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 436(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 436(sp)
-	beqz t0, .LibroBB0_66
+	lw %168, -28(s0)
+	la %169, i
+	lw %170, 0(%169)
+	xor %172, %168, %170
+	snez %171, %172
+	addi %267, zero, 0
+	mv %239, %267
+	beqz %171, .LibroBB0_66
 	j .LibroBB0_53
 .LibroBB0_53: 
-	lw t2, -28(s0)
-	sw t2, 440(sp)
-	la t3, j
-	lw t2, 0(t3)
-	sw t2, 444(sp)
-	lw t0, 440(sp)
-	lw t1, 444(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 448(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 448(sp)
-	beqz t0, .LibroBB0_66
+	lw %173, -28(s0)
+	la %174, j
+	lw %175, 0(%174)
+	xor %177, %173, %175
+	snez %176, %177
+	addi %268, zero, 0
+	mv %239, %268
+	beqz %176, .LibroBB0_66
 	j .LibroBB0_54
 .LibroBB0_54: 
-	lw t2, -28(s0)
-	sw t2, 452(sp)
-	la t3, k
-	lw t2, 0(t3)
-	sw t2, 456(sp)
-	lw t0, 452(sp)
-	lw t1, 456(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 460(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 460(sp)
-	beqz t0, .LibroBB0_66
+	lw %178, -28(s0)
+	la %179, k
+	lw %180, 0(%179)
+	xor %182, %178, %180
+	snez %181, %182
+	addi %269, zero, 0
+	mv %239, %269
+	beqz %181, .LibroBB0_66
 	j .LibroBB0_55
 .LibroBB0_55: 
-	lw t2, -32(s0)
-	sw t2, 464(sp)
-	lw t2, -36(s0)
-	sw t2, 468(sp)
-	lw t0, 464(sp)
-	lw t1, 468(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 472(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 472(sp)
-	beqz t0, .LibroBB0_66
+	lw %183, -32(s0)
+	lw %184, -36(s0)
+	xor %186, %183, %184
+	snez %185, %186
+	addi %270, zero, 0
+	mv %239, %270
+	beqz %185, .LibroBB0_66
 	j .LibroBB0_56
 .LibroBB0_56: 
-	lw t2, -32(s0)
-	sw t2, 476(sp)
-	la t3, h
-	lw t2, 0(t3)
-	sw t2, 480(sp)
-	lw t0, 476(sp)
-	lw t1, 480(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 484(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 484(sp)
-	beqz t0, .LibroBB0_66
+	lw %187, -32(s0)
+	la %188, h
+	lw %189, 0(%188)
+	xor %191, %187, %189
+	snez %190, %191
+	addi %271, zero, 0
+	mv %239, %271
+	beqz %190, .LibroBB0_66
 	j .LibroBB0_57
 .LibroBB0_57: 
-	lw t2, -32(s0)
-	sw t2, 488(sp)
-	la t3, i
-	lw t2, 0(t3)
-	sw t2, 492(sp)
-	lw t0, 488(sp)
-	lw t1, 492(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 496(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 496(sp)
-	beqz t0, .LibroBB0_66
+	lw %192, -32(s0)
+	la %193, i
+	lw %194, 0(%193)
+	xor %196, %192, %194
+	snez %195, %196
+	addi %272, zero, 0
+	mv %239, %272
+	beqz %195, .LibroBB0_66
 	j .LibroBB0_58
 .LibroBB0_58: 
-	lw t2, -32(s0)
-	sw t2, 500(sp)
-	la t3, j
-	lw t2, 0(t3)
-	sw t2, 504(sp)
-	lw t0, 500(sp)
-	lw t1, 504(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 508(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 508(sp)
-	beqz t0, .LibroBB0_66
+	lw %197, -32(s0)
+	la %198, j
+	lw %199, 0(%198)
+	xor %201, %197, %199
+	snez %200, %201
+	addi %273, zero, 0
+	mv %239, %273
+	beqz %200, .LibroBB0_66
 	j .LibroBB0_59
 .LibroBB0_59: 
-	lw t2, -32(s0)
-	sw t2, 512(sp)
-	la t3, k
-	lw t2, 0(t3)
-	sw t2, 516(sp)
-	lw t0, 512(sp)
-	lw t1, 516(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 520(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 520(sp)
-	beqz t0, .LibroBB0_66
+	lw %202, -32(s0)
+	la %203, k
+	lw %204, 0(%203)
+	xor %206, %202, %204
+	snez %205, %206
+	addi %274, zero, 0
+	mv %239, %274
+	beqz %205, .LibroBB0_66
 	j .LibroBB0_60
 .LibroBB0_60: 
-	lw t2, -36(s0)
-	sw t2, 524(sp)
-	la t3, h
-	lw t2, 0(t3)
-	sw t2, 528(sp)
-	lw t0, 524(sp)
-	lw t1, 528(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 532(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 532(sp)
-	beqz t0, .LibroBB0_66
+	lw %207, -36(s0)
+	la %208, h
+	lw %209, 0(%208)
+	xor %211, %207, %209
+	snez %210, %211
+	addi %275, zero, 0
+	mv %239, %275
+	beqz %210, .LibroBB0_66
 	j .LibroBB0_61
 .LibroBB0_61: 
-	lw t2, -36(s0)
-	sw t2, 536(sp)
-	la t3, i
-	lw t2, 0(t3)
-	sw t2, 540(sp)
-	lw t0, 536(sp)
-	lw t1, 540(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 544(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 544(sp)
-	beqz t0, .LibroBB0_66
+	lw %212, -36(s0)
+	la %213, i
+	lw %214, 0(%213)
+	xor %216, %212, %214
+	snez %215, %216
+	addi %276, zero, 0
+	mv %239, %276
+	beqz %215, .LibroBB0_66
 	j .LibroBB0_62
 .LibroBB0_62: 
-	lw t2, -36(s0)
-	sw t2, 548(sp)
-	la t3, j
-	lw t2, 0(t3)
-	sw t2, 552(sp)
-	lw t0, 548(sp)
-	lw t1, 552(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 556(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 556(sp)
-	beqz t0, .LibroBB0_66
+	lw %217, -36(s0)
+	la %218, j
+	lw %219, 0(%218)
+	xor %221, %217, %219
+	snez %220, %221
+	addi %277, zero, 0
+	mv %239, %277
+	beqz %220, .LibroBB0_66
 	j .LibroBB0_63
 .LibroBB0_63: 
-	lw t2, -36(s0)
-	sw t2, 560(sp)
-	la t3, k
-	lw t2, 0(t3)
-	sw t2, 564(sp)
-	lw t0, 560(sp)
-	lw t1, 564(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 568(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 568(sp)
-	beqz t0, .LibroBB0_66
+	lw %222, -36(s0)
+	la %223, k
+	lw %224, 0(%223)
+	xor %226, %222, %224
+	snez %225, %226
+	addi %278, zero, 0
+	mv %239, %278
+	beqz %225, .LibroBB0_66
 	j .LibroBB0_64
 .LibroBB0_64: 
-	la t3, i
-	lw t2, 0(t3)
-	sw t2, 572(sp)
-	la t3, j
-	lw t2, 0(t3)
-	sw t2, 576(sp)
-	lw t0, 572(sp)
-	lw t1, 576(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 580(sp)
-	addi t3, zero, 0
-	mv t2, t3
-	sw t2, 596(sp)
-	lw t0, 580(sp)
-	beqz t0, .LibroBB0_66
+	la %227, i
+	lw %228, 0(%227)
+	la %229, j
+	lw %230, 0(%229)
+	xor %232, %228, %230
+	snez %231, %232
+	addi %279, zero, 0
+	mv %239, %279
+	beqz %231, .LibroBB0_66
 	j .LibroBB0_65
 .LibroBB0_65: 
-	la t3, h
-	lw t2, 0(t3)
-	sw t2, 584(sp)
-	la t3, k
-	lw t2, 0(t3)
-	sw t2, 588(sp)
-	lw t0, 584(sp)
-	lw t1, 588(sp)
-	xor t5, t0, t1
-	snez t2, t5
-	sw t2, 592(sp)
-	lw t0, 592(sp)
-	mv t2, t0
-	sw t2, 596(sp)
+	la %233, h
+	lw %234, 0(%233)
+	la %235, k
+	lw %236, 0(%235)
+	xor %238, %234, %236
+	snez %237, %238
+	mv %239, %237
 	j .LibroBB0_66
 .LibroBB0_66: 
-	lw t0, 596(sp)
-	beqz t0, .LibroBB0_67
+	beqz %239, .LibroBB0_67
 	j .LibroBB0_68
 .LibroBB0_67: 
 	j .LibroBB0_23
 .LibroBB0_68: 
-	la t3, total
-	lw t2, 0(t3)
-	sw t2, 600(sp)
-	addi t2, zero, 1
-	sw t2, 604(sp)
-	lw t0, 600(sp)
-	lw t1, 604(sp)
-	add t2, t0, t1
-	sw t2, 604(sp)
-	la t3, total
-	lw t1, 604(sp)
-	sw t1, 0(t3)
+	la %280, total
+	lw %281, 0(%280)
+	addi %282, zero, 1
+	add %282, %281, %282
+	la %283, total
+	sw %282, 0(%283)
 	j .LibroBB0_67
 _GLOBAL_: 
-	addi sp, sp, -8
-	sw s0, 0(sp)
-	sw ra, 4(sp)
-	addi s0, sp, 8
-	lw s0, 0(sp)
-	lw ra, 4(sp)
-	addi sp, sp, 8
 	ret
 
 .data
