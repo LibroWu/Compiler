@@ -7,11 +7,11 @@ import Assembly.Operand.virtualReg;
 import java.util.BitSet;
 
 public class Br extends Inst {
-    public Reg src1,src2;
+    public Reg src1, src2;
     public AsmBlock destination;
     public CompareCategory comOp = null;
 
-    public Br(CompareCategory comOp,Reg src1,Reg src2, AsmBlock destination) {
+    public Br(CompareCategory comOp, Reg src1, Reg src2, AsmBlock destination) {
         this.comOp = comOp;
         this.src1 = src1;
         this.src2 = src2;
@@ -21,16 +21,16 @@ public class Br extends Inst {
     @Override
     public void fillSet() {
         use.set(src1.getNumber());
-        use.set(src2.getNumber());
+        if (src2 != null) use.set(src2.getNumber());
     }
 
     @Override
     public void calcInst() {
         liveOut = new BitSet(bitSize);
-        if (next !=null) {
+        if (next != null) {
             liveOut.or(next.liveIn);
         }
-        if (destination!=null) {
+        if (destination != null) {
             liveOut.or(destination.headInst.liveIn);
         }
         liveIn = (BitSet) use.clone();
@@ -41,8 +41,8 @@ public class Br extends Inst {
 
     @Override
     public String toString() {
-        if (src2==null) {
-            return "b"+comOp+"z " + src1.toString() + ", "+ destination.toString();
-        }else return "b"+comOp+" " + src1.toString() + ", "+src2.toString() + ", " + destination.toString();
+        if (src2 == null) {
+            return "b" + comOp + "z " + src1.toString() + ", " + destination.toString();
+        } else return "b" + comOp + " " + src1.toString() + ", " + src2.toString() + ", " + destination.toString();
     }
 }
