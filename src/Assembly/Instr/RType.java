@@ -4,6 +4,8 @@ import Assembly.Operand.Reg;
 import Util.error.internalError;
 import Util.position;
 
+import java.util.BitSet;
+
 public class RType extends Inst {
     public Reg rd, rs1, rs2;
     public CalCategory op;
@@ -13,6 +15,25 @@ public class RType extends Inst {
         this.rs1 = rs1;
         this.rs2 = rs2;
         this.op = op;
+    }
+
+    @Override
+    public void fillSet() {
+        use.set(rs1.getNumber());
+        use.set(rs2.getNumber());
+        def.set(rd.getNumber());
+    }
+
+    @Override
+    public void calcInst() {
+        liveOut = new BitSet(bitSize);
+        if (next != null) {
+            liveOut.or(next.liveIn);
+        }
+        liveIn = (BitSet) use.clone();
+        BitSet tmpBitSet = (BitSet) liveOut.clone();
+        tmpBitSet.andNot(def);
+        liveIn.or(tmpBitSet);
     }
 
     @Override

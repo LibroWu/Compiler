@@ -57,7 +57,8 @@ public class Main {
             new IRPrinter(out_llvm).visitProgram(pg);
             AsmPg asmPg = new AsmPg();
             new InstrSelector(asmPg).visitProgram(pg);
-            new RegAlloc(asmPg).work();
+            new LivenessAnalysis(asmPg).work();
+            new RegAlloc_Basic(asmPg).work();
             new AsmPrinter(asmPg,out_asm).print();
         } catch (error er) {
             System.err.println(er.toString());

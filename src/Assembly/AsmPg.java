@@ -19,7 +19,7 @@ public class AsmPg {
     public AsmPg() {
         phyRegs = new ArrayList<>();
         for (int i = 0; i < 32;++i) {
-            phyRegs.add(new PhyReg(phyRegName.get(i)));
+            phyRegs.add(new PhyReg(phyRegName.get(i),i));
         }
     }
 }

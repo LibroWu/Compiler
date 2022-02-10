@@ -10,4 +10,9 @@ public class virtualReg extends Reg{
     public String toString() {
         return "%" + index;
     }
+
+    @Override
+    public int getNumber() {
+        return index+32;
+    }
 }

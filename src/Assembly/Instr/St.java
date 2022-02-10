@@ -3,6 +3,8 @@ package Assembly.Instr;
 import Assembly.Operand.Imm;
 import Assembly.Operand.Reg;
 
+import java.util.BitSet;
+
 public class St extends Inst {
     public Reg rs, addr;
     public Imm offset;
@@ -13,6 +15,21 @@ public class St extends Inst {
         this.addr = addr;
         this.offset = offset;
         this.byteLen = byteLen;
+    }
+
+    @Override
+    public void fillSet() {
+        use.set(rs.getNumber());
+        use.set(addr.getNumber());
+    }
+    @Override
+    public void calcInst() {
+        liveOut = new BitSet(bitSize);
+        if (next != null) {
+            liveOut.or(next.liveIn);
+        }
+        liveIn = (BitSet) use.clone();
+        liveIn.or(liveOut);
     }
     @Override
     public String toString() {

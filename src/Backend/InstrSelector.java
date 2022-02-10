@@ -102,6 +102,7 @@ public class InstrSelector implements Pass {
         }
         visitBlock(f.rootBlock);
         asmFunc.stackLength = 4 * (cnt - reserveCnt);
+        asmFunc.registerCount = cnt;
     }
 
     @Override
@@ -224,7 +225,9 @@ public class InstrSelector implements Pass {
                     parameterCnt++;
                 }
                 asmBlock.push_back(new FuncCall(c.funcName));
-                if (c.rd != null) asmBlock.push_back(new Mv(getAsmReg(c.rd), a0));
+                if (c.rd != null) {
+                    asmBlock.push_back(new Mv(getAsmReg(c.rd), a0));
+                }
             } else if (s instanceof convertOp) {
                 convertOp con = (convertOp) s;
                 if (con.rs instanceof constant) {
