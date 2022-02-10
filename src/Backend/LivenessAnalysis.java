@@ -5,13 +5,16 @@ import Assembly.AsmFunc;
 import Assembly.AsmPg;
 import Assembly.Instr.Inst;
 
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.*;
 
 public class LivenessAnalysis {
     public AsmPg asmPg;
     private int blockCnt = 0;
     private int funcCnt = 0;
-
+    private PrintStream out = new PrintStream("test\\test.live");
     private void collect() {
         asmPg.funcS.forEach(this::collectFunc);
     }
@@ -38,7 +41,7 @@ public class LivenessAnalysis {
         funcCnt++;
     }
 
-    public LivenessAnalysis(AsmPg asmPg) {
+    public LivenessAnalysis(AsmPg asmPg) throws FileNotFoundException {
         this.asmPg = asmPg;
     }
 
@@ -51,9 +54,9 @@ public class LivenessAnalysis {
     }
 
     private void printBlock(AsmBlock asmBlock) {
-        System.out.println(asmBlock+":");
+        out.println(asmBlock+":");
         for (Inst i = asmBlock.headInst; i != null; i = i.next) {
-            System.out.println("\t" + i.toString() +"\tliveIn:\t"+i.liveIn+"\tliveOut:\t"+i.liveOut);
+            out.println("\t" + i.toString() +"\tliveIn:\t"+i.liveIn+"\tliveOut:\t"+i.liveOut);
         }
         asmBlock.successors.forEach(this::printBlock);
     }
