@@ -1,4 +1,20 @@
-int main(){
-    int a=10,b=100,c=1000,d=10000;
-    return a*b-c+d;
+/*
+Test Package: Codegen
+Author: Admin
+Time: 2020-02-02
+Input:
+=== input ===
+=== end ===
+Output:
+=== output ===
+=== end ===
+ExitCode: 20
+InstLimit: -1
+Origin Package: Codegen Pretest-581
+*/
+int main() {
+    int x = 10;
+    if (x == 10) x = 20;
+    else x = 30;
+    return x;
 }

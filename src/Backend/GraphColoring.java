@@ -75,7 +75,8 @@ public class GraphColoring {
                 live = (BitSet) secondTailInst.liveOut.clone();
             } else live = (BitSet) asmBlock.tailInst.liveOut.clone();
             for (Inst i = asmBlock.tailInst; i != null; i = i.prev) {
-                if (i instanceof Mv mv) {
+                if (i instanceof Mv) {
+                    Mv mv = (Mv) i;
                     live.andNot(i.use);
                     moveList.get(mv.rd.getNumber()).add(i);
                     if (mv.rd != mv.rs1) {
