@@ -16,7 +16,7 @@ public class GraphColoring {
         INITIAL, PRECOLORED, SIMPLIFYWORKLIST, FREEZEWORKLIST, SPILLEDNODES, COALESCEDNODES, COLOREDNODES, SELECTSTACK
     }
 
-    private int K = 7;
+    private int K = 32;
     private LivenessAnalysis livenessAnalysis;
     private AsmPg asmPg;
     private AsmFunc asmFunc;
@@ -35,6 +35,7 @@ public class GraphColoring {
     private final double[] myExp = {1, 10, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18};
     private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5, a0;
     private ArrayList<PhyReg> phyRegs;
+    private BitSet colorSet = new BitSet(K);
 
     public GraphColoring(AsmPg asmPg, AsmFunc asmFunc, LivenessAnalysis livenessAnalysis) {
         this.asmPg = asmPg;
@@ -57,13 +58,16 @@ public class GraphColoring {
         activeMove = new HashSet<>();
 
         s0 = asmPg.phyRegs.get(8);
-        ArrayList<PhyReg> tmpPhyRegs = asmPg.phyRegs;
+        phyRegs = asmPg.phyRegs;
+        colorSet.set(0,5);
+        colorSet.set(8);
+        /*ArrayList<PhyReg> tmpPhyRegs = asmPg.phyRegs;
         //t0-t6,a0-a7,s1-s11
         phyRegs = new ArrayList<>(Arrays.asList(tmpPhyRegs.get(5), tmpPhyRegs.get(6), tmpPhyRegs.get(7)));
         for (int i = 28; i < 32; ++i) phyRegs.add(tmpPhyRegs.get(i));
         for (int i = 10; i < 18; ++i) phyRegs.add(tmpPhyRegs.get(i));
         phyRegs.add(tmpPhyRegs.get(9));
-        for (int i = 18; i < 28; ++i) phyRegs.add(tmpPhyRegs.get(i));
+        for (int i = 18; i < 28; ++i) phyRegs.add(tmpPhyRegs.get(i));*/
     }
 
     private void Build() {
@@ -378,7 +382,7 @@ public class GraphColoring {
         while (!selectStack.isEmpty()) {
             int n = selectStack.pop();
             inWhichNodeSets.set(n,InWhichNodeSet.COLOREDNODES);
-            BitSet forbidBits = new BitSet(K);
+            BitSet forbidBits = (BitSet) colorSet.clone();
             for (Integer w : adjList.get(n)) {
                 int aliasW = GetAlias(w);
                 if (coloredNodes.contains(aliasW) || aliasW < 32) forbidBits.set(color.get(aliasW));
@@ -574,56 +578,56 @@ public class GraphColoring {
             for (Inst i = asmBlock.headInst; i != null; i = i.next) {
                 if (i instanceof Br) {
                     Br branch = (Br) i;
-                    tmp = color.get(branch.src1.getNumber());
-                    if (tmp >= 32) branch.src1 = phyRegs.get(tmp);
+                    tmp = branch.src1.getNumber();
+                    if (tmp >= 32) branch.src1 = phyRegs.get(color.get(tmp));
                     if (branch.src2 != null) {
-                        tmp = color.get(branch.src2.getNumber());
-                        if (tmp >= 32) branch.src2 = phyRegs.get(tmp);
+                        tmp = branch.src2.getNumber();
+                        if (tmp >= 32) branch.src2 = phyRegs.get(color.get(tmp));
                     }
                 } else if (i instanceof IType) {
                     IType it = (IType) i;
-                    tmp = color.get(it.rd.getNumber());
-                    if (tmp >= 32) it.rd = phyRegs.get(tmp);
-                    tmp = color.get(it.rs.getNumber());
-                    if (tmp >= 32) it.rs = phyRegs.get(tmp);
+                    tmp = it.rd.getNumber();
+                    if (tmp >= 32) it.rd = phyRegs.get(color.get(tmp));
+                    tmp = it.rs.getNumber();
+                    if (tmp >= 32) it.rs = phyRegs.get(color.get(tmp));
                 } else if (i instanceof La) {
                     La la = (La) i;
-                    tmp = color.get(la.rd.getNumber());
-                    if (tmp >= 32) la.rd = phyRegs.get(tmp);
+                    tmp = la.rd.getNumber();
+                    if (tmp >= 32) la.rd = phyRegs.get(color.get(tmp));
                 } else if (i instanceof Ld) {
                     Ld ld = (Ld) i;
-                    tmp = color.get(ld.rd.getNumber());
-                    if (tmp >= 32) ld.rd = phyRegs.get(tmp);
-                    tmp = color.get(ld.addr.getNumber());
-                    if (tmp >= 32) ld.addr = phyRegs.get(tmp);
+                    tmp = ld.rd.getNumber();
+                    if (tmp >= 32) ld.rd = phyRegs.get(color.get(tmp));
+                    tmp = ld.addr.getNumber();
+                    if (tmp >= 32) ld.addr = phyRegs.get(color.get(tmp));
                 } else if (i instanceof Li) {
                     Li li = (Li) i;
-                    tmp = color.get(li.rd.getNumber());
-                    if (tmp >= 32) li.rd = phyRegs.get(tmp);
+                    tmp = li.rd.getNumber();
+                    if (tmp >= 32) li.rd = phyRegs.get(color.get(tmp));
                 } else if (i instanceof Lui) {
                     Lui lui = (Lui) i;
-                    tmp = color.get(lui.rd.getNumber());
-                    if (tmp >= 32) lui.rd = phyRegs.get(tmp);
+                    tmp = lui.rd.getNumber();
+                    if (tmp >= 32) lui.rd = phyRegs.get(color.get(tmp));
                 } else if (i instanceof Mv) {
                     Mv mv = (Mv) i;
-                    tmp = color.get(mv.rd.getNumber());
-                    if (tmp >= 32) mv.rd = phyRegs.get(tmp);
-                    tmp = color.get(mv.rs1.getNumber());
-                    if (tmp >= 32) mv.rs1 = phyRegs.get(tmp);
+                    tmp = mv.rd.getNumber();
+                    if (tmp >= 32) mv.rd = phyRegs.get(color.get(tmp));
+                    tmp = mv.rs1.getNumber();
+                    if (tmp >= 32) mv.rs1 = phyRegs.get(color.get(tmp));
                 } else if (i instanceof RType) {
                     RType r = (RType) i;
-                    tmp = color.get(r.rd.getNumber());
-                    if (tmp >= 32) r.rd = phyRegs.get(tmp);
-                    tmp = color.get(r.rs1.getNumber());
-                    if (tmp >= 32) r.rs1 = phyRegs.get(tmp);
-                    tmp = color.get(r.rs2.getNumber());
-                    if (tmp >= 32) r.rs2 = phyRegs.get(tmp);
+                    tmp = r.rd.getNumber();
+                    if (tmp >= 32) r.rd = phyRegs.get(color.get(tmp));
+                    tmp = r.rs1.getNumber();
+                    if (tmp >= 32) r.rs1 = phyRegs.get(color.get(tmp));
+                    tmp = r.rs2.getNumber();
+                    if (tmp >= 32) r.rs2 = phyRegs.get(color.get(tmp));
                 } else if (i instanceof St) {
                     St st = (St) i;
-                    tmp = color.get(st.rs.getNumber());
-                    if (tmp >= 32) st.rs = phyRegs.get(tmp);
-                    tmp = color.get(st.addr.getNumber());
-                    if (tmp >= 32) st.addr = phyRegs.get(tmp);
+                    tmp = st.rs.getNumber();
+                    if (tmp >= 32) st.rs = phyRegs.get(color.get(tmp));
+                    tmp = st.addr.getNumber();
+                    if (tmp >= 32) st.addr = phyRegs.get(color.get(tmp));
                 }
             }
         }
