@@ -1,28 +1,36 @@
 /*
-Test Package: Codegen
-Author: Admin
+Test Package: Sema_Local_Preview
+Test Target: Basic
+Author: Pikachu
 Time: 2020-02-02
-Input:
-=== input ===
-=== end ===
-Output:
-=== output ===
-=== end ===
-ExitCode: 13
-InstLimit: -1
-Origin Package: Codegen Pretest-582
+Verdict: Success
+Origin Package: Semantic
 */
-int tak(int x, int y, int z) {
-    if(y < x) {
-        return 1 + tak( tak(x - 1, y , z),
-            tak(y - 1, z , x),
-            tak(z - 1, x , y)
-        );
-    } else {
-       return z;
-    }
-}
-
 int main() {
-    return tak(18,12,6);
+    int a;
+    bool b;
+    string c;
+    bool flag = true;
+    {
+        if (b == b) {
+            flag = false;
+        }
+        int b;
+        bool c;
+        int a;
+        {
+            int c;
+            if (a + a - a == a) {
+                flag = true;
+            }
+            bool a;
+            string b;                                                                                                 {int [][][][][][][][][][][][][][][][][][][][] a = new int [1][1][1][1][1][1][1][1][1][1][1][1][1][1][1][][][][][];
+                {
+                    return 0;
+                }
+            }
+        }
+    }
+    return 0;
+    return 0;
 }

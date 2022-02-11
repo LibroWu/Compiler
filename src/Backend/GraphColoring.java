@@ -16,7 +16,7 @@ public class GraphColoring {
         INITIAL, PRECOLORED, SIMPLIFYWORKLIST, FREEZEWORKLIST, SPILLEDNODES, COALESCEDNODES, COLOREDNODES, SELECTSTACK
     }
 
-    private int K = 32;
+    private final int K = 32;
     private LivenessAnalysis livenessAnalysis;
     private AsmPg asmPg;
     private AsmFunc asmFunc;
@@ -42,6 +42,7 @@ public class GraphColoring {
         this.asmFunc = asmFunc;
         this.livenessAnalysis = livenessAnalysis;
         preColored = new HashSet<>();
+        for (int i=0;i<K;++i) preColored.add(i);
         initial = new HashSet<>();
         simplifyWorklist = new HashSet<>();
         freezeWorklist = new HashSet<>();
@@ -387,19 +388,21 @@ public class GraphColoring {
                 int aliasW = GetAlias(w);
                 if (coloredNodes.contains(aliasW) || aliasW < 32) forbidBits.set(color.get(aliasW));
             }
-            if (forbidBits.nextClearBit(0) < 0) spillWorklist.add(n);
+            int nextClearBit = forbidBits.nextClearBit(0);
+            if (nextClearBit < 0 || nextClearBit>=K) spilledNodes.add(n);
             else {
                 coloredNodes.add(n);
+                //if (forbidBits.nextClearBit(0)==32) System.out.println("---"+n+"---");
                 color.set(n, forbidBits.nextClearBit(0));
             }
         }
         for (Integer n : coalescedNodes) {
+            //if (color.get(GetAlias(n))==32) System.out.println("^^^"+n+" "+GetAlias(n)+"^^^");
             color.set(n, color.get(GetAlias(n)));
         }
     }
 
     private void RewriteProgram() {
-        //todo
         LinkedList<Integer> newTemps = new LinkedList<>();
         HashMap<Integer, Integer> getStackPos = new HashMap<>();
         for (Integer spilledNode : spilledNodes) {
@@ -414,6 +417,7 @@ public class GraphColoring {
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         branch.src1 = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(branch.src1.getNumber());
                         asmBlock.insert_before(i, new Ld(branch.src1, s0, new Imm(stackPos * -4), 4));
                     }
                     if (branch.src2 != null) {
@@ -421,6 +425,7 @@ public class GraphColoring {
                         if (spilledNodes.contains(tmp)) {
                             int stackPos = getStackPos.get(tmp);
                             branch.src2 = new virtualReg(asmFunc.registerCount++);
+                            newTemps.add(branch.src2.getNumber());
                             asmBlock.insert_before(i, new Ld(branch.src2, s0, new Imm(stackPos * -4), 4));
                         }
                     }
@@ -430,12 +435,14 @@ public class GraphColoring {
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         it.rd = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(it.rd.getNumber());
                         asmBlock.insert_after(i, new St(it.rd, s0, new Imm(stackPos * -4), 4));
                     }
                     tmp = it.rs.getNumber();
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         it.rs = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(it.rs.getNumber());
                         asmBlock.insert_before(i, new Ld(it.rs, s0, new Imm(stackPos * -4), 4));
                     }
                 } else if (i instanceof La) {
@@ -444,6 +451,7 @@ public class GraphColoring {
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         la.rd = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(la.rd.getNumber());
                         asmBlock.insert_after(i, new St(la.rd, s0, new Imm(stackPos * -4), 4));
                     }
                 } else if (i instanceof Ld) {
@@ -452,12 +460,14 @@ public class GraphColoring {
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         ld.rd = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(ld.rd.getNumber());
                         asmBlock.insert_after(i, new St(ld.rd, s0, new Imm(stackPos * -4), 4));
                     }
                     tmp = ld.addr.getNumber();
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         ld.addr = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(ld.addr.getNumber());
                         asmBlock.insert_before(i, new Ld(ld.addr, s0, new Imm(stackPos * -4), 4));
                     }
                 } else if (i instanceof Li) {
@@ -466,6 +476,7 @@ public class GraphColoring {
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         li.rd = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(li.rd.getNumber());
                         asmBlock.insert_after(i, new St(li.rd, s0, new Imm(stackPos * -4), 4));
                     }
                 } else if (i instanceof Lui) {
@@ -474,6 +485,7 @@ public class GraphColoring {
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         lui.rd = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(lui.rd.getNumber());
                         asmBlock.insert_after(i, new St(lui.rd, s0, new Imm(stackPos * -4), 4));
                     }
                 } else if (i instanceof Mv) {
@@ -482,12 +494,14 @@ public class GraphColoring {
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         mv.rd = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(mv.rd.getNumber());
                         asmBlock.insert_after(i, new St(mv.rd, s0, new Imm(stackPos * -4), 4));
                     }
                     tmp = mv.rs1.getNumber();
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         mv.rs1 = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(mv.rs1.getNumber());
                         asmBlock.insert_before(i, new Ld(mv.rs1, s0, new Imm(stackPos * -4), 4));
                     }
                 } else if (i instanceof RType) {
@@ -496,18 +510,21 @@ public class GraphColoring {
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         r.rd = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(r.rd.getNumber());
                         asmBlock.insert_after(i, new St(r.rd, s0, new Imm(stackPos * -4), 4));
                     }
                     tmp = r.rs1.getNumber();
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         r.rs1 = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(r.rs1.getNumber());
                         asmBlock.insert_before(i, new Ld(r.rs1, s0, new Imm(stackPos * -4), 4));
                     }
                     tmp = r.rs2.getNumber();
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         r.rs1 = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(r.rs2.getNumber());
                         asmBlock.insert_before(i, new Ld(r.rs1, s0, new Imm(stackPos * -4), 4));
                     }
                 } else if (i instanceof St) {
@@ -516,12 +533,14 @@ public class GraphColoring {
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         st.rs = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(st.rs.getNumber());
                         asmBlock.insert_before(i, new Ld(st.rs, s0, new Imm(stackPos * -4), 4));
                     }
                     tmp = st.addr.getNumber();
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
                         st.addr = new virtualReg(asmFunc.registerCount++);
+                        newTemps.add(st.addr.getNumber());
                         asmBlock.insert_before(i, new Ld(st.addr, s0, new Imm(stackPos * -4), 4));
                     }
                 }
@@ -531,6 +550,7 @@ public class GraphColoring {
         initial = coloredNodes;
         initial.addAll(coalescedNodes);
         initial.addAll(newTemps);
+        coalescedNodes = new HashSet<>();
         coloredNodes = new HashSet<>();
     }
 
@@ -617,6 +637,7 @@ public class GraphColoring {
                 } else if (i instanceof RType) {
                     RType r = (RType) i;
                     tmp = r.rd.getNumber();
+                    //System.out.println("***"+r+"***");
                     if (tmp >= 32) r.rd = phyRegs.get(color.get(tmp));
                     tmp = r.rs1.getNumber();
                     if (tmp >= 32) r.rs1 = phyRegs.get(color.get(tmp));

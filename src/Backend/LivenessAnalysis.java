@@ -109,5 +109,6 @@ public class LivenessAnalysis {
                 if (calcInst(currentInst)) quit = false;
             }
         }
+        printFunc(func);
     }
 }
