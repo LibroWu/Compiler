@@ -25,7 +25,7 @@ public class Main {
         String llvmOutput = "test\\test.ll";
         String asmOutput = "output.s";
         //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\e2.mx";
-        InputStream input = new FileInputStream(name);
+        //InputStream input = new FileInputStream(name);
         PrintStream out_llvm = new PrintStream(llvmOutput);
         PrintStream out_asm = new PrintStream(asmOutput);
         //OutputStream out = System.out;
