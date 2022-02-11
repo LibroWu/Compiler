@@ -1,7 +1,7 @@
 main:
 	addi %0, zero, 0	liveIn:	{0, 8}	liveOut:	{0, 8, 32}
 	sw %0, -12(s0)	liveIn:	{0, 8, 32}	liveOut:	{0, 8}
-	addi %1, zero, 0	liveIn:	{0, 8}	liveOut:	{8, 33}
+	addi %1, zero, 10	liveIn:	{0, 8}	liveOut:	{8, 33}
 	sw %1, -12(s0)	liveIn:	{8, 33}	liveOut:	{8}
 	j .LibroBB0_1	liveIn:	{8}	liveOut:	{8}
 .LibroBB0_1:

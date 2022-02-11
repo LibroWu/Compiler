@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class AsmFunc {
     public AsmBlock rootBlock = null;
-    public int stackLength = 0, registerCount = 0;
+    public int stackLength = 0, registerCount = 0,allocCount=0,stackReserved,originalRegisterCount;
     public String funcName;
     public List<AsmBlock> blockList = new LinkedList<>();
 

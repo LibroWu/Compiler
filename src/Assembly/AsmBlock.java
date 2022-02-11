@@ -10,9 +10,12 @@ public class AsmBlock {
     public boolean isRoot = false;
     public String funcName = null;
     public HashMap<AsmBlock,Inst> JumpFrom = new HashMap<>();
+    public int loopDepth;
     // prune-use: public AsmBlock precursor = null;
 
-    public AsmBlock() {}
+    public AsmBlock(int loopDepth) {
+        this.loopDepth = loopDepth;
+    }
 
     public void push_back(Inst i) {
         if (headInst == null) headInst = tailInst = i;

@@ -11,7 +11,10 @@ public class block {
     public ArrayList<block> successors = new ArrayList<>();
     public terminalStmt tailStmt = null;
     public boolean jumpTo = false;
-    public block() {}
+    public int loopDepth;
+    public block(int loopDepth) {
+        this.loopDepth = loopDepth;
+    }
 
     public void push_front(statement stmt){
         stmts.push(stmt);

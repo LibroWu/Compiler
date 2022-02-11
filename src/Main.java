@@ -21,15 +21,15 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        //String name = "test\\test.mx";
-        String llvmOutput = "test.ll";
-        String asmOutput = "output.s";
+        String name = "test\\test.mx";
+        String llvmOutput = "test\\test.ll";
+        String asmOutput = "test\\test.s";
         //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\e2.mx";
-        //InputStream input = new FileInputStream(name);
+        InputStream input = new FileInputStream(name);
         PrintStream out_llvm = new PrintStream(llvmOutput);
         PrintStream out_asm = new PrintStream(asmOutput);
         //OutputStream out = System.out;
-        InputStream input = System.in;
+        //InputStream input = System.in;
         try {
             RootNode ASTRoot;
             globalScope gScope = new globalScope(null);
@@ -57,8 +57,9 @@ public class Main {
             new IRPrinter(out_llvm).visitProgram(pg);
             AsmPg asmPg = new AsmPg();
             new InstrSelector(asmPg).visitProgram(pg);
-            new LivenessAnalysis(asmPg).work();
-            new RegAlloc_Basic(asmPg).work();
+            //new LivenessAnalysis(asmPg).work();
+            new RegAlloc(asmPg).work();
+            //new RegAlloc_Basic(asmPg).work();
             new AsmPrinter(asmPg,out_asm).print();
         } catch (error er) {
             System.err.println(er.toString());

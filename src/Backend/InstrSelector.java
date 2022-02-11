@@ -39,7 +39,7 @@ public class InstrSelector implements Pass {
 
     private AsmBlock getAsmBlock(block b) {
         if (!blockMap.containsKey(b)) {
-            blockMap.put(b, new AsmBlock());
+            blockMap.put(b, new AsmBlock(b.loopDepth));
         }
         return blockMap.get(b);
     }
@@ -102,7 +102,9 @@ public class InstrSelector implements Pass {
         }
         visitBlock(f.rootBlock);
         asmFunc.stackLength = 4 * (cnt - reserveCnt);
-        asmFunc.registerCount = cnt;
+        asmFunc.registerCount = asmFunc.originalRegisterCount = cnt;
+        asmFunc.allocCount = asmFunc.stackReserved = f.allocas.size();
+        asmFunc.stackReserved +=3;
     }
 
     @Override

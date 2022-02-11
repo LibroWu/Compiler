@@ -31,6 +31,7 @@ public class IRBuilder implements ASTVisitor {
     private constant constZero = new constant(0), constVoid = new constant(), constUnit = new constant(1);
     private register lastFuncCaller = null;
     private IRType lastFuncCallerIRType = null;
+    private int loopDepth = 0;
 
     public IRBuilder(program pg, globalScope gScope, HashMap<String, classDef> idToDef, HashMap<String, funcDef> idToFuncDef) {
         this.pg = pg;
@@ -38,7 +39,7 @@ public class IRBuilder implements ASTVisitor {
         this.idToFuncDef = idToFuncDef;
         currentScope = this.gScope = gScope;
         globalInitializer.returnType = voidIrType;
-        globalInitializer.rootBlock = new block();
+        globalInitializer.rootBlock = new block(loopDepth);
         globalInitializer.funcId = "_GLOBAL_";
         voidIrType.isVoid = true;
         set_declares();
@@ -160,8 +161,8 @@ public class IRBuilder implements ASTVisitor {
         currentFunc = idToFuncDef.get(idPrefix + it.id);
         //System.out.println(currentFunc.funcId);
         if (Objects.equals(currentFunc.funcId, "main")) mainFunc = currentFunc;
-        currentFunc.rootBlock = new block();
-        currentFunc.returnBlock = new block();
+        currentFunc.rootBlock = new block(loopDepth);
+        currentFunc.returnBlock = new block(loopDepth);
         currentFunc.returnBlock.jumpTo = true;
         currentBlock = currentFunc.rootBlock;
         pg.push_back(currentFunc);
@@ -197,7 +198,7 @@ public class IRBuilder implements ASTVisitor {
                 IRType tmpIrType;
                 if (t.isClass) {
                     tmpIrType = new IRType(idToDef.get(t.name), t.dimension + 1, 0);
-                    if (Objects.equals(t.name, "string") && t.dimension==0) tmpIrType.isString = true;
+                    if (Objects.equals(t.name, "string") && t.dimension == 0) tmpIrType.isString = true;
                 } else tmpIrType = new IRType(t);
                 currentFunc.parameterRegs.add(rs);
                 currentScope.defineVariable(tmpId, t, it.parameters.pos);
@@ -260,7 +261,7 @@ public class IRBuilder implements ASTVisitor {
             IRType tmpIrType;
             if (t.isClass) {
                 tmpIrType = new IRType(idToDef.get(t.name), t.dimension + 1, 0);
-                if (Objects.equals(t.name, "string") && t.dimension==0) tmpIrType.isString = true;
+                if (Objects.equals(t.name, "string") && t.dimension == 0) tmpIrType.isString = true;
             } else tmpIrType = new IRType(t);
             for (declaratorNode declaratorNode : it.declaratorList) {
                 if (currentStruct == null || currentFunc != null) {
@@ -275,7 +276,7 @@ public class IRBuilder implements ASTVisitor {
                             IRType declIRType = declaratorNode.expr.irType;
                             if (tmpIrType.isString && declIRType.cDef == null) {
                                 rs = constStringCastToString(declaratorNode.expr);
-                            }else if (tmpIrType.ptrNum == 0 && declIRType.ptrNum == 0 && tmpIrType.iNum!=declIRType.iNum) {
+                            } else if (tmpIrType.ptrNum == 0 && declIRType.ptrNum == 0 && tmpIrType.iNum != declIRType.iNum) {
                                 convertOp.convertType convert;
                                 if (tmpIrType.iNum > declIRType.iNum) convert = convertOp.convertType.SEXT;
                                 else convert = convertOp.convertType.TRUNC;
@@ -288,7 +289,7 @@ public class IRBuilder implements ASTVisitor {
                         currentScope.linkRegister(declaratorNode.Identifier, rd, tmpIrType.getPtr());
                         entity en;
                         if (declaratorNode.expr != null) {
-                            currentBlock = new block();
+                            currentBlock = new block(loopDepth);
                             currentFunc = new funcDef();
                             currentFunc.returnType = voidIrType;
                             currentFunc.funcId = "_global_var_init." + initFuncCounter++;
@@ -356,9 +357,9 @@ public class IRBuilder implements ASTVisitor {
     @Override
     public void visit(selectStmtNode it) {
         it.cond.accept(this);
-        block TBlock = new block(), FBlock, ConvergeBlock = new block();
+        block TBlock = new block(loopDepth), FBlock, ConvergeBlock = new block(loopDepth);
         if (it.falseStmt != null) {
-            FBlock = new block();
+            FBlock = new block(loopDepth);
             if (it.cond.rd instanceof constant) {
                 constant con = (constant) it.cond.rd;
                 ConvergeBlock.jumpTo = true;
@@ -442,11 +443,12 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(iterStmtNode it) {
+        ++loopDepth;
         currentScope = new Scope(currentScope);
         block parentLoopExitBlock = loopExitBlock;
         block parentLoopContinueBlock = loopContinueBlock;
         if (it.isFor) {
-            block body = new block(), checkBlock = new block(), exitBlock = new block(), incrBlock = new block();
+            block body = new block(loopDepth), checkBlock = new block(loopDepth), exitBlock = new block(loopDepth), incrBlock = new block(loopDepth);
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
             currentBlock.successors.add(checkBlock);
             currentBlock.successors.add(body);
@@ -474,7 +476,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.push_back(new br(null, checkBlock, null));
             currentBlock = exitBlock;
         } else {
-            block body = new block(), checkBlock = new block(), exitBlock = new block();
+            block body = new block(loopDepth), checkBlock = new block(loopDepth), exitBlock = new block(loopDepth);
             loopExitBlock = exitBlock;
             loopContinueBlock = checkBlock;
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
@@ -487,8 +489,8 @@ public class IRBuilder implements ASTVisitor {
             if (it.cond.rd instanceof constant) {
                 constant con = (constant) it.cond.rd;
                 if (con.getBoolValue()) {
-                    currentBlock.push_back(new br(null,body,null));
-                } else currentBlock.push_back(new br(null,exitBlock,null));
+                    currentBlock.push_back(new br(null, body, null));
+                } else currentBlock.push_back(new br(null, exitBlock, null));
             } else currentBlock.push_back(new br((register) it.cond.rd, body, exitBlock));
             currentBlock = body;
             it.mainStmt.accept(this);
@@ -498,6 +500,7 @@ public class IRBuilder implements ASTVisitor {
         loopExitBlock = parentLoopExitBlock;
         loopContinueBlock = parentLoopContinueBlock;
         currentScope = currentScope.parentScope();
+        --loopDepth;
     }
 
     @Override
@@ -508,7 +511,7 @@ public class IRBuilder implements ASTVisitor {
                 if (currentFunc.retReg != null) {
                     entity rd;
                     IRType rsIRType = it.expr.irType, targetIRType = currentFunc.returnType;
-                    if (! (it.expr.rd instanceof constant)) {
+                    if (!(it.expr.rd instanceof constant)) {
                         if (rsIRType.isString || targetIRType.isString) {
                             //const string to string
                             if (rsIRType.cDef == null) rd = constStringCastToString(it.expr);
@@ -615,7 +618,7 @@ public class IRBuilder implements ASTVisitor {
             firstExpr.accept(this);
             res = firstExpr.rd;
         } else {
-            block exitBl = new block();
+            block exitBl = new block(loopDepth);
             exitBl.jumpTo = true;
             res = new register();
             phi p = new phi((register) res, i1);
@@ -623,7 +626,7 @@ public class IRBuilder implements ASTVisitor {
             boolean meetConstantFlag = false;
             for (int i = 0; i < len - 1; ++i) {
                 firstExpr.accept(this);
-                block bl = new block();
+                block bl = new block(loopDepth);
                 bl.jumpTo = true;
                 if (firstExpr.rd instanceof constant) {
                     constant con = (constant) firstExpr.rd;
@@ -696,7 +699,7 @@ public class IRBuilder implements ASTVisitor {
             firstExpr.accept(this);
             res = firstExpr.rd;
         } else {
-            block exitBl = new block();
+            block exitBl = new block(loopDepth);
             exitBl.jumpTo = true;
             res = new register();
             phi p = new phi((register) res, i1);
@@ -704,7 +707,7 @@ public class IRBuilder implements ASTVisitor {
             boolean meetConstantFlag = false;
             for (int i = 0; i < len - 1; ++i) {
                 firstExpr.accept(this);
-                block bl = new block();
+                block bl = new block(loopDepth);
                 bl.jumpTo = true;
                 if (firstExpr.rd instanceof constant) {
                     constant con = (constant) firstExpr.rd;
@@ -871,7 +874,7 @@ public class IRBuilder implements ASTVisitor {
         firstExpr.accept(this);
         int listLen = it.exprList.size();
         entity lastRes = firstExpr.rd;
-        if ( listLen > 1 &&firstExpr.irType.isString ) {
+        if (listLen > 1 && firstExpr.irType.isString) {
             if (firstExpr.irType.cDef == null) lastRes = constStringCastToString(firstExpr);
             for (int i = 1; i < listLen; ++i) {
                 exprNode second = it.exprList.get(i);
@@ -935,7 +938,7 @@ public class IRBuilder implements ASTVisitor {
         int listLen = it.exprList.size();
         entity lastRes = firstExpr.rd;
         IRType resIrType;
-        if (listLen > 1 &&firstExpr.irType.isString ) {
+        if (listLen > 1 && firstExpr.irType.isString) {
             if (firstExpr.irType.cDef == null) lastRes = constStringCastToString(firstExpr);
             for (int i = 1; i < listLen; ++i) {
                 exprNode second = it.exprList.get(i);
@@ -1041,6 +1044,7 @@ public class IRBuilder implements ASTVisitor {
     }
 
     private register recursiveNew(ArrayList<exprNode> exprList, int recursiveStep, IRType irType) {
+        ++loopDepth;
         register rd, receiveReg = new register(), i32ptr = new register();
         exprNode presentNode = exprList.get(recursiveStep);
         presentNode.accept(this);
@@ -1076,7 +1080,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.push_back(new bitcast(rd, receiveReg, irType, i8Star));
         }
         if (recursiveStep + 1 != exprList.size()) {
-            block body = new block(), checkBlock = new block(), exitBlock = new block();
+            block body = new block(loopDepth), checkBlock = new block(loopDepth), exitBlock = new block(loopDepth);
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
             currentBlock.successors.add(checkBlock);
             currentBlock.successors.add(body);
@@ -1111,6 +1115,7 @@ public class IRBuilder implements ASTVisitor {
             //exit block
             currentBlock = exitBlock;
         }
+        --loopDepth;
         return rd;
     }
 
@@ -1137,10 +1142,10 @@ public class IRBuilder implements ASTVisitor {
             it.rd = new register();
             it.idReg = null;
             currentBlock.push_back(new bitcast((register) it.rd, receive_ptr, it.irType, i8Star));
-            String constructorName = "_"+it.type.name+"_"+it.type.name;
+            String constructorName = "_" + it.type.name + "_" + it.type.name;
             if (idToFuncDef.containsKey(constructorName)) {
-                call constructor = new call(null,voidIrType,constructorName);
-                constructor.parameters.push(new entityTypePair(it.rd,it.irType));
+                call constructor = new call(null, voidIrType, constructorName);
+                constructor.parameters.push(new entityTypePair(it.rd, it.irType));
                 currentBlock.push_back(constructor);
             }
         }
@@ -1243,11 +1248,11 @@ public class IRBuilder implements ASTVisitor {
                                     en = constStringCastToString(expr);
                                 } else {
                                     register tmpReg = new register();
-                                    if (tmpIRType.ptrNum>0 || tmpIRType.cDef!=null || expr.irType.ptrNum>0 || expr.irType.cDef!=null)
-                                    currentBlock.push_back(new bitcast(tmpReg, (register) expr.rd, tmpIRType, expr.irType));
+                                    if (tmpIRType.ptrNum > 0 || tmpIRType.cDef != null || expr.irType.ptrNum > 0 || expr.irType.cDef != null)
+                                        currentBlock.push_back(new bitcast(tmpReg, (register) expr.rd, tmpIRType, expr.irType));
                                     else {
-                                        convertOp.convertType op = (tmpIRType.iNum>expr.irType.iNum)? convertOp.convertType.ZEXT: convertOp.convertType.TRUNC;
-                                        currentBlock.push_back(new convertOp(tmpReg,expr.rd,op,tmpIRType,expr.irType));
+                                        convertOp.convertType op = (tmpIRType.iNum > expr.irType.iNum) ? convertOp.convertType.ZEXT : convertOp.convertType.TRUNC;
+                                        currentBlock.push_back(new convertOp(tmpReg, expr.rd, op, tmpIRType, expr.irType));
                                     }
                                     en = tmpReg;
                                 }
@@ -1353,8 +1358,8 @@ public class IRBuilder implements ASTVisitor {
             IRType irType = new IRType(0, length, i8);
             irType.isString = true;
             int tmpCnt = pg.globalStringConstants.size();
-            rd.label = ".libro.str"+((tmpCnt>0)?"."+tmpCnt:"");
-            pg.push_back(new globalStringConstant(content,it.literal, tmpCnt, (register) it.rd, irType));
+            rd.label = ".libro.str" + ((tmpCnt > 0) ? "." + tmpCnt : "");
+            pg.push_back(new globalStringConstant(content, it.literal, tmpCnt, (register) it.rd, irType));
             it.irType = irType.getPtr();
             it.idReg = (register) it.rd;
         } else if (it.isNull) {

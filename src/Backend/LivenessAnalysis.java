@@ -6,7 +6,6 @@ import Assembly.AsmPg;
 import Assembly.Instr.Inst;
 
 import java.io.FileNotFoundException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -14,8 +13,9 @@ public class LivenessAnalysis {
     public AsmPg asmPg;
     private int blockCnt = 0;
     private int funcCnt = 0;
-    private PrintStream out = new PrintStream("test\\test.live");
-    private void collect() {
+    //private PrintStream out = new PrintStream("test\\test.live");
+    private final PrintStream out = System.out;
+    public void collect() {
         asmPg.funcS.forEach(this::collectFunc);
     }
 
@@ -41,7 +41,7 @@ public class LivenessAnalysis {
         funcCnt++;
     }
 
-    public LivenessAnalysis(AsmPg asmPg) throws FileNotFoundException {
+    public LivenessAnalysis(AsmPg asmPg) {
         this.asmPg = asmPg;
     }
 
@@ -80,11 +80,10 @@ public class LivenessAnalysis {
         BitSet preIn = currentInst.liveIn;
         BitSet preOut = currentInst.liveOut;
         currentInst.calcInst();
-        return preIn.equals(currentInst.liveIn) && preOut.equals(currentInst.liveOut);
+        return !preIn.equals(currentInst.liveIn) || !preOut.equals(currentInst.liveOut);
     }
 
     public void workInFunc(AsmFunc func) {
-        AsmBlock rootBlock = func.rootBlock;
         int bitSize = func.registerCount + 32, blockListSize = func.blockList.size();
         ListIterator<AsmBlock> asmBlockListIterator = func.blockList.listIterator(blockListSize);
         while (asmBlockListIterator.hasPrevious()) {
@@ -104,10 +103,10 @@ public class LivenessAnalysis {
                 AsmBlock currentBlock = asmBlockListIterator.previous();
                 Inst currentInst = currentBlock.tailInst;
                 while (currentInst.prev != null) {
-                    if (!calcInst(currentInst)) quit = false;
+                    if (calcInst(currentInst)) quit = false;
                     currentInst = currentInst.prev;
                 }
-                if (!calcInst(currentInst)) quit = false;
+                if (calcInst(currentInst)) quit = false;
             }
         }
     }

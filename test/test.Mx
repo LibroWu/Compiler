@@ -1,3 +1,4 @@
 int main(){
-    return 10;
+    int a=10,b=100,c=1000,d=10000;
+    return a*b-c+d;
 }

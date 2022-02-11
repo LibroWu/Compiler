@@ -2,11 +2,8 @@ package Assembly;
 
 import Assembly.Operand.PhyReg;
 
+import java.util.*;
 import java.util.ArrayList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class AsmPg {
     public static ArrayList<String> phyRegName = new ArrayList<>(Arrays.asList(
@@ -14,7 +11,7 @@ public class AsmPg {
             "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7",
             "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"));
     public ArrayList<PhyReg> phyRegs;
-    public ArrayList<AsmFunc> funcS = new ArrayList<>();
+    public LinkedList<AsmFunc> funcS = new LinkedList<>();
     public ArrayList<AsmGlobal> globals = new ArrayList<>();
     public AsmPg() {
         phyRegs = new ArrayList<>();
