@@ -84,6 +84,8 @@ public class LivenessAnalysis {
     }
 
     public void workInFunc(AsmFunc func) {
+        //System.out.println("----------------*-----------------");
+        //printFunc(func);
         int bitSize = func.registerCount + 32, blockListSize = func.blockList.size();
         ListIterator<AsmBlock> asmBlockListIterator = func.blockList.listIterator(blockListSize);
         while (asmBlockListIterator.hasPrevious()) {
@@ -109,6 +111,7 @@ public class LivenessAnalysis {
                 if (calcInst(currentInst)) quit = false;
             }
         }
+        //System.out.println("********************-*******************");
         //printFunc(func);
     }
 }

@@ -3,7 +3,7 @@ package Assembly;
 import java.util.*;
 
 public class AsmFunc {
-    public AsmBlock rootBlock = null;
+    public AsmBlock rootBlock = null,tailBlock = null;
     public int stackLength = 0, registerCount = 0,allocCount=0,stackReserved,originalRegisterCount,calleeSavedCount;
     public String funcName;
     public List<AsmBlock> blockList = new LinkedList<>();

@@ -15,6 +15,7 @@ public class InstrSelector implements Pass {
     private int cnt = 0, reserveCnt = 0;
     private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5, a0;
     private Imm ImmZero = new Imm(0);
+    private AsmBlock tailBlock = null;
 
     public AsmPg asmPg;
 
@@ -100,7 +101,9 @@ public class InstrSelector implements Pass {
         for (alloca alloca : f.allocas) {
             regMap.put(alloca.rd, new virtualReg(--reserveCnt));
         }
+        tailBlock = null;
         visitBlock(f.rootBlock);
+        asmFunc.tailBlock = tailBlock;
         asmFunc.stackLength = 4 * (cnt - reserveCnt);
         asmFunc.registerCount = asmFunc.originalRegisterCount = cnt;
         asmFunc.allocCount = asmFunc.stackReserved = f.allocas.size();
@@ -374,6 +377,7 @@ public class InstrSelector implements Pass {
                 }
             } else if (s instanceof ret) {
                 ret r = (ret) s;
+                tailBlock = asmBlock;
                 if (r.value != null) {
                     if (r.value instanceof register)
                         asmBlock.push_back(

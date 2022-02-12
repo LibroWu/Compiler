@@ -12,9 +12,9 @@ public class FuncCall extends Inst {
 
     @Override
     public void fillSet() {
-//        for (Reg parameter : parameters) {
-//            def.set(parameter.getNumber());
-//        }
+        for (Reg parameter : parameters) {
+            def.set(parameter.getNumber());
+        }
     }
 
     @Override
