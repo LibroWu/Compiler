@@ -1,16 +1,20 @@
 package Assembly.Instr;
-
+import Assembly.Operand.Reg;
 import java.util.BitSet;
+import java.util.LinkedList;
 
 public class FuncCall extends Inst {
     public String funcName;
-
+    public LinkedList<Reg> parameters = new LinkedList<>();
     public FuncCall(String funcName) {
         this.funcName = funcName;
     }
 
     @Override
     public void fillSet() {
+//        for (Reg parameter : parameters) {
+//            def.set(parameter.getNumber());
+//        }
     }
 
     @Override
@@ -19,7 +23,8 @@ public class FuncCall extends Inst {
         if (next != null) {
             liveOut.or(next.liveIn);
         }
-        liveIn  = (BitSet) liveOut.clone();
+        liveIn = (BitSet) liveOut.clone();
+        liveIn.andNot(def);
     }
 
     @Override

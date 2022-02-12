@@ -35,7 +35,7 @@ public class GraphColoring {
     private final double[] myExp = {1, 10, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18};
     private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5, a0;
     private ArrayList<PhyReg> phyRegs;
-    private BitSet colorSet = new BitSet(K);
+    private BitSet colorSet = new BitSet(K),callerSavedSet = new BitSet(K),calleeSavedUsed = new BitSet(32);
 
     public GraphColoring(AsmPg asmPg, AsmFunc asmFunc, LivenessAnalysis livenessAnalysis) {
         this.asmPg = asmPg;
@@ -62,6 +62,10 @@ public class GraphColoring {
         phyRegs = asmPg.phyRegs;
         colorSet.set(0,5);
         colorSet.set(8);
+        callerSavedSet.set(0,8);
+        callerSavedSet.set(10,18);
+        callerSavedSet.set(28,32);
+        asmFunc.calleeSavedUsed = calleeSavedUsed;
         /*ArrayList<PhyReg> tmpPhyRegs = asmPg.phyRegs;
         //t0-t6,a0-a7,s1-s11
         phyRegs = new ArrayList<>(Arrays.asList(tmpPhyRegs.get(5), tmpPhyRegs.get(6), tmpPhyRegs.get(7)));
@@ -94,6 +98,14 @@ public class GraphColoring {
                     for (int l = live.nextSetBit(0); l >= 0; l = live.nextSetBit(l + 1)) {
                         AddEdge(l, d);
                     }
+                if (i instanceof FuncCall) {
+                    //System.out.println(i+"^^^"+live);
+                    for (int d = live.nextSetBit(0); d >= 0; d = live.nextSetBit(d + 1)) {
+                        for (int l = callerSavedSet.nextSetBit(0); l >= 0; l = callerSavedSet.nextSetBit(l + 1)) {
+                            AddEdge(l, d);
+                        }
+                    }
+                }
                 live.andNot(i.def);
                 live.or(i.use);
             }
@@ -380,6 +392,7 @@ public class GraphColoring {
     }
 
     private void AssignColors() {
+        calleeSavedUsed.clear();
         while (!selectStack.isEmpty()) {
             int n = selectStack.pop();
             inWhichNodeSets.set(n,InWhichNodeSet.COLOREDNODES);
@@ -392,14 +405,22 @@ public class GraphColoring {
             if (nextClearBit < 0 || nextClearBit>=K) spilledNodes.add(n);
             else {
                 coloredNodes.add(n);
+                int colorChosen = forbidBits.nextClearBit(0);
+                if (!callerSavedSet.get(colorChosen))
+                    calleeSavedUsed.set(colorChosen);
                 //if (forbidBits.nextClearBit(0)==32) System.out.println("---"+n+"---");
-                color.set(n, forbidBits.nextClearBit(0));
+                color.set(n, colorChosen);
             }
         }
         for (Integer n : coalescedNodes) {
             //if (color.get(GetAlias(n))==32) System.out.println("^^^"+n+" "+GetAlias(n)+"^^^");
             color.set(n, color.get(GetAlias(n)));
         }
+        int calleeSavedCount = 0;
+        for (int d = calleeSavedUsed.nextSetBit(0); d >= 0; d = calleeSavedUsed.nextSetBit(d + 1)) {
+            ++calleeSavedCount;
+        }
+        asmFunc.calleeSavedCount = calleeSavedCount;
     }
 
     private void RewriteProgram() {
@@ -593,6 +614,7 @@ public class GraphColoring {
     }
 
     private void Replace() {
+        int stackChange = -4*asmFunc.calleeSavedCount;
         for (AsmBlock asmBlock : asmFunc.blockList) {
             int tmp;
             for (Inst i = asmBlock.headInst; i != null; i = i.next) {
@@ -620,6 +642,7 @@ public class GraphColoring {
                     if (tmp >= 32) ld.rd = phyRegs.get(color.get(tmp));
                     tmp = ld.addr.getNumber();
                     if (tmp >= 32) ld.addr = phyRegs.get(color.get(tmp));
+                    if (ld.addr.getNumber()==8)ld.offset = new Imm(ld.offset.value+stackChange);
                 } else if (i instanceof Li) {
                     Li li = (Li) i;
                     tmp = li.rd.getNumber();
@@ -649,6 +672,7 @@ public class GraphColoring {
                     if (tmp >= 32) st.rs = phyRegs.get(color.get(tmp));
                     tmp = st.addr.getNumber();
                     if (tmp >= 32) st.addr = phyRegs.get(color.get(tmp));
+                    if (st.addr.getNumber()==8)st.offset = new Imm(st.offset.value+stackChange);
                 }
             }
         }

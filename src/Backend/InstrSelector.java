@@ -205,6 +205,7 @@ public class InstrSelector implements Pass {
             } else if (s instanceof call) {
                 call c = (call) s;
                 int parameterCnt = 0;
+                FuncCall funcCall = new FuncCall(c.funcName);
                 for (entityTypePair parameter : c.parameters) {
                     Reg rs;
                     entity en = parameter.en;
@@ -224,9 +225,10 @@ public class InstrSelector implements Pass {
                     } else {
 
                     }
+                    funcCall.parameters.add(rs);
                     parameterCnt++;
                 }
-                asmBlock.push_back(new FuncCall(c.funcName));
+                asmBlock.push_back(funcCall);
                 if (c.rd != null) {
                     asmBlock.push_back(new Mv(getAsmReg(c.rd), a0));
                 }
