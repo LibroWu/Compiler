@@ -53,7 +53,7 @@ public class Main {
             program pg = new program();
             new IRBuilder(pg, gScope,idToDef,idToFuncDef).visit(ASTRoot);
             //optimise
-            new Optimizer_Base().visitProgram(pg);
+            //new Optimizer_Base().visitProgram(pg);
             new IRPrinter(out_llvm).visitProgram(pg);
             AsmPg asmPg = new AsmPg();
             new InstrSelector(asmPg).visitProgram(pg);
