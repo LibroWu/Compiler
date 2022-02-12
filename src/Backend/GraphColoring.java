@@ -691,11 +691,11 @@ public class GraphColoring {
             else break;
         } while (true);
         AssignColors();
-        if (!spilledNodes.isEmpty()) {
+        if (spilledNodes.isEmpty()) {
+            Replace();
+        } else {
             RewriteProgram();
             this.Main();
-        } else {
-            Replace();
         }
     }
 }
