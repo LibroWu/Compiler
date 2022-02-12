@@ -60,6 +60,7 @@ public class Main {
             //new LivenessAnalysis(asmPg).work();
             new RegAlloc(asmPg).work();
             //new RegAlloc_Basic(asmPg).work();
+            new AsmOptimizer(asmPg).work();
             new AsmPrinter(asmPg,out_asm).print();
         } catch (error er) {
             System.err.println(er.toString());

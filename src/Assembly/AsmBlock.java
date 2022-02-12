@@ -38,6 +38,17 @@ public class AsmBlock {
         in.prev = i; in.next = i.next; i.next = in;
     }
 
+    public void delete_Inst(Inst i) {
+        if (i.prev==null) headInst = i.next;
+        else {
+            i.prev.next = i.next;
+        }
+        if (i.next==null) tailInst = i.prev;
+        else {
+            i.next.prev = i.prev;
+        }
+    }
+
     @Override
     public String toString() {
         if (isRoot) return funcName;
