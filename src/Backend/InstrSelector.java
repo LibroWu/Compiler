@@ -16,6 +16,7 @@ public class InstrSelector implements Pass {
     private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5, a0;
     private Imm ImmZero = new Imm(0);
     private AsmBlock tailBlock = null;
+    private AsmFunc asmFunc = null;
 
     public AsmPg asmPg;
 
@@ -82,7 +83,7 @@ public class InstrSelector implements Pass {
     public void visitFuncDef(funcDef f) {
         cnt = 0;
         reserveCnt = -2;
-        AsmFunc asmFunc = new AsmFunc(f.funcId);
+        asmFunc = new AsmFunc(f.funcId);
         asmFunc.rootBlock = getAsmBlock(f.rootBlock);
         asmPg.funcS.add(asmFunc);
         //todo parameters,ra,sp
@@ -94,7 +95,7 @@ public class InstrSelector implements Pass {
             if (parameterCnt < 8) {
                 rootBlock.push_back(new Mv(getAsmReg(parameterReg), asmPg.phyRegs.get(10 + parameterCnt)));
             } else {
-
+                rootBlock.push_back(new Ld(getAsmReg(parameterReg), s0, new Imm((parameterCnt - 8) * 4), 4));
             }
             ++parameterCnt;
         }
@@ -107,7 +108,7 @@ public class InstrSelector implements Pass {
         asmFunc.stackLength = 4 * (cnt - reserveCnt);
         asmFunc.registerCount = asmFunc.originalRegisterCount = cnt;
         asmFunc.allocCount = asmFunc.stackReserved = f.allocas.size();
-        asmFunc.stackReserved +=3;
+        asmFunc.stackReserved += 3;
     }
 
     @Override
@@ -226,11 +227,13 @@ public class InstrSelector implements Pass {
                     if (parameterCnt < 8) {
                         asmBlock.push_back(new Mv(asmPg.phyRegs.get(parameterCnt + 10), rs));
                     } else {
-
+                        asmBlock.push_back(new St(rs, sp, new Imm((parameterCnt - 8) * 4), 4));
                     }
                     funcCall.parameters.add(rs);
                     parameterCnt++;
                 }
+                if (c.parameters.size() - 7 > asmFunc.callSpilledCount)
+                    asmFunc.callSpilledCount = c.parameters.size() - 7;
                 asmBlock.push_back(funcCall);
                 if (c.rd != null) {
                     asmBlock.push_back(new Mv(getAsmReg(c.rd), a0));

@@ -39,7 +39,7 @@ public class RegAlloc {
 
     public void workInFunc(AsmFunc func) {
         new GraphColoring(asmPg,func,livenessAnalysis).Main();
-        func.stackLength = (func.stackReserved+func.calleeSavedCount)*4-4;
+        func.stackLength = (func.stackReserved+func.calleeSavedCount+func.callSpilledCount)*4-4;
         AsmBlock rootBlock = func.rootBlock;
         tailBlock = func.tailBlock;
         Inst headInst = rootBlock.headInst, tailInst = tailBlock.tailInst;

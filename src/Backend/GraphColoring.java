@@ -642,7 +642,8 @@ public class GraphColoring {
                     if (tmp >= 32) ld.rd = phyRegs.get(color.get(tmp));
                     tmp = ld.addr.getNumber();
                     if (tmp >= 32) ld.addr = phyRegs.get(color.get(tmp));
-                    if (ld.addr.getNumber()==8)ld.offset = new Imm(ld.offset.value+stackChange);
+                    int value = ld.offset.value;
+                    if (ld.addr.getNumber()==8 && value<0)ld.offset = new Imm(value+stackChange);
                 } else if (i instanceof Li) {
                     Li li = (Li) i;
                     tmp = li.rd.getNumber();
@@ -672,7 +673,8 @@ public class GraphColoring {
                     if (tmp >= 32) st.rs = phyRegs.get(color.get(tmp));
                     tmp = st.addr.getNumber();
                     if (tmp >= 32) st.addr = phyRegs.get(color.get(tmp));
-                    if (st.addr.getNumber()==8)st.offset = new Imm(st.offset.value+stackChange);
+                    int value = st.offset.value;
+                    if (st.addr.getNumber()==8 && value<0)st.offset = new Imm(value+stackChange);
                 }
             }
         }
