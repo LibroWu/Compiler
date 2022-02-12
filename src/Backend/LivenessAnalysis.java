@@ -64,7 +64,7 @@ public class LivenessAnalysis {
     public void work() {
         collect();
         asmPg.funcS.forEach(this::workInFunc);
-        printLivenessAnalysisResult();
+        //printLivenessAnalysisResult();
     }
 
     private void addBitSet(Inst currentInst, int bitSize) {
@@ -110,7 +110,18 @@ public class LivenessAnalysis {
             }
         }
         //dead code eliminate
-
+        asmBlockListIterator = func.blockList.listIterator(blockListSize);
+        while (asmBlockListIterator.hasPrevious()) {
+            AsmBlock currentBlock = asmBlockListIterator.previous();
+            Inst currentInst = currentBlock.headInst;
+            while (currentInst!=null) {
+                Inst next = currentInst.next;
+                if (currentInst.check())
+                    currentBlock.delete_Inst(currentInst);
+                currentInst = next;
+            }
+        }
         //printFunc(func);
+
     }
 }

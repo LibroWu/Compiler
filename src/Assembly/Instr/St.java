@@ -31,6 +31,12 @@ public class St extends Inst {
         liveIn = (BitSet) use.clone();
         liveIn.or(liveOut);
     }
+
+    @Override
+    public boolean check() {
+        return false;
+    }
+
     @Override
     public String toString() {
         String op;

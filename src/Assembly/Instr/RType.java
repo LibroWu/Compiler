@@ -35,7 +35,10 @@ public class RType extends Inst {
         tmpBitSet.andNot(def);
         liveIn.or(tmpBitSet);
     }
-
+    @Override
+    public boolean check() {
+        return !liveOut.get(rd.getNumber());
+    }
     @Override
     public String toString() {
         if (op.ordinal() < 12) return op + " " + rd + ", " + rs1 + ", " + rs2;

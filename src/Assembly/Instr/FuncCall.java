@@ -25,6 +25,11 @@ public class FuncCall extends Inst {
     }
 
     @Override
+    public boolean check() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "call " + funcName;
     }

@@ -28,7 +28,10 @@ public class Ld extends Inst {
         tmpBitSet.andNot(def);
         liveIn.or(tmpBitSet);
     }
-
+    @Override
+    public boolean check() {
+        return !liveOut.get(rd.getNumber());
+    }
     @Override
     public void fillSet() {
         use.set(addr.getNumber());

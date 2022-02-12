@@ -26,6 +26,12 @@ public class La extends Inst{
         liveIn = (BitSet) liveOut.clone();
         liveIn.andNot(def);
     }
+
+    @Override
+    public boolean check() {
+        return !liveOut.get(rd.getNumber());
+    }
+
     @Override
     public String toString() {
         return "la "+rd+", "+symbol;

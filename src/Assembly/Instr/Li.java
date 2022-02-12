@@ -31,7 +31,10 @@ public class Li extends Inst {
         tmpBitSet.andNot(def);
         liveIn.or(tmpBitSet);
     }
-
+    @Override
+    public boolean check() {
+        return !liveOut.get(rd.getNumber());
+    }
     @Override
     public String toString() {
         return "li " + rd + ", " + imm;

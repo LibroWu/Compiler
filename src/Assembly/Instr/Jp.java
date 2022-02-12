@@ -23,6 +23,11 @@ public class Jp extends Inst {
     }
 
     @Override
+    public boolean check() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "j " + destination;
     }

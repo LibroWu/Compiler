@@ -40,6 +40,11 @@ public class Br extends Inst {
     }
 
     @Override
+    public boolean check() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         if (src2 == null) {
             return "b" + comOp + "z " + src1.toString() + ", " + destination.toString();

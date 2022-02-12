@@ -28,7 +28,10 @@ public class Lui extends Inst {
         liveIn = (BitSet) liveOut.clone();
         liveIn.andNot(def);
     }
-
+    @Override
+    public boolean check() {
+        return !liveOut.get(rd.getNumber());
+    }
     @Override
     public String toString() {
         return "lui " + rd + ", " + imm;

@@ -36,6 +36,11 @@ public class IType extends Inst {
     }
 
     @Override
+    public boolean check() {
+        return !liveOut.get(rd.getNumber());
+    }
+
+    @Override
     public String toString() {
         if (op.ordinal() < 12) return op + "i " + rd + ", " + rs + ", " + imm;
         else {

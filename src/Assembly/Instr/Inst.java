@@ -17,6 +17,7 @@ public abstract class Inst {
 
     abstract public void fillSet();
     abstract public void calcInst();
+    abstract public boolean check();
     // below: for Asm Printer
     @Override abstract public String toString();
 }
