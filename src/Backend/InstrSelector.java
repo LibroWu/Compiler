@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class InstrSelector implements Pass {
     private HashMap<block, AsmBlock> blockMap = new HashMap<>();
-    private HashMap<register, virtualReg> regMap = new HashMap<>();
+    private HashMap<register, Reg> regMap = new HashMap<>();
     private int cnt = 0, reserveCnt = 0;
     private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5, a0;
     private Imm ImmZero = new Imm(0);
@@ -46,7 +46,7 @@ public class InstrSelector implements Pass {
         return blockMap.get(b);
     }
 
-    private virtualReg getAsmReg(register r) {
+    private Reg getAsmReg(register r) {
         if (!regMap.containsKey(r)) {
             regMap.put(r, new virtualReg(cnt++));
         }
@@ -93,7 +93,8 @@ public class InstrSelector implements Pass {
         int parameterCnt = 0;
         for (register parameterReg : f.parameterRegs) {
             if (parameterCnt < 8) {
-                rootBlock.push_back(new Mv(getAsmReg(parameterReg), asmPg.phyRegs.get(10 + parameterCnt)));
+                regMap.put(parameterReg,asmPg.phyRegs.get(10+parameterCnt));
+                //rootBlock.push_back(new Mv(getAsmReg(parameterReg), asmPg.phyRegs.get(10 + parameterCnt)));
             } else {
                 rootBlock.push_back(new Ld(getAsmReg(parameterReg), s0, new Imm((parameterCnt - 8) * 4), 4));
             }
@@ -248,7 +249,7 @@ public class InstrSelector implements Pass {
                         asmBlock.push_back(new Lui(rs, new Imm(constValue >>> 12)));
                         asmBlock.push_back(new IType(rs, rs, new Imm(getLo(constValue)), Inst.CalCategory.add));
                     } else asmBlock.push_back(new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
-                    virtualReg vr = getAsmReg(con.rd);
+                    virtualReg vr = (virtualReg) getAsmReg(con.rd);
                     asmBlock.push_back(new Mv(vr, rs));
                 } else {
                     regMap.put(con.rd, getAsmReg((register) con.rs));
@@ -350,7 +351,7 @@ public class InstrSelector implements Pass {
                     asmBlock.push_back(new La(tmpReg, l.ptr.label));
                     asmBlock.push_back(new Ld(getAsmReg(l.rd), tmpReg, ImmZero, l.align));
                 } else {
-                    virtualReg vr = getAsmReg(l.ptr);
+                    virtualReg vr =(virtualReg) getAsmReg(l.ptr);
                     if (vr.index < 0)
                         asmBlock.push_back(new Ld(getAsmReg(l.rd), s0, new Imm(vr.index * 4), l.align));
                     else asmBlock.push_back(new Ld(getAsmReg(l.rd), vr, ImmZero, l.align));
@@ -410,7 +411,7 @@ public class InstrSelector implements Pass {
                     asmBlock.push_back(new La(tmpReg, st.target.label));
                     asmBlock.push_back(new St(rs, tmpReg, ImmZero, st.align));
                 } else {
-                    virtualReg vr = getAsmReg(st.target);
+                    virtualReg vr = (virtualReg) getAsmReg(st.target);
                     if (vr.index < 0)
                         asmBlock.push_back(new St(rs, s0, new Imm(vr.index * 4), st.align));
                     else asmBlock.push_back(new St(rs, vr, ImmZero, st.align));
