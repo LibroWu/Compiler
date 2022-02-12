@@ -29,7 +29,7 @@ public class La extends Inst{
 
     @Override
     public boolean check() {
-        return !liveOut.get(rd.getNumber());
+        return !liveOut.get(rd.getNumber())&& rd.getNumber()>=32;
     }
 
     @Override
