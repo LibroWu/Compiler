@@ -3,7 +3,7 @@ package Backend;
 import Assembly.AsmBlock;
 import Assembly.AsmFunc;
 import Assembly.AsmPg;
-import Assembly.Instr.Inst;
+import Assembly.Instr.*;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -76,6 +76,14 @@ public class LivenessAnalysis {
         currentInst.fillSet();
     }
 
+    private void addBitSet(AsmBlock currentBlock, int bitSize) {
+        currentBlock.kill = new BitSet(bitSize);
+        currentBlock.gen = new BitSet(bitSize);
+        currentBlock.liveIn = new BitSet(bitSize);
+        currentBlock.liveOut = new BitSet(bitSize);
+        currentBlock.bitSize = bitSize;
+    }
+
     private boolean calcInst(Inst currentInst) {
         BitSet preIn = currentInst.liveIn;
         BitSet preOut = currentInst.liveOut;
@@ -83,14 +91,25 @@ public class LivenessAnalysis {
         return !preIn.equals(currentInst.liveIn) || !preOut.equals(currentInst.liveOut);
     }
 
+    private boolean calcBlock(AsmBlock currentBlock) {
+        BitSet preIn = currentBlock.liveIn;
+        BitSet preOut = currentBlock.liveOut;
+        currentBlock.calcBlock();
+        return !preIn.equals(currentBlock.liveIn) || !preOut.equals(currentBlock.liveOut);
+    }
+
     public void workInFunc(AsmFunc func) {
         int bitSize = func.registerCount + 32, blockListSize = func.blockList.size();
         ListIterator<AsmBlock> asmBlockListIterator = func.blockList.listIterator(blockListSize);
         while (asmBlockListIterator.hasPrevious()) {
             AsmBlock currentBlock = asmBlockListIterator.previous();
+            addBitSet(currentBlock,bitSize);
             Inst currentInst = currentBlock.tailInst;
             while (currentInst.prev != null) {
                 addBitSet(currentInst, bitSize);
+                currentBlock.gen.andNot(currentInst.def);
+                currentBlock.gen.or(currentInst.use);
+                currentBlock.kill.or(currentInst.def);
                 currentInst = currentInst.prev;
             }
             addBitSet(currentInst, bitSize);
@@ -101,26 +120,35 @@ public class LivenessAnalysis {
             asmBlockListIterator = func.blockList.listIterator(blockListSize);
             while (asmBlockListIterator.hasPrevious()) {
                 AsmBlock currentBlock = asmBlockListIterator.previous();
-                Inst currentInst = currentBlock.tailInst;
+                if (calcBlock(currentBlock)) {
+                    quit = false;
+                    break;
+                }
+/*                Inst currentInst = currentBlock.tailInst;
                 while (currentInst.prev != null) {
                     if (calcInst(currentInst)) quit = false;
                     currentInst = currentInst.prev;
                 }
-                if (calcInst(currentInst)) quit = false;
+                if (calcInst(currentInst)) quit = false;*/
             }
         }
         //dead code eliminate
-        asmBlockListIterator = func.blockList.listIterator(blockListSize);
+/*        asmBlockListIterator = func.blockList.listIterator(blockListSize);
         while (asmBlockListIterator.hasPrevious()) {
             AsmBlock currentBlock = asmBlockListIterator.previous();
+            BitSet live = (BitSet) currentBlock.liveOut.clone();
             Inst currentInst = currentBlock.headInst;
             while (currentInst!=null) {
                 Inst next = currentInst.next;
+                if (currentInst instanceof Mv) live.andNot(currentInst.use);
+                live.or(currentInst.def);
                 if (currentInst.check())
                     currentBlock.delete_Inst(currentInst);
+                live.andNot(currentInst.def);
+                live.or(currentInst.use);
                 currentInst = next;
             }
-        }
+        }*/
         //printFunc(func);
     }
 }

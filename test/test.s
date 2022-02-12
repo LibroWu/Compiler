@@ -3,21 +3,21 @@
 	.p2align	2
 	.type	main,@function
 gcd: 
-	addi sp, sp, -356
-	sw ra, 352(sp)
-	sw s0, 348(sp)
-	sw s1, 344(sp)
-	sw s2, 340(sp)
-	sw s3, 336(sp)
-	sw s4, 332(sp)
-	sw s5, 328(sp)
-	sw s6, 324(sp)
-	sw s7, 320(sp)
-	sw s8, 316(sp)
-	sw s9, 312(sp)
-	sw s10, 308(sp)
-	sw s11, 304(sp)
-	addi s0, sp, 356
+	addi sp, sp, -380
+	sw ra, 376(sp)
+	sw s0, 372(sp)
+	sw s1, 368(sp)
+	sw s2, 364(sp)
+	sw s3, 360(sp)
+	sw s4, 356(sp)
+	sw s5, 352(sp)
+	sw s6, 348(sp)
+	sw s7, 344(sp)
+	sw s8, 340(sp)
+	sw s9, 336(sp)
+	sw s10, 332(sp)
+	sw s11, 328(sp)
+	addi s0, sp, 380
 	lw t0, 0(s0)
 	sw t0, -196(s0)
 	lw t0, 4(s0)
@@ -32,21 +32,24 @@ gcd:
 	sw t0, -216(s0)
 	lw t0, 24(s0)
 	sw t0, -220(s0)
-	lw t6, 28(s0)
-	lw t5, 32(s0)
-	lw t4, 36(s0)
-	lw t3, 40(s0)
-	lw s11, 44(s0)
-	lw s10, 48(s0)
-	lw s9, 52(s0)
-	lw s8, 56(s0)
-	lw s7, 60(s0)
-	lw s6, 64(s0)
-	lw s5, 68(s0)
-	lw s4, 72(s0)
-	lw s3, 76(s0)
-	lw s2, 80(s0)
-	lw s1, 84(s0)
+	lw t0, 28(s0)
+	sw t0, -224(s0)
+	lw t0, 32(s0)
+	sw t0, -276(s0)
+	lw t0, 36(s0)
+	sw t0, -280(s0)
+	lw t6, 40(s0)
+	lw t5, 44(s0)
+	lw t4, 48(s0)
+	lw t3, 52(s0)
+	lw s11, 56(s0)
+	lw s10, 60(s0)
+	lw s9, 64(s0)
+	lw s8, 68(s0)
+	lw s7, 72(s0)
+	lw s6, 76(s0)
+	lw s5, 80(s0)
+	lw s4, 84(s0)
 	lw t2, 88(s0)
 	lw t1, 92(s0)
 	addi t0, zero, 0
@@ -73,21 +76,24 @@ gcd:
 	sw t0, -112(s0)
 	lw t0, -220(s0)
 	sw t0, -116(s0)
-	sw t6, -120(s0)
-	sw t5, -124(s0)
-	sw t4, -128(s0)
-	sw t3, -132(s0)
-	sw s11, -136(s0)
-	sw s10, -140(s0)
-	sw s9, -144(s0)
-	sw s8, -148(s0)
-	sw s7, -152(s0)
-	sw s6, -156(s0)
-	sw s5, -160(s0)
-	sw s4, -164(s0)
-	sw s3, -168(s0)
-	sw s2, -172(s0)
-	sw s1, -176(s0)
+	lw t0, -224(s0)
+	sw t0, -120(s0)
+	lw t0, -276(s0)
+	sw t0, -124(s0)
+	lw t0, -280(s0)
+	sw t0, -128(s0)
+	sw t6, -132(s0)
+	sw t5, -136(s0)
+	sw t4, -140(s0)
+	sw t3, -144(s0)
+	sw s11, -148(s0)
+	sw s10, -152(s0)
+	sw s9, -156(s0)
+	sw s8, -160(s0)
+	sw s7, -164(s0)
+	sw s6, -168(s0)
+	sw s5, -172(s0)
+	sw s4, -176(s0)
 	sw t2, -180(s0)
 	sw t1, -184(s0)
 	la a0, .libro.str
@@ -99,19 +105,21 @@ gcd:
 	beqz t0, .LibroBB0_1
 	j .LibroBB0_2
 .LibroBB0_1: 
+	lw t0, -188(s0)
 	addi t0, zero, 0
 	sw t0, -188(s0)
 	j .LibroBB0_5
 .LibroBB0_2: 
-	la a0, .libro.str.1
+	la s1, .libro.str.1
+	mv a0, s1
 	call println
 	addi t0, zero, 1
 	sw t0, -56(s0)
 	j .LibroBB0_10
 .LibroBB0_3: 
-	lw t1, -68(s0)
+	lw s1, -68(s0)
 	lw t0, -72(s0)
-	add t1, t1, t0
+	add t1, s1, t0
 	lw t0, -76(s0)
 	add t1, t1, t0
 	lw t0, -80(s0)
@@ -167,42 +175,43 @@ gcd:
 	lw t0, -180(s0)
 	add t1, t1, t0
 	lw t0, -184(s0)
-	add t1, t1, t0
-	addi t0, zero, 100
-	rem t0, t1, t0
-	sw t0, -192(s0)
+	add t0, t1, t0
+	addi t1, zero, 100
+	rem t1, t0, t1
+	lw t0, -192(s0)
+	sw t1, -192(s0)
 	j .LibroBB0_6
 .LibroBB0_4: 
-	lw t1, -60(s0)
+	lw s3, -60(s0)
 	lw t0, -64(s0)
-	rem t1, t1, t0
+	rem t1, s3, t0
 	addi t0, zero, 0
 	xor t0, t1, t0
 	seqz t0, t0
 	beqz t0, .LibroBB0_7
 	j .LibroBB0_8
 .LibroBB0_5: 
-	lw t1, -188(s0)
+	lw s1, -188(s0)
 	addi t0, zero, 10
-	slt t0, t0, t1
+	slt t0, t0, s1
 	seqz t0, t0
 	beqz t0, .LibroBB0_4
 	j .LibroBB0_3
 .LibroBB0_6: 
-	lw t1, -188(s0)
+	lw s1, -188(s0)
 	addi t0, zero, 1
-	add t0, t1, t0
+	add t0, s1, t0
 	sw t0, -188(s0)
 	j .LibroBB0_5
 .LibroBB0_7: 
-	lw t0, -64(s0)
-	sw t0, -224(s0)
+	lw s1, -64(s0)
+	sw s1, -232(s0)
 	lw t1, -60(s0)
 	lw t0, -64(s0)
 	rem t0, t1, t0
-	sw t0, -228(s0)
+	sw t0, -240(s0)
 	lw t0, -192(s0)
-	sw t0, -232(s0)
+	sw t0, -248(s0)
 	addi a0, zero, 10
 	addi a1, zero, 68
 	addi a2, zero, 0
@@ -266,17 +275,17 @@ gcd:
 	lw a6, -84(s0)
 	lw a7, -88(s0)
 	lw t0, -92(s0)
-	sw t0, -236(s0)
-	lw t0, -96(s0)
-	sw t0, -240(s0)
-	lw t0, -100(s0)
-	sw t0, -244(s0)
-	lw t0, -104(s0)
-	sw t0, -248(s0)
-	lw t0, -108(s0)
 	sw t0, -252(s0)
-	lw t0, -112(s0)
+	lw t0, -96(s0)
 	sw t0, -256(s0)
+	lw t0, -100(s0)
+	sw t0, -260(s0)
+	lw t0, -104(s0)
+	sw t0, -264(s0)
+	lw t0, -108(s0)
+	sw t0, -268(s0)
+	lw t0, -112(s0)
+	sw t0, -272(s0)
 	lw t6, -116(s0)
 	lw t5, -120(s0)
 	lw t4, -124(s0)
@@ -295,20 +304,20 @@ gcd:
 	lw t2, -176(s0)
 	lw t1, -180(s0)
 	lw t0, -184(s0)
-	lw a0, -224(s0)
-	lw a1, -228(s0)
-	lw a2, -232(s0)
-	lw a1, -236(s0)
-	sw a1, 0(sp)
+	lw a0, -232(s0)
 	lw a1, -240(s0)
-	sw a1, 4(sp)
-	lw a1, -244(s0)
-	sw a1, 8(sp)
-	lw a1, -248(s0)
-	sw a1, 12(sp)
+	lw a2, -248(s0)
 	lw a1, -252(s0)
-	sw a1, 16(sp)
+	sw a1, 0(sp)
 	lw a1, -256(s0)
+	sw a1, 4(sp)
+	lw a1, -260(s0)
+	sw a1, 8(sp)
+	lw a1, -264(s0)
+	sw a1, 12(sp)
+	lw a1, -268(s0)
+	sw a1, 16(sp)
+	lw a1, -272(s0)
 	sw a1, 20(sp)
 	sw t6, 24(sp)
 	sw t5, 28(sp)
@@ -332,75 +341,84 @@ gcd:
 	sw a0, -56(s0)
 	j .LibroBB0_10
 .LibroBB0_8: 
-	lw t0, -64(s0)
+	lw s1, -64(s0)
+	sw s1, -228(s0)
+	lw t0, -228(s0)
 	sw t0, -56(s0)
 	j .LibroBB0_10
 .LibroBB0_9: 
-	addi t0, zero, 0
+	addi s2, zero, 0
+	sw s2, -236(s0)
+	lw t0, -236(s0)
 	sw t0, -56(s0)
 	j .LibroBB0_10
 .LibroBB0_10: 
-	lw a0, -56(s0)
-	lw s0, 348(sp)
-	lw s1, 344(sp)
-	lw s2, 340(sp)
-	lw s3, 336(sp)
-	lw s4, 332(sp)
-	lw s5, 328(sp)
-	lw s6, 324(sp)
-	lw s7, 320(sp)
-	lw s8, 316(sp)
-	lw s9, 312(sp)
-	lw s10, 308(sp)
-	lw s11, 304(sp)
-	lw ra, 352(sp)
-	addi sp, sp, 356
+	lw s1, -56(s0)
+	sw s1, -244(s0)
+	lw a0, -244(s0)
+	lw s0, 372(sp)
+	lw s1, 368(sp)
+	lw s2, 364(sp)
+	lw s3, 360(sp)
+	lw s4, 356(sp)
+	lw s5, 352(sp)
+	lw s6, 348(sp)
+	lw s7, 344(sp)
+	lw s8, 340(sp)
+	lw s9, 336(sp)
+	lw s10, 332(sp)
+	lw s11, 328(sp)
+	lw ra, 376(sp)
+	addi sp, sp, 380
 	ret
 gcd1: 
-	addi sp, sp, -340
-	sw ra, 336(sp)
-	sw s0, 332(sp)
-	sw s1, 328(sp)
-	sw s2, 324(sp)
-	sw s3, 320(sp)
-	sw s4, 316(sp)
-	sw s5, 312(sp)
-	sw s6, 308(sp)
-	sw s7, 304(sp)
-	sw s8, 300(sp)
-	sw s9, 296(sp)
-	sw s10, 292(sp)
-	sw s11, 288(sp)
-	addi s0, sp, 340
+	addi sp, sp, -376
+	sw ra, 372(sp)
+	sw s0, 368(sp)
+	sw s1, 364(sp)
+	sw s2, 360(sp)
+	sw s3, 356(sp)
+	sw s4, 352(sp)
+	sw s5, 348(sp)
+	sw s6, 344(sp)
+	sw s7, 340(sp)
+	sw s8, 336(sp)
+	sw s9, 332(sp)
+	sw s10, 328(sp)
+	sw s11, 324(sp)
+	addi s0, sp, 376
 	lw t0, 0(s0)
 	sw t0, -192(s0)
 	lw t0, 4(s0)
-	sw t0, -196(s0)
-	lw t0, 8(s0)
 	sw t0, -200(s0)
-	lw t0, 12(s0)
+	lw t0, 8(s0)
 	sw t0, -204(s0)
-	lw t0, 16(s0)
+	lw t0, 12(s0)
 	sw t0, -208(s0)
-	lw t0, 20(s0)
-	sw t0, -212(s0)
-	lw t0, 24(s0)
+	lw t0, 16(s0)
 	sw t0, -216(s0)
-	lw t6, 28(s0)
-	lw t5, 32(s0)
-	lw t4, 36(s0)
-	lw t3, 40(s0)
-	lw s11, 44(s0)
-	lw s10, 48(s0)
-	lw s9, 52(s0)
-	lw s8, 56(s0)
-	lw s7, 60(s0)
-	lw s6, 64(s0)
-	lw s5, 68(s0)
-	lw s4, 72(s0)
-	lw s3, 76(s0)
-	lw s2, 80(s0)
-	lw s1, 84(s0)
+	lw t0, 20(s0)
+	sw t0, -224(s0)
+	lw t0, 24(s0)
+	sw t0, -228(s0)
+	lw t0, 28(s0)
+	sw t0, -268(s0)
+	lw t0, 32(s0)
+	sw t0, -272(s0)
+	lw t0, 36(s0)
+	sw t0, -276(s0)
+	lw t6, 40(s0)
+	lw t5, 44(s0)
+	lw t4, 48(s0)
+	lw t3, 52(s0)
+	lw s11, 56(s0)
+	lw s10, 60(s0)
+	lw s9, 64(s0)
+	lw s8, 68(s0)
+	lw s7, 72(s0)
+	lw s6, 76(s0)
+	lw s5, 80(s0)
+	lw s4, 84(s0)
 	lw t2, 88(s0)
 	lw t1, 92(s0)
 	addi t0, zero, 0
@@ -415,33 +433,36 @@ gcd1:
 	sw a7, -88(s0)
 	lw t0, -192(s0)
 	sw t0, -92(s0)
-	lw t0, -196(s0)
-	sw t0, -96(s0)
 	lw t0, -200(s0)
-	sw t0, -100(s0)
+	sw t0, -96(s0)
 	lw t0, -204(s0)
-	sw t0, -104(s0)
+	sw t0, -100(s0)
 	lw t0, -208(s0)
-	sw t0, -108(s0)
-	lw t0, -212(s0)
-	sw t0, -112(s0)
+	sw t0, -104(s0)
 	lw t0, -216(s0)
+	sw t0, -108(s0)
+	lw t0, -224(s0)
+	sw t0, -112(s0)
+	lw t0, -228(s0)
 	sw t0, -116(s0)
-	sw t6, -120(s0)
-	sw t5, -124(s0)
-	sw t4, -128(s0)
-	sw t3, -132(s0)
-	sw s11, -136(s0)
-	sw s10, -140(s0)
-	sw s9, -144(s0)
-	sw s8, -148(s0)
-	sw s7, -152(s0)
-	sw s6, -156(s0)
-	sw s5, -160(s0)
-	sw s4, -164(s0)
-	sw s3, -168(s0)
-	sw s2, -172(s0)
-	sw s1, -176(s0)
+	lw t0, -268(s0)
+	sw t0, -120(s0)
+	lw t0, -272(s0)
+	sw t0, -124(s0)
+	lw t0, -276(s0)
+	sw t0, -128(s0)
+	sw t6, -132(s0)
+	sw t5, -136(s0)
+	sw t4, -140(s0)
+	sw t3, -144(s0)
+	sw s11, -148(s0)
+	sw s10, -152(s0)
+	sw s9, -156(s0)
+	sw s8, -160(s0)
+	sw s7, -164(s0)
+	sw s6, -168(s0)
+	sw s5, -172(s0)
+	sw s4, -176(s0)
 	sw t2, -180(s0)
 	sw t1, -184(s0)
 	la a0, .libro.str.2
@@ -453,9 +474,11 @@ gcd1:
 	beqz t0, .LibroBB1_1
 	j .LibroBB1_2
 .LibroBB1_1: 
-	lw t1, -68(s0)
-	lw t0, -72(s0)
-	add t1, t1, t0
+	lw s3, -68(s0)
+	sw s3, -196(s0)
+	lw t1, -72(s0)
+	lw t0, -196(s0)
+	add t1, t0, t1
 	lw t0, -76(s0)
 	add t1, t1, t0
 	lw t0, -80(s0)
@@ -511,10 +534,11 @@ gcd1:
 	lw t0, -180(s0)
 	add t1, t1, t0
 	lw t0, -184(s0)
-	add t1, t1, t0
-	addi t0, zero, 100
-	rem t0, t1, t0
-	sw t0, -188(s0)
+	add t0, t1, t0
+	addi t1, zero, 100
+	rem t1, t0, t1
+	lw t0, -188(s0)
+	sw t1, -188(s0)
 	lw t1, -60(s0)
 	lw t0, -64(s0)
 	rem t1, t1, t0
@@ -524,21 +548,28 @@ gcd1:
 	beqz t0, .LibroBB1_5
 	j .LibroBB1_4
 .LibroBB1_2: 
-	la a0, .libro.str.3
+	la s1, .libro.str.3
+	sw s1, -264(s0)
+	lw a0, -264(s0)
 	call println
 	addi t0, zero, 1
 	sw t0, -56(s0)
 	j .LibroBB1_6
 .LibroBB1_3: 
-	addi t0, zero, 0
+	addi s2, zero, 0
+	sw s2, -232(s0)
+	lw t0, -232(s0)
 	sw t0, -56(s0)
 	j .LibroBB1_6
 .LibroBB1_4: 
-	lw t0, -64(s0)
+	lw s1, -64(s0)
+	sw s1, -212(s0)
+	lw t0, -212(s0)
 	sw t0, -56(s0)
 	j .LibroBB1_6
 .LibroBB1_5: 
-	lw a0, -64(s0)
+	lw s1, -64(s0)
+	sw s1, -220(s0)
 	lw t1, -60(s0)
 	lw t0, -64(s0)
 	rem a1, t1, t0
@@ -549,17 +580,17 @@ gcd1:
 	lw a6, -84(s0)
 	lw a7, -88(s0)
 	lw t0, -92(s0)
-	sw t0, -220(s0)
-	lw t0, -96(s0)
-	sw t0, -224(s0)
-	lw t0, -100(s0)
-	sw t0, -228(s0)
-	lw t0, -104(s0)
-	sw t0, -232(s0)
-	lw t0, -108(s0)
-	sw t0, -236(s0)
-	lw t0, -112(s0)
 	sw t0, -240(s0)
+	lw t0, -96(s0)
+	sw t0, -244(s0)
+	lw t0, -100(s0)
+	sw t0, -248(s0)
+	lw t0, -104(s0)
+	sw t0, -252(s0)
+	lw t0, -108(s0)
+	sw t0, -256(s0)
+	lw t0, -112(s0)
+	sw t0, -260(s0)
 	lw t6, -116(s0)
 	lw t5, -120(s0)
 	lw t4, -124(s0)
@@ -578,17 +609,18 @@ gcd1:
 	lw t2, -176(s0)
 	lw t1, -180(s0)
 	lw t0, -184(s0)
-	lw a1, -220(s0)
-	sw a1, 0(sp)
-	lw a1, -224(s0)
-	sw a1, 4(sp)
-	lw a1, -228(s0)
-	sw a1, 8(sp)
-	lw a1, -232(s0)
-	sw a1, 12(sp)
-	lw a1, -236(s0)
-	sw a1, 16(sp)
+	lw a0, -220(s0)
 	lw a1, -240(s0)
+	sw a1, 0(sp)
+	lw a1, -244(s0)
+	sw a1, 4(sp)
+	lw a1, -248(s0)
+	sw a1, 8(sp)
+	lw a1, -252(s0)
+	sw a1, 12(sp)
+	lw a1, -256(s0)
+	sw a1, 16(sp)
+	lw a1, -260(s0)
 	sw a1, 20(sp)
 	sw t6, 24(sp)
 	sw t5, 28(sp)
@@ -612,67 +644,72 @@ gcd1:
 	sw a0, -56(s0)
 	j .LibroBB1_6
 .LibroBB1_6: 
-	lw a0, -56(s0)
-	lw s0, 332(sp)
-	lw s1, 328(sp)
-	lw s2, 324(sp)
-	lw s3, 320(sp)
-	lw s4, 316(sp)
-	lw s5, 312(sp)
-	lw s6, 308(sp)
-	lw s7, 304(sp)
-	lw s8, 300(sp)
-	lw s9, 296(sp)
-	lw s10, 292(sp)
-	lw s11, 288(sp)
-	lw ra, 336(sp)
-	addi sp, sp, 340
+	lw s1, -56(s0)
+	sw s1, -236(s0)
+	lw a0, -236(s0)
+	lw s0, 368(sp)
+	lw s1, 364(sp)
+	lw s2, 360(sp)
+	lw s3, 356(sp)
+	lw s4, 352(sp)
+	lw s5, 348(sp)
+	lw s6, 344(sp)
+	lw s7, 340(sp)
+	lw s8, 336(sp)
+	lw s9, 332(sp)
+	lw s10, 328(sp)
+	lw s11, 324(sp)
+	lw ra, 372(sp)
+	addi sp, sp, 376
 	ret
 gcd2: 
-	addi sp, sp, -340
-	sw ra, 336(sp)
-	sw s0, 332(sp)
-	sw s1, 328(sp)
-	sw s2, 324(sp)
-	sw s3, 320(sp)
-	sw s4, 316(sp)
-	sw s5, 312(sp)
-	sw s6, 308(sp)
-	sw s7, 304(sp)
-	sw s8, 300(sp)
-	sw s9, 296(sp)
-	sw s10, 292(sp)
-	sw s11, 288(sp)
-	addi s0, sp, 340
+	addi sp, sp, -376
+	sw ra, 372(sp)
+	sw s0, 368(sp)
+	sw s1, 364(sp)
+	sw s2, 360(sp)
+	sw s3, 356(sp)
+	sw s4, 352(sp)
+	sw s5, 348(sp)
+	sw s6, 344(sp)
+	sw s7, 340(sp)
+	sw s8, 336(sp)
+	sw s9, 332(sp)
+	sw s10, 328(sp)
+	sw s11, 324(sp)
+	addi s0, sp, 376
 	lw t0, 0(s0)
 	sw t0, -192(s0)
 	lw t0, 4(s0)
-	sw t0, -196(s0)
-	lw t0, 8(s0)
 	sw t0, -200(s0)
-	lw t0, 12(s0)
+	lw t0, 8(s0)
 	sw t0, -204(s0)
-	lw t0, 16(s0)
+	lw t0, 12(s0)
 	sw t0, -208(s0)
-	lw t0, 20(s0)
-	sw t0, -212(s0)
-	lw t0, 24(s0)
+	lw t0, 16(s0)
 	sw t0, -216(s0)
-	lw t6, 28(s0)
-	lw t5, 32(s0)
-	lw t4, 36(s0)
-	lw t3, 40(s0)
-	lw s11, 44(s0)
-	lw s10, 48(s0)
-	lw s9, 52(s0)
-	lw s8, 56(s0)
-	lw s7, 60(s0)
-	lw s6, 64(s0)
-	lw s5, 68(s0)
-	lw s4, 72(s0)
-	lw s3, 76(s0)
-	lw s2, 80(s0)
-	lw s1, 84(s0)
+	lw t0, 20(s0)
+	sw t0, -224(s0)
+	lw t0, 24(s0)
+	sw t0, -228(s0)
+	lw t0, 28(s0)
+	sw t0, -268(s0)
+	lw t0, 32(s0)
+	sw t0, -272(s0)
+	lw t0, 36(s0)
+	sw t0, -276(s0)
+	lw t6, 40(s0)
+	lw t5, 44(s0)
+	lw t4, 48(s0)
+	lw t3, 52(s0)
+	lw s11, 56(s0)
+	lw s10, 60(s0)
+	lw s9, 64(s0)
+	lw s8, 68(s0)
+	lw s7, 72(s0)
+	lw s6, 76(s0)
+	lw s5, 80(s0)
+	lw s4, 84(s0)
 	lw t2, 88(s0)
 	lw t1, 92(s0)
 	addi t0, zero, 0
@@ -687,33 +724,36 @@ gcd2:
 	sw a7, -88(s0)
 	lw t0, -192(s0)
 	sw t0, -92(s0)
-	lw t0, -196(s0)
-	sw t0, -96(s0)
 	lw t0, -200(s0)
-	sw t0, -100(s0)
+	sw t0, -96(s0)
 	lw t0, -204(s0)
-	sw t0, -104(s0)
+	sw t0, -100(s0)
 	lw t0, -208(s0)
-	sw t0, -108(s0)
-	lw t0, -212(s0)
-	sw t0, -112(s0)
+	sw t0, -104(s0)
 	lw t0, -216(s0)
+	sw t0, -108(s0)
+	lw t0, -224(s0)
+	sw t0, -112(s0)
+	lw t0, -228(s0)
 	sw t0, -116(s0)
-	sw t6, -120(s0)
-	sw t5, -124(s0)
-	sw t4, -128(s0)
-	sw t3, -132(s0)
-	sw s11, -136(s0)
-	sw s10, -140(s0)
-	sw s9, -144(s0)
-	sw s8, -148(s0)
-	sw s7, -152(s0)
-	sw s6, -156(s0)
-	sw s5, -160(s0)
-	sw s4, -164(s0)
-	sw s3, -168(s0)
-	sw s2, -172(s0)
-	sw s1, -176(s0)
+	lw t0, -268(s0)
+	sw t0, -120(s0)
+	lw t0, -272(s0)
+	sw t0, -124(s0)
+	lw t0, -276(s0)
+	sw t0, -128(s0)
+	sw t6, -132(s0)
+	sw t5, -136(s0)
+	sw t4, -140(s0)
+	sw t3, -144(s0)
+	sw s11, -148(s0)
+	sw s10, -152(s0)
+	sw s9, -156(s0)
+	sw s8, -160(s0)
+	sw s7, -164(s0)
+	sw s6, -168(s0)
+	sw s5, -172(s0)
+	sw s4, -176(s0)
 	sw t2, -180(s0)
 	sw t1, -184(s0)
 	la a0, .libro.str.4
@@ -725,15 +765,19 @@ gcd2:
 	beqz t0, .LibroBB2_2
 	j .LibroBB2_1
 .LibroBB2_1: 
-	la a0, .libro.str.5
+	la s1, .libro.str.5
+	sw s1, -264(s0)
+	lw a0, -264(s0)
 	call println
 	addi t0, zero, 1
 	sw t0, -56(s0)
 	j .LibroBB2_6
 .LibroBB2_2: 
-	lw t1, -68(s0)
-	lw t0, -72(s0)
-	add t1, t1, t0
+	lw s3, -68(s0)
+	sw s3, -196(s0)
+	lw t1, -72(s0)
+	lw t0, -196(s0)
+	add t1, t0, t1
 	lw t0, -76(s0)
 	add t1, t1, t0
 	lw t0, -80(s0)
@@ -789,10 +833,11 @@ gcd2:
 	lw t0, -180(s0)
 	add t1, t1, t0
 	lw t0, -184(s0)
-	add t1, t1, t0
-	addi t0, zero, 100
-	rem t0, t1, t0
-	sw t0, -188(s0)
+	add t0, t1, t0
+	addi t1, zero, 100
+	rem t1, t0, t1
+	lw t0, -188(s0)
+	sw t1, -188(s0)
 	lw t1, -60(s0)
 	lw t0, -64(s0)
 	rem t1, t1, t0
@@ -802,11 +847,14 @@ gcd2:
 	beqz t0, .LibroBB2_4
 	j .LibroBB2_3
 .LibroBB2_3: 
-	lw t0, -64(s0)
+	lw s1, -64(s0)
+	sw s1, -212(s0)
+	lw t0, -212(s0)
 	sw t0, -56(s0)
 	j .LibroBB2_6
 .LibroBB2_4: 
-	lw a0, -64(s0)
+	lw s1, -64(s0)
+	sw s1, -220(s0)
 	lw t1, -60(s0)
 	lw t0, -64(s0)
 	rem a1, t1, t0
@@ -817,17 +865,17 @@ gcd2:
 	lw a6, -84(s0)
 	lw a7, -88(s0)
 	lw t0, -92(s0)
-	sw t0, -220(s0)
-	lw t0, -96(s0)
-	sw t0, -224(s0)
-	lw t0, -100(s0)
-	sw t0, -228(s0)
-	lw t0, -104(s0)
-	sw t0, -232(s0)
-	lw t0, -108(s0)
-	sw t0, -236(s0)
-	lw t0, -112(s0)
 	sw t0, -240(s0)
+	lw t0, -96(s0)
+	sw t0, -244(s0)
+	lw t0, -100(s0)
+	sw t0, -248(s0)
+	lw t0, -104(s0)
+	sw t0, -252(s0)
+	lw t0, -108(s0)
+	sw t0, -256(s0)
+	lw t0, -112(s0)
+	sw t0, -260(s0)
 	lw t6, -116(s0)
 	lw t5, -120(s0)
 	lw t4, -124(s0)
@@ -846,17 +894,18 @@ gcd2:
 	lw t2, -176(s0)
 	lw t1, -180(s0)
 	lw t0, -184(s0)
-	lw a1, -220(s0)
-	sw a1, 0(sp)
-	lw a1, -224(s0)
-	sw a1, 4(sp)
-	lw a1, -228(s0)
-	sw a1, 8(sp)
-	lw a1, -232(s0)
-	sw a1, 12(sp)
-	lw a1, -236(s0)
-	sw a1, 16(sp)
+	lw a0, -220(s0)
 	lw a1, -240(s0)
+	sw a1, 0(sp)
+	lw a1, -244(s0)
+	sw a1, 4(sp)
+	lw a1, -248(s0)
+	sw a1, 8(sp)
+	lw a1, -252(s0)
+	sw a1, 12(sp)
+	lw a1, -256(s0)
+	sw a1, 16(sp)
+	lw a1, -260(s0)
 	sw a1, 20(sp)
 	sw t6, 24(sp)
 	sw t5, 28(sp)
@@ -880,33 +929,38 @@ gcd2:
 	sw a0, -56(s0)
 	j .LibroBB2_6
 .LibroBB2_5: 
-	addi t0, zero, 0
+	addi s2, zero, 0
+	sw s2, -232(s0)
+	lw t0, -232(s0)
 	sw t0, -56(s0)
 	j .LibroBB2_6
 .LibroBB2_6: 
-	lw a0, -56(s0)
-	lw s0, 332(sp)
-	lw s1, 328(sp)
-	lw s2, 324(sp)
-	lw s3, 320(sp)
-	lw s4, 316(sp)
-	lw s5, 312(sp)
-	lw s6, 308(sp)
-	lw s7, 304(sp)
-	lw s8, 300(sp)
-	lw s9, 296(sp)
-	lw s10, 292(sp)
-	lw s11, 288(sp)
-	lw ra, 336(sp)
-	addi sp, sp, 340
+	lw s1, -56(s0)
+	sw s1, -236(s0)
+	lw a0, -236(s0)
+	lw s0, 368(sp)
+	lw s1, 364(sp)
+	lw s2, 360(sp)
+	lw s3, 356(sp)
+	lw s4, 352(sp)
+	lw s5, 348(sp)
+	lw s6, 344(sp)
+	lw s7, 340(sp)
+	lw s8, 336(sp)
+	lw s9, 332(sp)
+	lw s10, 328(sp)
+	lw s11, 324(sp)
+	lw ra, 372(sp)
+	addi sp, sp, 376
 	ret
 main: 
-	addi sp, sp, -112
-	sw ra, 108(sp)
-	sw s0, 104(sp)
-	addi s0, sp, 112
+	addi sp, sp, -116
+	sw ra, 112(sp)
+	sw s0, 108(sp)
+	sw s1, 104(sp)
+	addi s0, sp, 116
 	addi t0, zero, 0
-	sw t0, -12(s0)
+	sw t0, -16(s0)
 	addi a0, zero, 10
 	addi a1, zero, 1
 	addi a2, zero, 0
@@ -972,13 +1026,15 @@ main:
 	lw a0, 0(t0)
 	call println
 	addi t0, zero, 0
-	sw t0, -12(s0)
+	sw t0, -16(s0)
 	j .LibroBB3_1
 .LibroBB3_1: 
-	lw a0, -12(s0)
-	lw s0, 104(sp)
-	lw ra, 108(sp)
-	addi sp, sp, 112
+	lw s1, -16(s0)
+	mv a0, s1
+	lw s0, 108(sp)
+	lw s1, 104(sp)
+	lw ra, 112(sp)
+	addi sp, sp, 116
 	ret
 .data
 	.type	.libro.str,@object

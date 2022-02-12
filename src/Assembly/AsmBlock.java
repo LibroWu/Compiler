@@ -1,6 +1,8 @@
 package Assembly;
 import Assembly.Instr.Inst;
 
+import java.sql.PseudoColumnUsage;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 public class AsmBlock {
@@ -11,6 +13,11 @@ public class AsmBlock {
     public String funcName = null;
     public HashMap<AsmBlock,Inst> JumpFrom = new HashMap<>();
     public int loopDepth;
+    //0-31 for global register
+    //kill is def, gen is use
+    public BitSet kill,gen,liveIn,liveOut;
+    public int bitSize;
+
     // prune-use: public AsmBlock precursor = null;
 
     public AsmBlock(int loopDepth) {
@@ -47,6 +54,17 @@ public class AsmBlock {
         else {
             i.next.prev = i.prev;
         }
+    }
+
+    public void calcBlock(){
+        liveOut = new BitSet(bitSize);
+        for (AsmBlock successor : successors) {
+            liveOut.or(successor.liveIn);
+        }
+        liveIn = (BitSet) gen.clone();
+        BitSet tmpBitSet = (BitSet) liveOut.clone();
+        tmpBitSet.andNot(kill);
+        liveIn.or(tmpBitSet);
     }
 
     @Override
