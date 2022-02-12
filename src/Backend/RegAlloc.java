@@ -30,7 +30,6 @@ public class RegAlloc {
         s0 = asmPg.phyRegs.get(8);
         zero = asmPg.phyRegs.get(0);
         livenessAnalysis = new LivenessAnalysis(asmPg);
-        livenessAnalysis.collect();
         phyRegs = asmPg.phyRegs;
     }
 

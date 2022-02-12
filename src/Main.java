@@ -23,6 +23,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         String name = "test\\test.mx";
         String llvmOutput = "test\\test.ll";
+        //String asmOutput = "test\\test.s";
         String asmOutput = "output.s";
         //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\e2.mx";
         //InputStream input = new FileInputStream(name);
@@ -57,7 +58,7 @@ public class Main {
             new IRPrinter(out_llvm).visitProgram(pg);
             AsmPg asmPg = new AsmPg();
             new InstrSelector(asmPg).visitProgram(pg);
-            //new LivenessAnalysis(asmPg).work();
+            new LivenessAnalysis(asmPg).work();
             new RegAlloc(asmPg).work();
             //new RegAlloc_Basic(asmPg).work();
             new AsmOptimizer(asmPg).work();
