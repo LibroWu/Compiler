@@ -23,7 +23,7 @@ public class Jp extends Inst {
     }
 
     @Override
-    public boolean check(BitSet liveOut) {
+    public boolean check() {
         return false;
     }
 

@@ -31,7 +31,7 @@ public class Br extends Inst {
             liveOut.or(next.liveIn);
         }
         if (destination != null) {
-            liveOut.or(destination.headInst.liveIn);
+            liveOut.or(destination.liveIn);
         }
         liveIn = (BitSet) use.clone();
         BitSet tmpBitSet = (BitSet) liveOut.clone();
@@ -40,7 +40,7 @@ public class Br extends Inst {
     }
 
     @Override
-    public boolean check(BitSet liveOut) {
+    public boolean check() {
         return false;
     }
 

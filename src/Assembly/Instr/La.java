@@ -28,7 +28,7 @@ public class La extends Inst{
     }
 
     @Override
-    public boolean check(BitSet liveOut) {
+    public boolean check() {
         return !liveOut.get(rd.getNumber())&& rd.getNumber()>=32;
     }
 

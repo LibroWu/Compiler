@@ -29,7 +29,7 @@ public class Lui extends Inst {
         liveIn.andNot(def);
     }
     @Override
-    public boolean check(BitSet liveOut) {
+    public boolean check() {
         return !liveOut.get(rd.getNumber())&& rd.getNumber()>=32;
     }
     @Override

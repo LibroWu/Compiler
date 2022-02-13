@@ -76,9 +76,9 @@ public class LivenessAnalysis {
         currentInst.fillSet();
     }
 
-    private void addBitSet(AsmBlock currentBlock, int bitSize) {
-        currentBlock.kill = new BitSet(bitSize);
-        currentBlock.gen = new BitSet(bitSize);
+    private void addBitSet(AsmBlock currentBlock, int bitSize,BitSet gen,BitSet kill) {
+        currentBlock.kill = kill;
+        currentBlock.gen = gen;
         currentBlock.liveIn = new BitSet(bitSize);
         currentBlock.liveOut = new BitSet(bitSize);
         currentBlock.bitSize = bitSize;
@@ -103,20 +103,16 @@ public class LivenessAnalysis {
         ListIterator<AsmBlock> asmBlockListIterator = func.blockList.listIterator(blockListSize);
         while (asmBlockListIterator.hasPrevious()) {
             AsmBlock currentBlock = asmBlockListIterator.previous();
-            addBitSet(currentBlock,bitSize);
             Inst currentInst = currentBlock.tailInst;
-            while (currentInst.prev != null) {
+            BitSet gen = new BitSet(bitSize),kill = new BitSet(bitSize);
+            while (currentInst != null) {
                 addBitSet(currentInst, bitSize);
-                currentBlock.gen.andNot(currentInst.def);
-                currentBlock.gen.or(currentInst.use);
-                currentBlock.kill.or(currentInst.def);
+                gen.andNot(currentInst.def);
+                gen.or(currentInst.use);
+                kill.or(currentInst.def);
                 currentInst = currentInst.prev;
             }
-            addBitSet(currentInst, bitSize);
-            currentBlock.gen.andNot(currentInst.def);
-            currentBlock.gen.or(currentInst.use);
-            currentBlock.kill.or(currentInst.def);
-            currentInst = currentInst.prev;
+            addBitSet(currentBlock,bitSize,gen,kill);
         }
         boolean quit = false;
         while (!quit) {
@@ -139,18 +135,25 @@ public class LivenessAnalysis {
         asmBlockListIterator = func.blockList.listIterator(blockListSize);
         while (asmBlockListIterator.hasPrevious()) {
             AsmBlock currentBlock = asmBlockListIterator.previous();
-            BitSet live = (BitSet) currentBlock.liveOut.clone();
-            Inst currentInst = currentBlock.headInst;
+            //BitSet live = (BitSet) currentBlock.liveOut.clone();
+            Inst currentInst = currentBlock.tailInst;
             while (currentInst!=null) {
-                Inst next = currentInst.next;
-                if (currentInst instanceof Mv) live.andNot(currentInst.use);
-                live.or(currentInst.def);
-                if (currentInst.check(live))
+                Inst prev = currentInst.prev;
+                //if (currentInst instanceof Mv) live.andNot(currentInst.use);
+                //live.or(currentInst.def);
+                currentInst.calcInst();
+                System.out.println("\t"+currentInst+"\t\t"+currentInst.liveOut);
+                if (currentInst.check())
                     currentBlock.delete_Inst(currentInst);
-                live.andNot(currentInst.def);
-                live.or(currentInst.use);
-                currentInst = next;
+                //live.andNot(currentInst.def);
+                //live.or(currentInst.use);
+                currentInst = prev;
             }
+/*            System.out.println("**********");
+            System.out.println(currentBlock+"\t block liveIn:"+currentBlock.liveIn+"\t block liveOut:"+currentBlock.liveOut);
+            System.out.println("\t first inst liveIn:"+currentBlock.headInst.liveIn+"\t last inst liveOut:"+currentBlock.tailInst.liveOut);
+            if (currentBlock.tailInst.prev!=null)System.out.println("\t last prev inst liveOut:"+currentBlock.tailInst.prev.liveOut);
+            System.out.println("**********");*/
         }
         //printFunc(func);
     }

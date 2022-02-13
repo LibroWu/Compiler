@@ -30,7 +30,7 @@ public class Mv extends Inst {
         liveIn.or(tmpBitSet);
     }
     @Override
-    public boolean check(BitSet liveOut) {
+    public boolean check() {
         return !liveOut.get(rd.getNumber()) && rd.getNumber()>=32;
     }
 
