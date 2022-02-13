@@ -31,7 +31,7 @@ public class Br extends Inst {
             liveOut.or(next.liveIn);
         }
         if (destination != null) {
-            liveOut.or(destination.liveIn);
+            liveOut.or(destination.headInst.liveIn);
         }
         liveIn = (BitSet) use.clone();
         BitSet tmpBitSet = (BitSet) liveOut.clone();

@@ -3,7 +3,7 @@ package Backend;
 import Assembly.AsmBlock;
 import Assembly.AsmFunc;
 import Assembly.AsmPg;
-import Assembly.Instr.*;
+import Assembly.Instr.Inst;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -76,26 +76,11 @@ public class LivenessAnalysis {
         currentInst.fillSet();
     }
 
-    private void addBitSet(AsmBlock currentBlock, int bitSize,BitSet gen,BitSet kill) {
-        currentBlock.kill = kill;
-        currentBlock.gen = gen;
-        currentBlock.liveIn = new BitSet(bitSize);
-        currentBlock.liveOut = new BitSet(bitSize);
-        currentBlock.bitSize = bitSize;
-    }
-
     private boolean calcInst(Inst currentInst) {
         BitSet preIn = currentInst.liveIn;
         BitSet preOut = currentInst.liveOut;
         currentInst.calcInst();
         return !preIn.equals(currentInst.liveIn) || !preOut.equals(currentInst.liveOut);
-    }
-
-    private boolean calcBlock(AsmBlock currentBlock) {
-        BitSet preIn = currentBlock.liveIn;
-        BitSet preOut = currentBlock.liveOut;
-        currentBlock.calcBlock();
-        return !preIn.equals(currentBlock.liveIn) || !preOut.equals(currentBlock.liveOut);
     }
 
     public void workInFunc(AsmFunc func) {
@@ -104,15 +89,11 @@ public class LivenessAnalysis {
         while (asmBlockListIterator.hasPrevious()) {
             AsmBlock currentBlock = asmBlockListIterator.previous();
             Inst currentInst = currentBlock.tailInst;
-            BitSet gen = new BitSet(bitSize),kill = new BitSet(bitSize);
-            while (currentInst != null) {
+            while (currentInst.prev != null) {
                 addBitSet(currentInst, bitSize);
-                gen.andNot(currentInst.def);
-                gen.or(currentInst.use);
-                kill.or(currentInst.def);
                 currentInst = currentInst.prev;
             }
-            addBitSet(currentBlock,bitSize,gen,kill);
+            addBitSet(currentInst, bitSize);
         }
         boolean quit = false;
         while (!quit) {
@@ -120,40 +101,25 @@ public class LivenessAnalysis {
             asmBlockListIterator = func.blockList.listIterator(blockListSize);
             while (asmBlockListIterator.hasPrevious()) {
                 AsmBlock currentBlock = asmBlockListIterator.previous();
-                if (calcBlock(currentBlock)) {
-                    quit = false;
-                }
-                /*Inst currentInst = currentBlock.tailInst;
+                Inst currentInst = currentBlock.tailInst;
                 while (currentInst.prev != null) {
                     if (calcInst(currentInst)) quit = false;
                     currentInst = currentInst.prev;
                 }
-                if (calcInst(currentInst)) quit = false;*/
+                if (calcInst(currentInst)) quit = false;
             }
         }
         //dead code eliminate
         asmBlockListIterator = func.blockList.listIterator(blockListSize);
         while (asmBlockListIterator.hasPrevious()) {
             AsmBlock currentBlock = asmBlockListIterator.previous();
-            //BitSet live = (BitSet) currentBlock.liveOut.clone();
-            Inst currentInst = currentBlock.tailInst;
+            Inst currentInst = currentBlock.headInst;
             while (currentInst!=null) {
-                Inst prev = currentInst.prev;
-                //if (currentInst instanceof Mv) live.andNot(currentInst.use);
-                //live.or(currentInst.def);
-                currentInst.calcInst();
-                System.out.println("\t"+currentInst+"\t\t"+currentInst.liveOut);
+                Inst next = currentInst.next;
                 if (currentInst.check())
                     currentBlock.delete_Inst(currentInst);
-                //live.andNot(currentInst.def);
-                //live.or(currentInst.use);
-                currentInst = prev;
+                currentInst = next;
             }
-/*            System.out.println("**********");
-            System.out.println(currentBlock+"\t block liveIn:"+currentBlock.liveIn+"\t block liveOut:"+currentBlock.liveOut);
-            System.out.println("\t first inst liveIn:"+currentBlock.headInst.liveIn+"\t last inst liveOut:"+currentBlock.tailInst.liveOut);
-            if (currentBlock.tailInst.prev!=null)System.out.println("\t last prev inst liveOut:"+currentBlock.tailInst.prev.liveOut);
-            System.out.println("**********");*/
         }
         //printFunc(func);
     }

@@ -78,11 +78,10 @@ public class GraphColoring {
     private void Build() {
         asmFunc.blockList.forEach(asmBlock -> {
             BitSet live;
-            //Inst secondTailInst = asmBlock.tailInst.prev;
-            live = (BitSet) asmBlock.liveOut.clone();
-//            if (secondTailInst instanceof Br) {
-//                live = (BitSet) secondTailInst.liveOut.clone();
-//            } else live = (BitSet) asmBlock.tailInst.liveOut.clone();
+            Inst secondTailInst = asmBlock.tailInst.prev;
+            if (secondTailInst instanceof Br) {
+                live = (BitSet) secondTailInst.liveOut.clone();
+            } else live = (BitSet) asmBlock.tailInst.liveOut.clone();
             for (Inst i = asmBlock.tailInst; i != null; i = i.prev) {
                 if (i instanceof Mv) {
                     Mv mv = (Mv) i;

@@ -2094,33 +2094,53 @@ int[][] a;
 
 void init() {
   n = getInt();
-  printlnInt(n);
   m = getInt();
-  printlnInt(m);
   a = new int[n][n];
 
   int i;
   int j;
-    printlnInt(0);
-  for (i = 0; i < 100; ++i) {
-    //printlnInt(1);
-    for (j = 0; j < 100; ++j) {
-      printlnInt(2);
+  for (i = 0; i < n; ++i) {
+    for (j = 0; j < n; ++j) {
       a[i][j] = INF;
     }
-    //printlnInt(3);
   }
-    //println("finish set INF");
+  for (i = 0; i < n; ++i)
+    a[i][i] = 0;
 
-    //println("set zero");
-
-
+  for (i = 0; i < m; ++i) {
+    int u = getInt();
+    int v = getInt();
+    int w = getInt();
+    a[u][v] = w;
+  }
 }
 
 int main() {
-    println("begin");
   init();
 
+  int i;
+  int j;
+  int k;
+  for (k = 0; k < n; ++k) {
+    for (i = 0; i < n; ++i) {
+      for (j = 0; j < n; ++j) {
+        if (a[i][j] > a[i][k] + a[k][j])
+          a[i][j] = a[i][k] + a[k][j];
+      }
+    }
+  }
+
+  for (i = 0; i < n; ++i) {
+    for (j = 0; j < n; ++j) {
+      if (a[i][j] == INF) {
+        print("-1");
+      } else {
+        print(toString(a[i][j]));
+      }
+      print(" ");
+    }
+    println("");
+  }
 
   return 0;
 }
