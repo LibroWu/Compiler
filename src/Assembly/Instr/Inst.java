@@ -17,7 +17,7 @@ public abstract class Inst {
 
     abstract public void fillSet();
     abstract public void calcInst();
-    abstract public boolean check();
+    abstract public boolean check(BitSet liveOut);
     // below: for Asm Printer
     @Override abstract public String toString();
 }

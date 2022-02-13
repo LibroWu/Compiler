@@ -33,7 +33,7 @@ public class St extends Inst {
     }
 
     @Override
-    public boolean check() {
+    public boolean check(BitSet liveOut) {
         return false;
     }
 

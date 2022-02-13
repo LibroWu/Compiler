@@ -36,7 +36,7 @@ public class RType extends Inst {
         liveIn.or(tmpBitSet);
     }
     @Override
-    public boolean check() {
+    public boolean check(BitSet liveOut) {
         return !liveOut.get(rd.getNumber())&& rd.getNumber()>=32;
     }
     @Override

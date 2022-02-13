@@ -25,7 +25,7 @@ public class FuncCall extends Inst {
     }
 
     @Override
-    public boolean check() {
+    public boolean check(BitSet liveOut) {
         return false;
     }
 
