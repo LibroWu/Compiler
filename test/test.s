@@ -53,8 +53,7 @@ init:
 	addi t0, zero, 4
 	add t0, t1, t0
 	sw t0, -28(s0)
-	slt t0, t1, s2
-	beqz t0, .LibroBB0_1
+	bge t1, s2, .LibroBB0_1
 	j .LibroBB0_2
 .LibroBB0_4: 
 	addi t0, zero, 0
@@ -64,8 +63,7 @@ init:
 	lw t1, -32(s0)
 	la t0, n
 	lw t0, 0(t0)
-	slt t0, t1, t0
-	beqz t0, .LibroBB0_4
+	bge t1, t0, .LibroBB0_4
 	j .LibroBB0_6
 .LibroBB0_6: 
 	addi t0, zero, 0
@@ -85,8 +83,7 @@ init:
 	lw t1, -32(s0)
 	la t0, n
 	lw t0, 0(t0)
-	slt t0, t1, t0
-	beqz t0, .LibroBB0_8
+	bge t1, t0, .LibroBB0_8
 	j .LibroBB0_10
 .LibroBB0_10: 
 	la t0, a
@@ -117,8 +114,7 @@ init:
 	lw t1, -36(s0)
 	la t0, n
 	lw t0, 0(t0)
-	slt t0, t1, t0
-	beqz t0, .LibroBB0_13
+	bge t1, t0, .LibroBB0_13
 	j .LibroBB0_14
 .LibroBB0_13: 
 	j .LibroBB0_7
@@ -185,8 +181,7 @@ init:
 	lw t1, -32(s0)
 	la t0, m
 	lw t0, 0(t0)
-	slt t0, t1, t0
-	beqz t0, .LibroBB0_16
+	bge t1, t0, .LibroBB0_16
 	j .LibroBB0_17
 .LibroBB0_20: 
 	lw s0, 40(sp)
@@ -224,8 +219,7 @@ main:
 	lw t1, -28(s0)
 	la t0, n
 	lw t0, 0(t0)
-	slt t0, t1, t0
-	beqz t0, .LibroBB1_1
+	bge t1, t0, .LibroBB1_1
 	j .LibroBB1_4
 .LibroBB1_4: 
 	addi t0, zero, 0
@@ -249,8 +243,7 @@ main:
 	lw t1, -20(s0)
 	la t0, n
 	lw t0, 0(t0)
-	slt t0, t1, t0
-	beqz t0, .LibroBB1_7
+	bge t1, t0, .LibroBB1_7
 	j .LibroBB1_5
 .LibroBB1_9: 
 	j .LibroBB1_2
@@ -258,8 +251,7 @@ main:
 	lw t1, -20(s0)
 	la t0, n
 	lw t0, 0(t0)
-	slt t0, t1, t0
-	beqz t0, .LibroBB1_9
+	bge t1, t0, .LibroBB1_9
 	j .LibroBB1_11
 .LibroBB1_11: 
 	addi t0, zero, 0
@@ -281,8 +273,7 @@ main:
 	lw t1, -24(s0)
 	la t0, n
 	lw t0, 0(t0)
-	slt t0, t1, t0
-	beqz t0, .LibroBB1_16
+	bge t1, t0, .LibroBB1_16
 	j .LibroBB1_15
 .LibroBB1_15: 
 	la t0, a
@@ -330,8 +321,7 @@ main:
 	lw t1, -24(s0)
 	la t0, n
 	lw t0, 0(t0)
-	slt t0, t1, t0
-	beqz t0, .LibroBB1_19
+	bge t1, t0, .LibroBB1_19
 	j .LibroBB1_21
 .LibroBB1_21: 
 	la t0, a
@@ -383,8 +373,7 @@ main:
 	add t0, t2, t0
 	lw t0, 0(t0)
 	add t0, s1, t0
-	slt t0, t0, a0
-	beqz t0, .LibroBB1_25
+	bge t0, a0, .LibroBB1_25
 	j .LibroBB1_26
 .LibroBB1_22: 
 	la a0, .libro.str.1
