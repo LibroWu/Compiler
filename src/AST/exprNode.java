@@ -14,6 +14,7 @@ public class exprNode extends ASTNode{
     public entity rd = null;
     public register idReg = null;
     public IRType irType = null;
+    public boolean isConst = false;
 
     public exprNode(position pos) {
         super(pos);

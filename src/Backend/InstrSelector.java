@@ -101,7 +101,9 @@ public class InstrSelector implements Pass {
             ++parameterCnt;
         }
         for (alloca alloca : f.allocas) {
-            regMap.put(alloca.rd, new virtualReg(--reserveCnt));
+            virtualReg vr = new virtualReg(++cnt);
+            vr.isAlloc = true;
+            regMap.put(alloca.rd, vr);
         }
         tailBlock = null;
         visitBlock(f.rootBlock);
@@ -211,12 +213,20 @@ public class InstrSelector implements Pass {
                             flag = false;
                             Inst.CompareCategory compareCategory = Inst.CompareCategory.eq;
                             switch (rType.op) {
-                                case slt: compareCategory = Inst.CompareCategory.ge;break;
-                                case seq: compareCategory = Inst.CompareCategory.eq;break;
-                                case sne: compareCategory = Inst.CompareCategory.ne;break;
-                                case sgt: compareCategory = Inst.CompareCategory.lt;break;
+                                case slt:
+                                    compareCategory = Inst.CompareCategory.ge;
+                                    break;
+                                case seq:
+                                    compareCategory = Inst.CompareCategory.eq;
+                                    break;
+                                case sne:
+                                    compareCategory = Inst.CompareCategory.ne;
+                                    break;
+                                case sgt:
+                                    compareCategory = Inst.CompareCategory.lt;
+                                    break;
                             }
-                            brF = new Br(compareCategory,rType.rs1,rType.rs2,targetF);
+                            brF = new Br(compareCategory, rType.rs1, rType.rs2, targetF);
                             targetF.JumpFrom.put(asmBlock, brF);
                             asmBlock.delete_Inst(tailInst);
                             asmBlock.push_back(brF);
@@ -374,8 +384,8 @@ public class InstrSelector implements Pass {
                     asmBlock.push_back(new Ld(getAsmReg(l.rd), tmpReg, ImmZero, l.align));
                 } else {
                     virtualReg vr = (virtualReg) getAsmReg(l.ptr);
-                    if (vr.index < 0)
-                        asmBlock.push_back(new Ld(getAsmReg(l.rd), s0, new Imm(vr.index * 4), l.align));
+                    if (vr.isAlloc)
+                        asmBlock.push_back(new Mv(getAsmReg(l.rd), vr));
                     else asmBlock.push_back(new Ld(getAsmReg(l.rd), vr, ImmZero, l.align));
                 }
             } else if (s instanceof phi) {
@@ -434,8 +444,8 @@ public class InstrSelector implements Pass {
                     asmBlock.push_back(new St(rs, tmpReg, ImmZero, st.align));
                 } else {
                     virtualReg vr = (virtualReg) getAsmReg(st.target);
-                    if (vr.index < 0)
-                        asmBlock.push_back(new St(rs, s0, new Imm(vr.index * 4), st.align));
+                    if (vr.isAlloc)
+                        asmBlock.push_back(new Mv(vr,rs));
                     else asmBlock.push_back(new St(rs, vr, ImmZero, st.align));
                 }
             } else if (s instanceof bitcast) {
