@@ -269,7 +269,9 @@ public class IRBuilder implements ASTVisitor {
                     if (currentFunc != null) {
                         currentScope.linkRegister(declaratorNode.Identifier, rd, tmpIrType.getPtr());
                         currentScope.defineVariable(declaratorNode.Identifier, t, declaratorNode.pos);
-                        currentFunc.push_back(new alloca(rd, tmpIrType));
+                        alloca al = new alloca(rd, tmpIrType);
+                        al.loopDepth = loopDepth;
+                        currentFunc.push_back(al);
                         if (declaratorNode.expr != null) {
                             declaratorNode.expr.accept(this);
                             entity rs;

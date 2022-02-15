@@ -4,10 +4,7 @@ import Assembly.AsmBlock;
 import Assembly.AsmFunc;
 import Assembly.AsmPg;
 import Assembly.Instr.*;
-import Assembly.Operand.Imm;
-import Assembly.Operand.PhyReg;
-import Assembly.Operand.Reg;
-import Assembly.Operand.virtualReg;
+import Assembly.Operand.*;
 
 import java.util.*;
 
@@ -23,7 +20,7 @@ public class GraphColoring {
     private HashSet<Integer> preColored, initial, simplifyWorklist, freezeWorklist, spilledNodes, coalescedNodes, coloredNodes, spillWorklist;
     private LinkedList<Integer> selectStack;
     private HashSet<Inst> coalescedMoves, constrainedMoves, frozenMoves, worklistMoves, activeMove;
-    private HashMap<Integer, virtualReg> IntToVirtualReg;
+    private HashMap<Integer, Reg> IntToReg;
     //Edge u to v then hash to u*MaxNodeNumber + v
     private HashSet<Integer> adjSet;
     private ArrayList<Integer> degree, alias, color;
@@ -308,7 +305,7 @@ public class GraphColoring {
     }
 
     private void passTheFunc() {
-        IntToVirtualReg = new HashMap<>();
+        IntToReg = new HashMap<>();
         for (AsmBlock asmBlock : asmFunc.blockList) {
             double loopWeight = (asmBlock.loopDepth > 18) ? 4e18 : myExp[asmBlock.loopDepth];
             int tmp;
@@ -316,54 +313,70 @@ public class GraphColoring {
                 if (i instanceof Br) {
                     Br branch = (Br) i;
                     tmp = branch.src1.getNumber();
+                    IntToReg.put(tmp, branch.src1);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                     if (branch.src2 != null) {
                         tmp = branch.src2.getNumber();
+                        IntToReg.put(tmp, branch.src2);
                         Priority.set(tmp, Priority.get(tmp) + loopWeight);
                     }
                 } else if (i instanceof IType) {
                     IType it = (IType) i;
                     tmp = it.rd.getNumber();
+                    IntToReg.put(tmp, it.rd);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                     tmp = it.rs.getNumber();
+                    IntToReg.put(tmp, it.rs);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                 } else if (i instanceof La) {
                     La la = (La) i;
                     tmp = la.rd.getNumber();
+                    IntToReg.put(tmp, la.rd);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                 } else if (i instanceof Ld) {
                     Ld ld = (Ld) i;
                     tmp = ld.rd.getNumber();
+                    IntToReg.put(tmp, ld.rd);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                     tmp = ld.addr.getNumber();
+                    IntToReg.put(tmp, ld.addr);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                 } else if (i instanceof Li) {
                     Li li = (Li) i;
                     tmp = li.rd.getNumber();
+                    IntToReg.put(tmp, li.rd);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                 } else if (i instanceof Lui) {
                     Lui lui = (Lui) i;
                     tmp = lui.rd.getNumber();
+                    IntToReg.put(tmp, lui.rd);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                 } else if (i instanceof Mv) {
                     Mv mv = (Mv) i;
                     tmp = mv.rd.getNumber();
+                    IntToReg.put(tmp, mv.rd);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                     tmp = mv.rs1.getNumber();
+                    IntToReg.put(tmp, mv.rs1);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                 } else if (i instanceof RType) {
                     RType r = (RType) i;
                     tmp = r.rd.getNumber();
+                    IntToReg.put(tmp, r.rd);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                     tmp = r.rs1.getNumber();
+                    IntToReg.put(tmp, r.rs1);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                     tmp = r.rs2.getNumber();
+                    IntToReg.put(tmp, r.rs2);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                 } else if (i instanceof St) {
                     St st = (St) i;
                     tmp = st.rs.getNumber();
+                    IntToReg.put(tmp, st.rs);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                     tmp = st.addr.getNumber();
+                    IntToReg.put(tmp, st.addr);
                     Priority.set(tmp, Priority.get(tmp) + loopWeight);
                 }
             }
@@ -376,6 +389,7 @@ public class GraphColoring {
         double chosenThreshold = 1e50;
         for (Integer i : spillWorklist) {
             double currentPriority = Priority.get(i) / degree.get(i);
+            if (i>=32 && ((virtualReg)IntToReg.get(i)).isAlloc) currentPriority = 0;
             if (i > asmFunc.originalRegisterCount + 32) currentPriority += 1e6;
             if (currentPriority < chosenThreshold) {
                 chosenThreshold = currentPriority;

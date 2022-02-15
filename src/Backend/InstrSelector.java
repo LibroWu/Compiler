@@ -101,9 +101,12 @@ public class InstrSelector implements Pass {
             ++parameterCnt;
         }
         for (alloca alloca : f.allocas) {
-            virtualReg vr = new virtualReg(cnt++);
-            vr.isAlloc = true;
-            regMap.put(alloca.rd, vr);
+            if (alloca.loopDepth == 0) regMap.put(alloca.rd, new virtualReg(--reserveCnt));
+            else {
+                virtualReg vr = new virtualReg(cnt++);
+                vr.isAlloc = true;
+                regMap.put(alloca.rd, vr);
+            }
         }
         tailBlock = null;
         visitBlock(f.rootBlock);
@@ -386,6 +389,8 @@ public class InstrSelector implements Pass {
                     virtualReg vr = (virtualReg) getAsmReg(l.ptr);
                     if (vr.isAlloc)
                         asmBlock.push_back(new Mv(getAsmReg(l.rd), vr));
+                    else if (vr.index < 0)
+                        asmBlock.push_back(new Ld(getAsmReg(l.rd), s0, new Imm(vr.index * 4), l.align));
                     else asmBlock.push_back(new Ld(getAsmReg(l.rd), vr, ImmZero, l.align));
                 }
             } else if (s instanceof phi) {
@@ -446,6 +451,8 @@ public class InstrSelector implements Pass {
                     virtualReg vr = (virtualReg) getAsmReg(st.target);
                     if (vr.isAlloc)
                         asmBlock.push_back(new Mv(vr,rs));
+                    else if (vr.index < 0)
+                        asmBlock.push_back(new St(rs, s0, new Imm(vr.index * 4), st.align));
                     else asmBlock.push_back(new St(rs, vr, ImmZero, st.align));
                 }
             } else if (s instanceof bitcast) {
