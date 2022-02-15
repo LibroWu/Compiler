@@ -35,14 +35,14 @@ public class GraphColoring {
     private final double[] myExp = {1, 10, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18};
     private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5, a0;
     private ArrayList<PhyReg> phyRegs;
-    private BitSet colorSet = new BitSet(K),callerSavedSet = new BitSet(K),calleeSavedUsed = new BitSet(32);
+    private BitSet colorSet = new BitSet(K), callerSavedSet = new BitSet(K), calleeSavedUsed = new BitSet(32);
 
     public GraphColoring(AsmPg asmPg, AsmFunc asmFunc, LivenessAnalysis livenessAnalysis) {
         this.asmPg = asmPg;
         this.asmFunc = asmFunc;
         this.livenessAnalysis = livenessAnalysis;
         preColored = new HashSet<>();
-        for (int i=0;i<K;++i) preColored.add(i);
+        for (int i = 0; i < K; ++i) preColored.add(i);
         initial = new HashSet<>();
         simplifyWorklist = new HashSet<>();
         freezeWorklist = new HashSet<>();
@@ -60,11 +60,11 @@ public class GraphColoring {
 
         s0 = asmPg.phyRegs.get(8);
         phyRegs = asmPg.phyRegs;
-        colorSet.set(0,5);
+        colorSet.set(0, 5);
         colorSet.set(8);
-        callerSavedSet.set(0,8);
-        callerSavedSet.set(10,18);
-        callerSavedSet.set(28,32);
+        callerSavedSet.set(0, 8);
+        callerSavedSet.set(10, 18);
+        callerSavedSet.set(28, 32);
         asmFunc.calleeSavedUsed = calleeSavedUsed;
         /*ArrayList<PhyReg> tmpPhyRegs = asmPg.phyRegs;
         //t0-t6,a0-a7,s1-s11
@@ -146,7 +146,7 @@ public class GraphColoring {
         int n = iter.next();
         simplifyWorklist.remove(n);
         selectStack.push(n);
-        inWhichNodeSets.set(n,InWhichNodeSet.SELECTSTACK);
+        inWhichNodeSets.set(n, InWhichNodeSet.SELECTSTACK);
         adjList.get(n).forEach(m -> {
             InWhichNodeSet checkSet = inWhichNodeSets.get(m);
             if (checkSet != InWhichNodeSet.SELECTSTACK && !coalescedNodes.contains(m)) {
@@ -198,18 +198,15 @@ public class GraphColoring {
         if (u == v) {
             coalescedMoves.add(m);
             AddWorkList(u);
-        } else if (preColored.contains(v) || adjSet.contains(u * finalRegCount + v)) {
+        } else if (v < 32 || adjSet.contains(u * finalRegCount + v)) {
             constrainedMoves.add(m);
             AddWorkList(u);
             AddWorkList(v);
-        } else {
-            boolean flag = preColored.contains(u);
-            if (flag && checkOK(u, v) || !flag && Conservative(u, v)) {
-                coalescedMoves.add(m);
-                Combine(u, v);
-                AddWorkList(u);
-            } else activeMove.add(m);
-        }
+        } else if ((u < 32 && checkOK(u, v)) || (u >= 32 && Conservative(u, v))) {
+            coalescedMoves.add(m);
+            Combine(u, v);
+            AddWorkList(u);
+        } else activeMove.add(m);
     }
 
     private boolean checkOK(int u, int v) {
@@ -227,17 +224,18 @@ public class GraphColoring {
         BitSet bitSet = new BitSet(finalRegCount);
         for (Integer n : adjList.get(u)) {
             InWhichNodeSet checkSet = inWhichNodeSets.get(n);
+            bitSet.set(n);
             if (checkSet != InWhichNodeSet.SELECTSTACK && !coalescedNodes.contains(n)) {
-                bitSet.set(n);
                 if (degree.get(n) >= K) ++k;
             }
         }
-        for (Integer n : adjList.get(v)) {
-            InWhichNodeSet checkSet = inWhichNodeSets.get(n);
-            if (checkSet != InWhichNodeSet.SELECTSTACK && !coalescedNodes.contains(n) && !bitSet.get(n)) {
-                if (degree.get(n) >= K) ++k;
+        for (Integer n : adjList.get(v))
+            if (!bitSet.get(n)) {
+                InWhichNodeSet checkSet = inWhichNodeSets.get(n);
+                if (checkSet != InWhichNodeSet.SELECTSTACK && !coalescedNodes.contains(n)) {
+                    if (degree.get(n) >= K) ++k;
+                }
             }
-        }
         return k < K;
     }
 
@@ -289,9 +287,9 @@ public class GraphColoring {
         moveList.get(u).forEach(m -> {
             if (activeMove.contains(m) || worklistMoves.contains(m)) {
                 Mv M = (Mv) m;
-                int v;
-                if (GetAlias(M.rd.getNumber()) == GetAlias(u)) v = GetAlias(M.rd.getNumber());
-                else v = GetAlias(M.rs1.getNumber());
+                int y = GetAlias(M.rd.getNumber()), x = GetAlias(M.rs1.getNumber()), v;
+                if (GetAlias(y) == GetAlias(u)) v = GetAlias(x);
+                else v = GetAlias(y);
                 activeMove.remove(m);
                 frozenMoves.add(m);
                 boolean hasNodeMoves = false;
@@ -376,7 +374,7 @@ public class GraphColoring {
         passTheFunc();
         int m = spillWorklist.iterator().next();
         double chosenThreshold = 1e50;
-         for (Integer i : spillWorklist) {
+        for (Integer i : spillWorklist) {
             double currentPriority = Priority.get(i) / degree.get(i);
             if (i > asmFunc.originalRegisterCount + 32) currentPriority += 1e6;
             if (currentPriority < chosenThreshold) {
@@ -393,14 +391,14 @@ public class GraphColoring {
         calleeSavedUsed.clear();
         while (!selectStack.isEmpty()) {
             int n = selectStack.pop();
-            inWhichNodeSets.set(n,InWhichNodeSet.COLOREDNODES);
+            inWhichNodeSets.set(n, InWhichNodeSet.COLOREDNODES);
             BitSet forbidBits = (BitSet) colorSet.clone();
             for (Integer w : adjList.get(n)) {
                 int aliasW = GetAlias(w);
                 if (coloredNodes.contains(aliasW) || aliasW < 32) forbidBits.set(color.get(aliasW));
             }
             int nextClearBit = forbidBits.nextClearBit(0);
-            if (nextClearBit < 0 || nextClearBit>=K) spilledNodes.add(n);
+            if (nextClearBit < 0 || nextClearBit >= K) spilledNodes.add(n);
             else {
                 coloredNodes.add(n);
                 int colorChosen = forbidBits.nextClearBit(0);
@@ -617,7 +615,7 @@ public class GraphColoring {
     }
 
     private void Replace() {
-        int stackChange = -4*asmFunc.calleeSavedCount;
+        int stackChange = -4 * asmFunc.calleeSavedCount;
         for (AsmBlock asmBlock : asmFunc.blockList) {
             int tmp;
             for (Inst i = asmBlock.headInst; i != null; i = i.next) {
@@ -646,7 +644,7 @@ public class GraphColoring {
                     tmp = ld.addr.getNumber();
                     if (tmp >= 32) ld.addr = phyRegs.get(color.get(tmp));
                     int value = ld.offset.value;
-                    if (ld.addr.getNumber()==8 && value<0)ld.offset = new Imm(value+stackChange);
+                    if (ld.addr.getNumber() == 8 && value < 0) ld.offset = new Imm(value + stackChange);
                 } else if (i instanceof Li) {
                     Li li = (Li) i;
                     tmp = li.rd.getNumber();
@@ -677,7 +675,7 @@ public class GraphColoring {
                     tmp = st.addr.getNumber();
                     if (tmp >= 32) st.addr = phyRegs.get(color.get(tmp));
                     int value = st.offset.value;
-                    if (st.addr.getNumber()==8 && value<0)st.offset = new Imm(value+stackChange);
+                    if (st.addr.getNumber() == 8 && value < 0) st.offset = new Imm(value + stackChange);
                 }
             }
         }
