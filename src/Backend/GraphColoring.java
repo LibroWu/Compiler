@@ -99,7 +99,6 @@ public class GraphColoring {
                         AddEdge(l, d);
                     }
                 if (i instanceof FuncCall) {
-                    //System.out.println(i+"^^^"+live);
                     for (int d = live.nextSetBit(0); d >= 0; d = live.nextSetBit(d + 1)) {
                         for (int l = callerSavedSet.nextSetBit(0); l >= 0; l = callerSavedSet.nextSetBit(l + 1)) {
                             AddEdge(l, d);
@@ -188,7 +187,7 @@ public class GraphColoring {
         Iterator<Inst> iter = worklistMoves.iterator();
         Mv m = (Mv) iter.next();
         worklistMoves.remove(m);
-        int x = GetAlias(m.rd.getNumber()), y = GetAlias(m.rs1.getNumber()), u, v;
+        int y = GetAlias(m.rd.getNumber()), x = GetAlias(m.rs1.getNumber()), u, v;
         if (preColored.contains(y)) {
             u = y;
             v = x;
@@ -291,7 +290,7 @@ public class GraphColoring {
             if (activeMove.contains(m) || worklistMoves.contains(m)) {
                 Mv M = (Mv) m;
                 int v;
-                if (GetAlias(M.rs1.getNumber()) == GetAlias(u)) v = GetAlias(M.rd.getNumber());
+                if (GetAlias(M.rd.getNumber()) == GetAlias(u)) v = GetAlias(M.rd.getNumber());
                 else v = GetAlias(M.rs1.getNumber());
                 activeMove.remove(m);
                 frozenMoves.add(m);
@@ -376,9 +375,8 @@ public class GraphColoring {
     private void SelectSpill() {
         passTheFunc();
         int m = spillWorklist.iterator().next();
-        double chosenThreshold = 1e99;
-        BitSet bitSet = new BitSet(finalRegCount);
-        for (Integer i : spillWorklist) {
+        double chosenThreshold = 1e50;
+         for (Integer i : spillWorklist) {
             double currentPriority = Priority.get(i) / degree.get(i);
             if (i > asmFunc.originalRegisterCount + 32) currentPriority += 1e6;
             if (currentPriority < chosenThreshold) {
@@ -424,6 +422,9 @@ public class GraphColoring {
     }
 
     private void RewriteProgram() {
+        //System.out.println("***********");
+        //new AsmPrinter(asmPg,System.out).print();
+
         LinkedList<Integer> newTemps = new LinkedList<>();
         HashMap<Integer, Integer> getStackPos = new HashMap<>();
         for (Integer spilledNode : spilledNodes) {
@@ -544,9 +545,9 @@ public class GraphColoring {
                     tmp = r.rs2.getNumber();
                     if (spilledNodes.contains(tmp)) {
                         int stackPos = getStackPos.get(tmp);
-                        r.rs1 = new virtualReg(asmFunc.registerCount++);
+                        r.rs2 = new virtualReg(asmFunc.registerCount++);
                         newTemps.add(r.rs2.getNumber());
-                        asmBlock.insert_before(i, new Ld(r.rs1, s0, new Imm(stackPos * -4), 4));
+                        asmBlock.insert_before(i, new Ld(r.rs2, s0, new Imm(stackPos * -4), 4));
                     }
                 } else if (i instanceof St) {
                     St st = (St) i;
@@ -573,6 +574,8 @@ public class GraphColoring {
         initial.addAll(newTemps);
         coalescedNodes = new HashSet<>();
         coloredNodes = new HashSet<>();
+        //System.out.println("------------");
+        //new AsmPrinter(asmPg,System.out).print();
     }
 
     private void initialize() {
@@ -696,6 +699,7 @@ public class GraphColoring {
         if (spilledNodes.isEmpty()) {
             Replace();
         } else {
+            //System.out.println(spilledNodes);
             RewriteProgram();
             this.Main();
         }
