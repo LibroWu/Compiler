@@ -105,7 +105,7 @@ public class InstrSelector implements Pass {
             ++parameterCnt;
         }
         for (alloca alloca : f.allocas) {
-            if (alloca.loopDepth == 0 && alloca.rd.loopDepth == 0) regMap.put(alloca.rd, new virtualReg(--reserveCnt));
+            if (false) regMap.put(alloca.rd, new virtualReg(--reserveCnt));
             else {
                 virtualReg vr = new virtualReg(cnt++);
                 vr.isAlloc = true;
