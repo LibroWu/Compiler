@@ -213,6 +213,23 @@ public class InstrSelector implements Pass {
                                     ++shiftCount;
                                     constValue >>= 1;
                                 }
+                                asmBlock.push_back(new IType(rd, getAsmReg((register) bi.rs1), new Imm(shiftCount), Inst.CalCategory.sra));
+                            } else {
+                                if (constValue > 2047 || constValue < -2048) {
+                                    if (((constValue >> 11) & 1) > 0) constValue += 1 << 12;
+                                    asmBlock.push_back(new Lui(rd, new Imm(constValue >>> 12)));
+                                    asmBlock.push_back(new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
+                                } else asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
+                                asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), rd, op));
+                            }
+                        }
+                        else if (op== Inst.CalCategory.rem) {
+                            if ( constValue>0 && (constValue ^ (constValue & -constValue)) == 0) {
+                                int shiftCount = -1;
+                                while (constValue > 0) {
+                                    ++shiftCount;
+                                    constValue >>= 1;
+                                }
                                 asmBlock.push_back(new IType(rd, getAsmReg((register) bi.rs1), new Imm((1<<shiftCount)-1), Inst.CalCategory.and));
                             } else {
                                 if (constValue > 2047 || constValue < -2048) {
