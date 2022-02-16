@@ -12,6 +12,7 @@ public class block {
     public terminalStmt tailStmt = null;
     public boolean jumpTo = false;
     public int loopDepth;
+    public String comment = null;
     public block(int loopDepth) {
         this.loopDepth = loopDepth;
     }

@@ -8,7 +8,7 @@ public class AsmBlock {
     public HashSet<AsmBlock> successors = new HashSet<>();
     public int index = -1,funcIndex=-1;
     public boolean isRoot = false;
-    public String funcName = null;
+    public String funcName = null,comment = null;
     public HashMap<AsmBlock,Inst> JumpFrom = new HashMap<>();
     public int loopDepth;
     // prune-use: public AsmBlock precursor = null;

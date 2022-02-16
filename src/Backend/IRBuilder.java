@@ -31,7 +31,7 @@ public class IRBuilder implements ASTVisitor {
     private constant constZero = new constant(0), constVoid = new constant(), constUnit = new constant(1);
     private register lastFuncCaller = null;
     private IRType lastFuncCallerIRType = null;
-    private int loopDepth = 0;
+    private int loopDepth = 0,iterCount = 0, selectCount = 0;
 
     public IRBuilder(program pg, globalScope gScope, HashMap<String, classDef> idToDef, HashMap<String, funcDef> idToFuncDef) {
         this.pg = pg;
@@ -156,6 +156,7 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(funcDefNode it) {
+        iterCount = selectCount = 0;
         currentScope = new Scope(currentScope);
         String idPrefix = ((currentStruct == null) ? "" : "_" + currentStruct.name + "_");
         currentFunc = idToFuncDef.get(idPrefix + it.id);
@@ -360,8 +361,11 @@ public class IRBuilder implements ASTVisitor {
     public void visit(selectStmtNode it) {
         it.cond.accept(this);
         block TBlock = new block(loopDepth), FBlock, ConvergeBlock = new block(loopDepth);
+        TBlock.comment = "True block in "+currentFunc.funcId +" selectCount " +selectCount;
+        ConvergeBlock.comment = "Converge block in "+currentFunc.funcId +" selectCount " +selectCount;
         if (it.falseStmt != null) {
             FBlock = new block(loopDepth);
+            FBlock.comment = "False block in "+currentFunc.funcId +" selectCount " +selectCount;
             if (it.cond.rd instanceof constant) {
                 constant con = (constant) it.cond.rd;
                 ConvergeBlock.jumpTo = true;
@@ -441,6 +445,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock = ConvergeBlock;
             currentScope = currentScope.parentScope();
         }
+        selectCount++;
     }
 
     @Override
@@ -452,6 +457,10 @@ public class IRBuilder implements ASTVisitor {
         if (it.isFor) {
             block body = new block(loopDepth), checkBlock = new block(loopDepth), exitBlock = new block(loopDepth), incrBlock = new block(loopDepth);
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
+            body.comment = "loop body " + currentFunc.funcId +" loopDepth "+ loopDepth +" iterCount " + iterCount;
+            checkBlock.comment = "loop check block "+ currentFunc.funcId +" loopDepth "+ loopDepth+" iterCount " + iterCount;
+            exitBlock.comment = "loop exit block "+ currentFunc.funcId +" loopDepth "+ loopDepth+" iterCount " + iterCount;
+            incrBlock.comment = "loop increase block "+ currentFunc.funcId +" loopDepth "+ loopDepth+" iterCount " + iterCount;
             currentBlock.successors.add(checkBlock);
             currentBlock.successors.add(body);
             if (it.incrExpr != null) {
@@ -479,6 +488,9 @@ public class IRBuilder implements ASTVisitor {
             currentBlock = exitBlock;
         } else {
             block body = new block(loopDepth), checkBlock = new block(loopDepth), exitBlock = new block(loopDepth);
+            body.comment = "loop body " + currentFunc.funcId +" loopDepth "+ loopDepth+" iterCount " + iterCount;
+            checkBlock.comment = "loop check block "+ currentFunc.funcId +" loopDepth "+ loopDepth+" iterCount " + iterCount;
+            exitBlock.comment = "loop exit block "+ currentFunc.funcId +" loopDepth "+ loopDepth+" iterCount " + iterCount;
             loopExitBlock = exitBlock;
             loopContinueBlock = checkBlock;
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
@@ -503,6 +515,7 @@ public class IRBuilder implements ASTVisitor {
         loopContinueBlock = parentLoopContinueBlock;
         currentScope = currentScope.parentScope();
         --loopDepth;
+        ++iterCount;
     }
 
     @Override
@@ -1084,11 +1097,16 @@ public class IRBuilder implements ASTVisitor {
         if (recursiveStep + 1 != exprList.size()) {
             block body = new block(loopDepth), checkBlock = new block(loopDepth), exitBlock = new block(loopDepth);
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
+            body.comment = "loop created by new body " + currentFunc.funcId +" loopDepth "+ loopDepth +" iterCount " + iterCount;
+            checkBlock.comment = "loop created by new check block "+ currentFunc.funcId +" loopDepth "+ loopDepth+" iterCount " + iterCount;
+            exitBlock.comment = "loop created by new exit block "+ currentFunc.funcId +" loopDepth "+ loopDepth+" iterCount " + iterCount;
+            ++iterCount;
             currentBlock.successors.add(checkBlock);
             currentBlock.successors.add(body);
             currentBlock.successors.add(exitBlock);
             register newLoopRd = new register(), iRd = new register(), cmpResult = new register(), addResult = new register();
             alloca newLoop = new alloca(newLoopRd, i64);
+            newLoop.loopDepth = loopDepth;
             newLoop.Comments = "for new loop";
             //initialize
             currentFunc.push_back(newLoop);
@@ -1421,6 +1439,7 @@ public class IRBuilder implements ASTVisitor {
             return;
         } else return;
         ////System.out.println("***" + it.Id + "***");
+        if (loopDepth>regType.reg.loopDepth) regType.reg.loopDepth = loopDepth;
         it.idReg = regType.reg;
         it.irType = regType.irType.reducePtr();
         it.rd = new register();

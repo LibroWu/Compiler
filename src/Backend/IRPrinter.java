@@ -48,7 +48,7 @@ public class IRPrinter implements Pass {
 
     @Override
     public void visitBlock(block b) {
-        if (b.jumpTo) out.println("\n" + getBlockName(b) + ":");
+        if (b.jumpTo) out.println("\n"+ ((b.comment!=null)?";"+b.comment+"\n":"")  + getBlockName(b) + ":" );
         for (statement stmt : b.stmts()) {
             print(stmt);
             if (stmt instanceof terminalStmt) break;

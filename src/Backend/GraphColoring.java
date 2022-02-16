@@ -711,7 +711,7 @@ public class GraphColoring {
         if (spilledNodes.isEmpty()) {
             Replace();
         } else {
-            //System.out.println(spilledNodes);
+            System.out.println(spilledNodes);
             RewriteProgram();
             this.Main();
         }
