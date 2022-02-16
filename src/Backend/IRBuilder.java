@@ -28,7 +28,7 @@ public class IRBuilder implements ASTVisitor {
     private HashMap<String, funcDef> idToFuncDef;
     private int initFuncCounter = 0;
     private IRType voidIrType = new IRType(), i8 = new IRType(8), i64 = new IRType(32), i32 = new IRType(32), i8Star = new IRType(8, 1, 0, null), i1 = new IRType(1), stringStar = new IRType(0, 1, 0, null), i32Star = i32.getPtr();
-    private constant constZero = new constant(0), constVoid = new constant(), constUnit = new constant(1);
+    private constant constZero = new constant(0), constVoid = new constant(), constUnit = new constant(1),constFull = new constant(-1);
     private register lastFuncCaller = null;
     private IRType lastFuncCallerIRType = null;
     private int loopDepth = 0,iterCount = 0, selectCount = 0;
@@ -1049,7 +1049,9 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.push_back(new binary(binary.opTye.SUB, i32, rd, constZero, it.rd));
                 it.rd = rd;
             } else if (Objects.equals(it.op, "~")) {
-
+                register rd = new register();
+                currentBlock.push_back(new binary(binary.opTye.XOR, i32, rd, constFull, it.rd));
+                it.rd = rd;
             } else if (Objects.equals(it.op, "*")) {
 
             } else {

@@ -294,6 +294,24 @@ public class InstrSelector implements Pass {
                             asmBlock.delete_Inst(tailInst);
                             asmBlock.push_back(brF);
                         }
+                    } else if (tailInst instanceof IType) {
+                        IType iType = (IType) tailInst;
+                        if (iType.op == Inst.CalCategory.seq || iType.op == Inst.CalCategory.sne) {
+                            flag = false;
+                            Inst.CompareCategory compareCategory = Inst.CompareCategory.eq;
+                            switch (iType.op) {
+                                case seq:
+                                    compareCategory = Inst.CompareCategory.ne;
+                                    break;
+                                case sne:
+                                    compareCategory = Inst.CompareCategory.eq;
+                                    break;
+                            }
+                            brF = new Br(compareCategory, iType.rs, null, targetF);
+                            targetF.JumpFrom.put(asmBlock, brF);
+                            asmBlock.delete_Inst(tailInst);
+                            asmBlock.push_back(brF);
+                        }
                     }
                     if (flag) {
                         brF = new Br(Inst.CompareCategory.eq, getAsmReg(branch.val), null, targetF);
