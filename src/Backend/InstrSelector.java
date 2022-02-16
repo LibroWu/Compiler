@@ -105,19 +105,17 @@ public class InstrSelector implements Pass {
             ++parameterCnt;
         }
         for (alloca alloca : f.allocas) {
-            if (false) regMap.put(alloca.rd, new virtualReg(--reserveCnt));
-            else {
-                virtualReg vr = new virtualReg(cnt++);
-                vr.isAlloc = true;
-                regMap.put(alloca.rd, vr);
-            }
+            virtualReg vr = new virtualReg(cnt++);
+            vr.isAlloc = true;
+            regMap.put(alloca.rd, vr);
         }
         tailBlock = null;
         visitBlock(f.rootBlock);
         asmFunc.tailBlock = tailBlock;
         asmFunc.stackLength = 4 * (cnt - reserveCnt);
         asmFunc.registerCount = asmFunc.originalRegisterCount = cnt;
-        asmFunc.allocCount = asmFunc.stackReserved = f.allocas.size();
+        asmFunc.allocCount = f.allocas.size();
+        asmFunc.stackReserved = 0;
         asmFunc.stackReserved += 3;
     }
 
@@ -190,8 +188,8 @@ public class InstrSelector implements Pass {
                 } else {
                     if (bi.rs2 instanceof constant) {
                         int constValue = getImmValue((constant) bi.rs2);
-                        if (op == Inst.CalCategory.mul ) {
-                            if ( constValue>0 && (constValue ^ (constValue & -constValue)) == 0) {
+                        if (op == Inst.CalCategory.mul) {
+                            if (constValue > 0 && (constValue ^ (constValue & -constValue)) == 0) {
                                 int shiftCount = -1;
                                 while (constValue > 0) {
                                     ++shiftCount;
@@ -203,11 +201,12 @@ public class InstrSelector implements Pass {
                                     if (((constValue >> 11) & 1) > 0) constValue += 1 << 12;
                                     asmBlock.push_back(new Lui(rd, new Imm(constValue >>> 12)));
                                     asmBlock.push_back(new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
-                                } else asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
+                                } else
+                                    asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
                                 asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), rd, op));
                             }
-                        } else if (op== Inst.CalCategory.div) {
-                            if ( constValue>0 && (constValue ^ (constValue & -constValue)) == 0) {
+                        } else if (op == Inst.CalCategory.div) {
+                            if (constValue > 0 && (constValue ^ (constValue & -constValue)) == 0) {
                                 int shiftCount = -1;
                                 while (constValue > 0) {
                                     ++shiftCount;
@@ -219,29 +218,29 @@ public class InstrSelector implements Pass {
                                     if (((constValue >> 11) & 1) > 0) constValue += 1 << 12;
                                     asmBlock.push_back(new Lui(rd, new Imm(constValue >>> 12)));
                                     asmBlock.push_back(new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
-                                } else asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
+                                } else
+                                    asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
                                 asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), rd, op));
                             }
-                        }
-                        else if (op== Inst.CalCategory.rem) {
-                            if ( constValue>0 && (constValue ^ (constValue & -constValue)) == 0) {
+                        } else if (op == Inst.CalCategory.rem) {
+                            if (constValue > 0 && (constValue ^ (constValue & -constValue)) == 0) {
                                 int shiftCount = -1;
                                 while (constValue > 0) {
                                     ++shiftCount;
                                     constValue >>= 1;
                                 }
-                                asmBlock.push_back(new IType(rd, getAsmReg((register) bi.rs1), new Imm((1<<shiftCount)-1), Inst.CalCategory.and));
+                                asmBlock.push_back(new IType(rd, getAsmReg((register) bi.rs1), new Imm((1 << shiftCount) - 1), Inst.CalCategory.and));
                             } else {
                                 if (constValue > 2047 || constValue < -2048) {
                                     if (((constValue >> 11) & 1) > 0) constValue += 1 << 12;
                                     asmBlock.push_back(new Lui(rd, new Imm(constValue >>> 12)));
                                     asmBlock.push_back(new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
-                                } else asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
+                                } else
+                                    asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
                                 asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), rd, op));
                             }
-                        }
-                        else {
-                            if (op== Inst.CalCategory.sub) {
+                        } else {
+                            if (op == Inst.CalCategory.sub) {
                                 constValue = -constValue;
                                 op = Inst.CalCategory.add;
                             }
@@ -250,7 +249,8 @@ public class InstrSelector implements Pass {
                                 asmBlock.push_back(new Lui(rd, new Imm(constValue >>> 12)));
                                 asmBlock.push_back(new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
                                 asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), rd, op));
-                            } else asmBlock.push_back(new IType(rd, getAsmReg((register) bi.rs1), new Imm(constValue), op));
+                            } else
+                                asmBlock.push_back(new IType(rd, getAsmReg((register) bi.rs1), new Imm(constValue), op));
                         }
                     } else {
                         asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), getAsmReg((register) bi.rs2), op));
