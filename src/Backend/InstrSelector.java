@@ -190,7 +190,13 @@ public class InstrSelector implements Pass {
                 } else {
                     if (bi.rs2 instanceof constant) {
                         int constValue = getImmValue((constant) bi.rs2);
-                        if (op == Inst.CalCategory.mul ) {
+                        if (constValue > 2047 || constValue < -2048) {
+                            if (((constValue >> 11) & 1) > 0) constValue += 1 << 12;
+                            asmBlock.push_back(new Lui(rd, new Imm(constValue >>> 12)));
+                            asmBlock.push_back(new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
+                        } else asmBlock.push_back(new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
+                        asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), rd, op));
+                        /*if (op == Inst.CalCategory.mul ) {
                             if ( constValue>0 && (constValue ^ (constValue & -constValue)) == 0) {
                                 int shiftCount = -1;
                                 while (constValue > 0) {
@@ -251,7 +257,7 @@ public class InstrSelector implements Pass {
                                 asmBlock.push_back(new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
                                 asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), rd, op));
                             } else asmBlock.push_back(new IType(rd, getAsmReg((register) bi.rs1), new Imm(constValue), op));
-                        }
+                        }*/
                     } else {
                         asmBlock.push_back(new RType(rd, getAsmReg((register) bi.rs1), getAsmReg((register) bi.rs2), op));
                     }
@@ -447,7 +453,7 @@ public class InstrSelector implements Pass {
                     if (globalVarCache.containsKey(label)) tmpReg = globalVarCache.get(label);
                     else {
                         tmpReg = new virtualReg(cnt++);
-                        globalVarCache.put(label,tmpReg);
+                        //globalVarCache.put(label,tmpReg);
                         asmBlock.push_back(new La(tmpReg, label));
                     }
                     asmBlock.push_back(new Ld(getAsmReg(l.rd), tmpReg, ImmZero, l.align));
@@ -515,7 +521,7 @@ public class InstrSelector implements Pass {
                     if (globalVarCache.containsKey(label)) tmpReg = globalVarCache.get(label);
                     else {
                         tmpReg = new virtualReg(cnt++);
-                        globalVarCache.put(label,tmpReg);
+                        //globalVarCache.put(label,tmpReg);
                         asmBlock.push_back(new La(tmpReg, label));
                     }
                     asmBlock.push_back(new St(rs, tmpReg, ImmZero, st.align));
