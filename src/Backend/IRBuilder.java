@@ -270,9 +270,7 @@ public class IRBuilder implements ASTVisitor {
                     if (currentFunc != null) {
                         currentScope.linkRegister(declaratorNode.Identifier, rd, tmpIrType.getPtr());
                         currentScope.defineVariable(declaratorNode.Identifier, t, declaratorNode.pos);
-                        alloca al = new alloca(rd, tmpIrType);
-                        al.loopDepth = loopDepth;
-                        currentFunc.push_back(al);
+                        currentFunc.push_back(new alloca(rd, tmpIrType));
                         if (declaratorNode.expr != null) {
                             declaratorNode.expr.accept(this);
                             entity rs;
@@ -1108,7 +1106,6 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.successors.add(exitBlock);
             register newLoopRd = new register(), iRd = new register(), cmpResult = new register(), addResult = new register();
             alloca newLoop = new alloca(newLoopRd, i64);
-            newLoop.loopDepth = loopDepth;
             newLoop.Comments = "for new loop";
             //initialize
             currentFunc.push_back(newLoop);

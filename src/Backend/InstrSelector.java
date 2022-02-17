@@ -100,7 +100,11 @@ public class InstrSelector implements Pass {
                 regMap.put(parameterReg, asmPg.phyRegs.get(10 + parameterCnt));
                 //rootBlock.push_back(new Mv(getAsmReg(parameterReg), asmPg.phyRegs.get(10 + parameterCnt)));
             } else {
-                rootBlock.push_back(new Ld(getAsmReg(parameterReg), s0, new Imm((parameterCnt - 8) * 4), 4));
+                //rootBlock.push_back(new Ld(getAsmReg(parameterReg), s0, new Imm((parameterCnt - 8) * 4), 4));
+                virtualReg vr = (virtualReg) getAsmReg(parameterReg);
+                vr.overflow = (parameterCnt - 8) * 4;
+                virtualReg another = (virtualReg) getAsmReg(parameterReg);
+                int t =another.overflow;
             }
             ++parameterCnt;
         }
@@ -115,7 +119,6 @@ public class InstrSelector implements Pass {
         asmFunc.stackLength = 4 * (cnt - reserveCnt);
         asmFunc.registerCount = asmFunc.originalRegisterCount = cnt;
         asmFunc.allocCount = f.allocas.size();
-        asmFunc.stackReserved = 0;
         asmFunc.stackReserved += 3;
     }
 
@@ -471,7 +474,9 @@ public class InstrSelector implements Pass {
                     asmBlock.push_back(new Ld(getAsmReg(l.rd), tmpReg, ImmZero, l.align));
                 } else {
                     virtualReg vr = (virtualReg) getAsmReg(l.ptr);
-                    if (vr.isAlloc)
+                    if (vr.overflow>=0)
+                        asmBlock.push_back(new Ld(getAsmReg(l.rd), s0, new Imm(vr.overflow), l.align));
+                    else if (vr.isAlloc)
                         asmBlock.push_back(new Mv(getAsmReg(l.rd), vr));
                     else if (vr.index < 0)
                         asmBlock.push_back(new Ld(getAsmReg(l.rd), s0, new Imm(vr.index * 4), l.align));
@@ -539,10 +544,13 @@ public class InstrSelector implements Pass {
                     asmBlock.push_back(new St(rs, tmpReg, ImmZero, st.align));
                 } else {
                     virtualReg vr = (virtualReg) getAsmReg(st.target);
-                    if (vr.isAlloc)
+                    if (rs instanceof virtualReg && ((virtualReg) rs).overflow>=0) {
+                        if (!vr.isAlloc)asmBlock.push_back(new St(vr, s0, new Imm(((virtualReg) rs).overflow), 4));
+                    }
+                    else if (vr.isAlloc)
                         asmBlock.push_back(new Mv(vr, rs));
                     else if (vr.index < 0)
-                        asmBlock.push_back(new St(rs, s0, new Imm(vr.index * 4), st.align));
+                        asmBlock.push_back(new St(rs, s0, new Imm(vr.index * 4), 4));
                     else asmBlock.push_back(new St(rs, vr, ImmZero, st.align));
                 }
             } else if (s instanceof bitcast) {

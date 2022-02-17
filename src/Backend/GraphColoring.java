@@ -388,8 +388,9 @@ public class GraphColoring {
         int m = spillWorklist.iterator().next();
         double chosenThreshold = 1e50;
         for (Integer i : spillWorklist) {
+            if (i<32) continue;
             double currentPriority = Priority.get(i) / degree.get(i);
-            if (i>=32 && ((virtualReg)IntToReg.get(i)).isAlloc) currentPriority = 0;
+            if (((virtualReg)IntToReg.get(i)).isAlloc) currentPriority = 0;
             if (i > asmFunc.originalRegisterCount + 32) currentPriority += 1e6;
             if (currentPriority < chosenThreshold) {
                 chosenThreshold = currentPriority;
@@ -603,7 +604,7 @@ public class GraphColoring {
         for (int i = 0; i < 32; ++i) {
             inWhichNodeSets.add(InWhichNodeSet.PRECOLORED);
             color.add(i);
-            degree.add(0);
+            degree.add(100000000);
             alias.add(i);
             Priority.add(0.0);
             moveList.add(new LinkedList<>());
@@ -711,8 +712,12 @@ public class GraphColoring {
         if (spilledNodes.isEmpty()) {
             Replace();
         } else {
+            //System.out.println("*****************");
+            //new AsmPrinter(asmPg,System.out).print();
             //System.out.println(spilledNodes);
             RewriteProgram();
+            //new AsmPrinter(asmPg,System.out).print();
+            //System.out.println("*****************");
             this.Main();
         }
     }
