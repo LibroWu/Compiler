@@ -2,646 +2,1167 @@
 	.globl main
 	.p2align	2
 	.type	main,@function
-gcd: 
-	addi sp, sp, -204
-	sw ra, 200(sp)
-	sw s0, 196(sp)
-	sw s1, 192(sp)
-	sw s2, 188(sp)
-	sw s3, 184(sp)
-	sw s4, 180(sp)
-	sw s5, 176(sp)
-	sw s6, 172(sp)
-	sw s7, 168(sp)
-	sw s8, 164(sp)
-	sw s9, 160(sp)
-	sw s10, 156(sp)
-	sw s11, 152(sp)
-	addi s0, sp, 204
-	mv s6, a0
-	mv a0, a2
-	mv s3, a4
-	mv s2, a5
-	mv s1, a6
-	mv s5, a7
-	addi t1, zero, 0
-	j .LibroBB0_2
+_EdgeList_init: 
+	addi sp, sp, -20
+	sw ra, 16(sp)
+	sw s0, 12(sp)
+	sw s1, 8(sp)
+	sw s2, 4(sp)
+	sw s3, 0(sp)
+	addi s0, sp, 20
+	mv s3, a0
+	mv s2, a1
+	mv s1, a2
+	slli t0, s1, 2
+	addi a0, t0, 4
+	call myNew
+	sw s1, 0(a0)
+	addi t0, s3, 0
+	sw a0, 0(t0)
+	slli t0, s1, 2
+	addi a0, t0, 4
+	call myNew
+	sw s1, 0(a0)
+	addi t0, s3, 4
+	sw a0, 0(t0)
+	slli t0, s2, 2
+	addi a0, t0, 4
+	call myNew
+	sw s2, 0(a0)
+	addi t0, s3, 8
+	sw a0, 0(t0)
+	addi t0, zero, 0
+	j .LibroBB0_1
 .LibroBB0_1: 
-	mv t2, s6
-	mv t1, a1
-	rem t2, t2, t1
-	addi t1, zero, 0
-	xor t1, t2, t1
-	bnez t1, .LibroBB0_7
-	j .LibroBB0_6
-.LibroBB0_2: 
-	addi t2, zero, 10
-	slt t2, t2, t1
-	bnez t2, .LibroBB0_1
-	j .LibroBB0_4
-.LibroBB0_3: 
-	addi t1, t1, 1
+	bge t0, s1, .LibroBB0_4
 	j .LibroBB0_2
-.LibroBB0_4: 
-	mv t2, a0
-	mv t0, a3
-	add t0, t2, t0
-	mv t2, s3
-	add t0, t0, t2
-	mv t2, s2
-	add t0, t0, t2
-	mv t2, s1
-	add t0, t0, t2
-	mv t2, s5
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t0, t0, t2
-	mv t2, s4
-	add t2, t0, t2
-	lw t0, -76(s0)
-	add t2, t2, t0
-	lw t0, -84(s0)
-	add t2, t2, t0
-	lw t0, -92(s0)
-	add t2, t2, t0
-	addi t0, zero, 100
-	rem t0, t2, t0
+.LibroBB0_2: 
+	addi t2, zero, 0
+	addi t1, zero, 1
+	sub t2, t2, t1
+	addi t1, s3, 4
+	lw a0, 0(t1)
+	slli t1, t0, 2
+	addi t1, t1, 4
+	add t1, a0, t1
+	sw t2, 0(t1)
 	j .LibroBB0_3
+.LibroBB0_3: 
+	addi t0, t0, 1
+	j .LibroBB0_1
+.LibroBB0_4: 
+	addi t0, zero, 0
+	j .LibroBB0_6
 .LibroBB0_5: 
-	addi a0, zero, 0
-	j .LibroBB0_8
+	addi t1, s3, 12
+	addi t0, zero, 0
+	sw t0, 0(t1)
+	j .LibroBB0_9
 .LibroBB0_6: 
-	mv a0, a1
-	j .LibroBB0_8
+	bge t0, s2, .LibroBB0_5
+	j .LibroBB0_7
 .LibroBB0_7: 
-	mv t1, a1
-	sw t1, -88(s0)
-	mv t2, s6
-	mv t1, a1
-	rem t1, t2, t1
-	sw t1, -96(s0)
-	sw t0, -100(s0)
-	addi a0, zero, 10
-	addi a1, zero, 68
-	addi a2, zero, 0
-	addi a3, zero, 2
-	addi a4, zero, 4
-	addi a5, zero, 6
-	addi a6, zero, 8
-	addi a7, zero, 10
-	addi t0, zero, 12
-	sw t0, 0(sp)
-	addi t0, zero, 14
-	sw t0, 4(sp)
-	addi t0, zero, 16
-	sw t0, 8(sp)
-	addi t0, zero, 18
-	sw t0, 12(sp)
-	addi t0, zero, 20
-	sw t0, 16(sp)
-	addi t0, zero, 22
-	sw t0, 20(sp)
-	addi t0, zero, 24
-	sw t0, 24(sp)
-	addi t0, zero, 26
-	sw t0, 28(sp)
-	addi t0, zero, 28
-	sw t0, 32(sp)
-	addi t0, zero, 30
-	sw t0, 36(sp)
-	addi t0, zero, 32
-	sw t0, 40(sp)
-	addi t0, zero, 34
-	sw t0, 44(sp)
-	addi t0, zero, 36
-	sw t0, 48(sp)
-	addi t0, zero, 38
-	sw t0, 52(sp)
-	addi t0, zero, 40
-	sw t0, 56(sp)
-	addi t0, zero, 42
-	sw t0, 60(sp)
-	addi t0, zero, 44
-	sw t0, 64(sp)
-	addi t0, zero, 46
-	sw t0, 68(sp)
-	addi t0, zero, 48
-	sw t0, 72(sp)
-	addi t0, zero, 50
-	sw t0, 76(sp)
-	addi t0, zero, 52
-	sw t0, 80(sp)
-	addi t0, zero, 54
-	sw t0, 84(sp)
-	addi t0, zero, 56
-	sw t0, 88(sp)
-	addi t0, zero, 58
-	sw t0, 92(sp)
-	call gcd
-	mv a3, a0
-	mv a4, s3
-	mv a5, s2
-	mv a6, s1
-	mv a7, s5
-	mv t0, s4
-	sw t0, -56(s0)
-	mv t0, s4
-	sw t0, -60(s0)
-	mv t0, s4
-	sw t0, -64(s0)
-	mv t0, s4
-	sw t0, -68(s0)
-	mv t0, s4
-	sw t0, -72(s0)
-	mv t0, s4
-	sw t0, -80(s0)
-	mv s6, s4
-	mv s7, s4
-	mv s8, s4
-	mv s9, s4
-	mv s10, s4
-	mv s11, s4
-	mv t3, s4
-	mv t4, s4
-	mv t5, s4
-	mv s5, s4
-	mv t0, s4
-	sw t0, -104(s0)
-	mv t6, s4
-	mv s3, s4
-	mv s2, s4
-	mv s1, s4
-	lw t2, -76(s0)
-	lw t1, -84(s0)
-	lw t0, -92(s0)
-	lw a0, -88(s0)
-	lw a1, -96(s0)
-	lw a2, -100(s0)
-	lw a1, -56(s0)
-	sw a1, 0(sp)
-	lw a1, -60(s0)
-	sw a1, 4(sp)
-	lw a1, -64(s0)
-	sw a1, 8(sp)
-	lw a1, -68(s0)
-	sw a1, 12(sp)
-	lw a1, -72(s0)
-	sw a1, 16(sp)
-	lw a1, -80(s0)
-	sw a1, 20(sp)
-	sw s6, 24(sp)
-	sw s7, 28(sp)
-	sw s8, 32(sp)
-	sw s9, 36(sp)
-	sw s10, 40(sp)
-	sw s11, 44(sp)
-	sw t3, 48(sp)
-	sw t4, 52(sp)
-	sw t5, 56(sp)
-	sw s5, 60(sp)
-	lw a1, -104(s0)
-	sw a1, 64(sp)
-	sw t6, 68(sp)
-	sw s3, 72(sp)
-	sw s2, 76(sp)
-	sw s1, 80(sp)
-	sw t2, 84(sp)
-	sw t1, 88(sp)
-	sw t0, 92(sp)
-	call gcd1
+	addi s1, zero, 0
+	addi t1, zero, 1
+	sub s1, s1, t1
+	addi t1, s3, 8
+	lw t2, 0(t1)
+	slli t1, t0, 2
+	addi t1, t1, 4
+	add t1, t2, t1
+	sw s1, 0(t1)
 	j .LibroBB0_8
 .LibroBB0_8: 
-	lw s0, 196(sp)
-	lw s1, 192(sp)
-	lw s2, 188(sp)
-	lw s3, 184(sp)
-	lw s4, 180(sp)
-	lw s5, 176(sp)
-	lw s6, 172(sp)
-	lw s7, 168(sp)
-	lw s8, 164(sp)
-	lw s9, 160(sp)
-	lw s10, 156(sp)
-	lw s11, 152(sp)
-	lw ra, 200(sp)
-	addi sp, sp, 204
+	addi t0, t0, 1
+	j .LibroBB0_6
+.LibroBB0_9: 
+	lw s0, 12(sp)
+	lw s1, 8(sp)
+	lw s2, 4(sp)
+	lw s3, 0(sp)
+	lw ra, 16(sp)
+	addi sp, sp, 20
 	ret
-gcd1: 
-	addi sp, sp, -212
-	sw ra, 208(sp)
-	sw s0, 204(sp)
-	sw s1, 200(sp)
-	sw s2, 196(sp)
-	sw s3, 192(sp)
-	sw s4, 188(sp)
-	sw s5, 184(sp)
-	sw s6, 180(sp)
-	sw s7, 176(sp)
-	sw s8, 172(sp)
-	sw s9, 168(sp)
-	sw s10, 164(sp)
-	sw s11, 160(sp)
-	addi s0, sp, 212
-	mv t3, a0
-	mv a0, a1
-	mv a1, a2
-	mv a2, a1
-	mv a1, a3
-	add a2, a2, a1
-	mv a1, a4
-	add a1, a2, a1
-	add a1, a1, a5
-	add a1, a1, a6
-	add a2, a1, a7
-	mv a1, t1
-	add a1, a2, a1
-	add a1, a1, s11
-	add a1, a1, s10
-	add a1, a1, s9
-	add a1, a1, s8
-	add a2, a1, t0
-	mv a1, t1
-	add a2, a2, a1
-	mv a1, t1
-	add a1, a2, a1
-	add a2, a1, s7
-	mv a1, t1
-	add a2, a2, a1
-	mv a1, t1
-	add a1, a2, a1
-	add a1, a1, s6
-	add a2, a1, s5
-	mv a1, s4
-	add a2, a2, a1
-	mv a1, s3
-	add a2, a2, a1
-	mv a1, s2
-	add a1, a2, a1
-	add a1, a1, s1
-	add a2, a1, t2
-	mv a1, t1
-	add a2, a2, a1
-	lw a1, -60(s0)
-	add a2, a2, a1
-	lw a1, -64(s0)
-	add a2, a2, a1
-	lw a1, -68(s0)
-	add a2, a2, a1
-	lw a1, -72(s0)
-	add a2, a2, a1
-	lw a1, -76(s0)
-	add a1, a2, a1
-	addi a2, zero, 100
-	rem a2, a1, a2
-	mv a1, t3
-	rem t4, a1, a0
-	addi a1, zero, 0
-	xor a1, t4, a1
-	bnez a1, .LibroBB1_2
+_EdgeList_addEdge: 
+	addi sp, sp, -24
+	sw ra, 20(sp)
+	sw s0, 16(sp)
+	sw s1, 12(sp)
+	sw s2, 8(sp)
+	sw s3, 4(sp)
+	sw s4, 0(sp)
+	addi s0, sp, 24
+	mv s4, a0
+	mv s3, a1
+	mv s2, a2
+	mv s1, a3
+	addi a0, zero, 12
+	call myNew
+	addi t0, a0, 0
+	sw s3, 0(t0)
+	addi t0, a0, 4
+	sw s2, 0(t0)
+	addi t0, a0, 8
+	sw s1, 0(t0)
+	addi t0, s4, 0
+	lw t1, 0(t0)
+	addi t0, s4, 12
+	lw t0, 0(t0)
+	slli t0, t0, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	sw a0, 0(t0)
+	addi t0, s4, 8
+	lw t1, 0(t0)
+	slli t0, s3, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	lw t2, 0(t0)
+	addi t0, s4, 4
+	lw t1, 0(t0)
+	addi t0, s4, 12
+	lw t0, 0(t0)
+	slli t0, t0, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	sw t2, 0(t0)
+	addi t0, s4, 12
+	lw t2, 0(t0)
+	addi t0, s4, 8
+	lw t1, 0(t0)
+	slli t0, s3, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	sw t2, 0(t0)
+	addi t1, s4, 12
+	lw t0, 0(t1)
+	addi t0, t0, 1
+	sw t0, 0(t1)
 	j .LibroBB1_1
 .LibroBB1_1: 
-	j .LibroBB1_4
-.LibroBB1_2: 
-	mv a1, a0
-	rem a1, t3, a1
-	mv t3, t1
-	sw t3, -80(s0)
-	sw s11, -84(s0)
-	sw s10, -88(s0)
-	sw s9, -92(s0)
-	sw s8, -96(s0)
-	sw t0, -112(s0)
-	mv t6, t1
-	mv t5, t1
-	mv t4, t1
-	mv t3, t1
-	lw t0, -60(s0)
-	mv s11, t0
-	lw t0, -64(s0)
-	mv s10, t0
-	lw t0, -68(s0)
-	mv s9, t0
-	lw t0, -72(s0)
-	mv s8, t0
-	lw t0, -76(s0)
-	sw t0, -104(s0)
-	lw t0, -104(s0)
-	sw t0, -100(s0)
-	lw t0, -100(s0)
-	sw t0, -108(s0)
-	lw t0, -108(s0)
-	sw t0, -56(s0)
-	lw t0, -80(s0)
-	sw t0, 0(sp)
-	lw t0, -84(s0)
-	sw t0, 4(sp)
-	lw t0, -88(s0)
-	sw t0, 8(sp)
-	lw t0, -92(s0)
-	sw t0, 12(sp)
-	lw t0, -96(s0)
-	sw t0, 16(sp)
-	lw t0, -112(s0)
-	sw t0, 20(sp)
-	sw t6, 24(sp)
-	sw t5, 28(sp)
-	sw s7, 32(sp)
-	sw t4, 36(sp)
-	sw t3, 40(sp)
-	sw s6, 44(sp)
-	sw s5, 48(sp)
-	sw s4, 52(sp)
-	sw s3, 56(sp)
-	sw s2, 60(sp)
-	sw s1, 64(sp)
-	sw t2, 68(sp)
-	sw t1, 72(sp)
-	sw s11, 76(sp)
-	sw s10, 80(sp)
-	sw s9, 84(sp)
-	sw s8, 88(sp)
-	lw t0, -56(s0)
-	sw t0, 92(sp)
-	call gcd2
-	j .LibroBB1_4
-.LibroBB1_3: 
-	addi a0, zero, 0
-	j .LibroBB1_4
-.LibroBB1_4: 
-	lw s0, 204(sp)
-	lw s1, 200(sp)
-	lw s2, 196(sp)
-	lw s3, 192(sp)
-	lw s4, 188(sp)
-	lw s5, 184(sp)
-	lw s6, 180(sp)
-	lw s7, 176(sp)
-	lw s8, 172(sp)
-	lw s9, 168(sp)
-	lw s10, 164(sp)
-	lw s11, 160(sp)
-	lw ra, 208(sp)
-	addi sp, sp, 212
+	lw s0, 16(sp)
+	lw s1, 12(sp)
+	lw s2, 8(sp)
+	lw s3, 4(sp)
+	lw s4, 0(sp)
+	lw ra, 20(sp)
+	addi sp, sp, 24
 	ret
-gcd2: 
-	addi sp, sp, -216
-	sw ra, 212(sp)
-	sw s0, 208(sp)
-	sw s1, 204(sp)
-	sw s2, 200(sp)
-	sw s3, 196(sp)
-	sw s4, 192(sp)
-	sw s5, 188(sp)
-	sw s6, 184(sp)
-	sw s7, 180(sp)
-	sw s8, 176(sp)
-	sw s9, 172(sp)
-	sw s10, 168(sp)
-	sw s11, 164(sp)
-	addi s0, sp, 216
-	mv s11, a0
-	mv a0, a1
-	mv a1, a3
-	add t3, a2, a1
-	mv a1, a4
-	add a1, t3, a1
-	add a1, a1, a5
-	add a1, a1, a6
-	add t3, a1, a7
-	mv a1, t1
-	add t3, t3, a1
-	mv a1, t1
-	add a1, t3, a1
-	add a1, a1, s10
-	add a1, a1, s9
-	add a1, a1, s8
-	add a1, a1, s7
-	add a1, a1, t0
-	add t3, a1, s6
-	mv a1, t1
-	add t3, t3, a1
-	mv a1, t1
-	add t3, t3, a1
-	mv a1, t1
-	add a1, t3, a1
-	add a1, a1, s5
-	add t3, a1, s4
-	mv a1, s3
-	add t3, t3, a1
-	mv a1, s2
-	add a1, t3, a1
-	add a1, a1, s1
-	add t3, a1, t2
-	mv a1, t1
-	add t3, t3, a1
-	lw a1, -60(s0)
-	add t3, t3, a1
-	lw a1, -64(s0)
-	add a1, t3, a1
-	lw a1, -68(s0)
-	lw a1, -72(s0)
-	mv a1, s11
-	rem t3, a1, a0
-	addi a1, zero, 0
-	xor a1, t3, a1
-	bnez a1, .LibroBB2_3
-	j .LibroBB2_2
+_EdgeList_nVertices: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 8
+	lw t0, 0(t0)
+	addi t0, t0, 0
+	lw a0, 0(t0)
+	j .LibroBB2_1
 .LibroBB2_1: 
-	addi a0, zero, 0
-	j .LibroBB2_4
-.LibroBB2_2: 
-	j .LibroBB2_4
-.LibroBB2_3: 
-	mv a1, a0
-	rem a1, s11, a1
-	mv s11, t1
-	sw s11, -84(s0)
-	mv s11, t1
-	sw s11, -88(s0)
-	sw s10, -92(s0)
-	sw s9, -96(s0)
-	sw s8, -100(s0)
-	sw t0, -116(s0)
-	mv t6, t1
-	mv t5, t1
-	mv t4, t1
-	lw t0, -60(s0)
-	mv t3, t0
-	lw t0, -64(s0)
-	mv s11, t0
-	lw t0, -68(s0)
-	mv s10, t0
-	lw t0, -72(s0)
-	mv s9, t0
-	lw t0, -76(s0)
-	mv s8, t0
-	lw t0, -80(s0)
-	sw t0, -108(s0)
-	lw t0, -108(s0)
-	sw t0, -104(s0)
-	lw t0, -104(s0)
-	sw t0, -112(s0)
-	lw t0, -112(s0)
-	sw t0, -56(s0)
-	lw t0, -84(s0)
-	sw t0, 0(sp)
-	lw t0, -88(s0)
-	sw t0, 4(sp)
-	lw t0, -92(s0)
-	sw t0, 8(sp)
-	lw t0, -96(s0)
-	sw t0, 12(sp)
-	lw t0, -100(s0)
-	sw t0, 16(sp)
-	sw s7, 20(sp)
-	lw t0, -116(s0)
-	sw t0, 24(sp)
-	sw s6, 28(sp)
-	sw t6, 32(sp)
-	sw t5, 36(sp)
-	sw t4, 40(sp)
-	sw s5, 44(sp)
-	sw s4, 48(sp)
-	sw s3, 52(sp)
-	sw s2, 56(sp)
-	sw s1, 60(sp)
-	sw t2, 64(sp)
-	sw t1, 68(sp)
-	sw t3, 72(sp)
-	sw s11, 76(sp)
-	sw s10, 80(sp)
-	sw s9, 84(sp)
-	sw s8, 88(sp)
-	lw t0, -56(s0)
-	sw t0, 92(sp)
-	call gcd
-	j .LibroBB2_4
-.LibroBB2_4: 
-	lw s0, 208(sp)
-	lw s1, 204(sp)
-	lw s2, 200(sp)
-	lw s3, 196(sp)
-	lw s4, 192(sp)
-	lw s5, 188(sp)
-	lw s6, 184(sp)
-	lw s7, 180(sp)
-	lw s8, 176(sp)
-	lw s9, 172(sp)
-	lw s10, 168(sp)
-	lw s11, 164(sp)
-	lw ra, 212(sp)
-	addi sp, sp, 216
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
 	ret
-main: 
-	addi sp, sp, -108
-	sw ra, 104(sp)
-	sw s0, 100(sp)
-	addi s0, sp, 108
-	addi a0, zero, 10
-	addi a1, zero, 1
-	addi a2, zero, 0
-	addi a3, zero, 2
-	addi a4, zero, 4
-	addi a5, zero, 6
-	addi a6, zero, 8
-	addi a7, zero, 10
-	addi t0, zero, 12
-	sw t0, 0(sp)
-	addi t0, zero, 14
-	sw t0, 4(sp)
+_EdgeList_nEdges: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 0
+	lw t0, 0(t0)
+	addi t0, t0, 0
+	lw a0, 0(t0)
+	j .LibroBB3_1
+.LibroBB3_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Array_Node_push_back: 
+	addi sp, sp, -16
+	sw ra, 12(sp)
+	sw s0, 8(sp)
+	sw s1, 4(sp)
+	sw s2, 0(sp)
+	addi s0, sp, 16
+	mv s2, a0
+	mv s1, a1
+	mv a0, s2
+	call _Array_Node_size
+	addi t0, s2, 0
+	lw t0, 0(t0)
+	addi t0, t0, 0
+	lw t0, 0(t0)
+	xor t0, a0, t0
+	bnez t0, .LibroBB4_1
+	j .LibroBB4_2
+.LibroBB4_1: 
+	addi t0, s2, 0
+	lw t1, 0(t0)
+	addi t0, s2, 4
+	lw t0, 0(t0)
+	slli t0, t0, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	sw s1, 0(t0)
+	addi t1, s2, 4
+	lw t0, 0(t1)
+	addi t0, t0, 1
+	sw t0, 0(t1)
+	j .LibroBB4_3
+.LibroBB4_2: 
+	mv a0, s2
+	call _Array_Node_doubleStorage
+	j .LibroBB4_1
+.LibroBB4_3: 
+	lw s0, 8(sp)
+	lw s1, 4(sp)
+	lw s2, 0(sp)
+	lw ra, 12(sp)
+	addi sp, sp, 16
+	ret
+_Array_Node_pop_back: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t1, a0, 4
+	lw t0, 0(t1)
+	addi t0, t0, -1
+	sw t0, 0(t1)
+	addi t0, a0, 0
+	lw t1, 0(t0)
+	addi t0, a0, 4
+	lw t0, 0(t0)
+	slli t0, t0, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	lw a0, 0(t0)
+	j .LibroBB5_1
+.LibroBB5_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Array_Node_back: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 0
+	lw t1, 0(t0)
+	addi t0, a0, 4
+	lw t0, 0(t0)
+	addi t0, t0, -1
+	slli t0, t0, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	lw a0, 0(t0)
+	j .LibroBB6_1
+.LibroBB6_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Array_Node_front: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 0
+	lw t2, 0(t0)
+	addi t1, zero, 0
+	addi t0, zero, 4
+	mul t1, t1, t0
+	addi t0, t1, 4
+	add t0, t2, t0
+	lw a0, 0(t0)
+	j .LibroBB7_1
+.LibroBB7_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Array_Node_size: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 4
+	lw a0, 0(t0)
+	j .LibroBB8_1
+.LibroBB8_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Array_Node_resize: 
+	addi sp, sp, -16
+	sw ra, 12(sp)
+	sw s0, 8(sp)
+	sw s1, 4(sp)
+	sw s2, 0(sp)
+	addi s0, sp, 16
+	mv s2, a0
+	mv s1, a1
+	j .LibroBB9_3
+.LibroBB9_1: 
+	addi t0, s2, 4
+	sw s1, 0(t0)
+	j .LibroBB9_4
+.LibroBB9_2: 
+	mv a0, s2
+	call _Array_Node_doubleStorage
+	j .LibroBB9_3
+.LibroBB9_3: 
+	addi t0, s2, 0
+	lw t0, 0(t0)
+	addi t0, t0, 0
+	lw t0, 0(t0)
+	bge t0, s1, .LibroBB9_1
+	j .LibroBB9_2
+.LibroBB9_4: 
+	lw s0, 8(sp)
+	lw s1, 4(sp)
+	lw s2, 0(sp)
+	lw ra, 12(sp)
+	addi sp, sp, 16
+	ret
+_Array_Node_get: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 0
+	lw t1, 0(t0)
+	slli t0, a1, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	lw a0, 0(t0)
+	j .LibroBB10_1
+.LibroBB10_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Array_Node_set: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 0
+	lw t1, 0(t0)
+	slli t0, a1, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	sw a2, 0(t0)
+	j .LibroBB11_1
+.LibroBB11_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Array_Node_swap: 
+	addi sp, sp, -12
+	sw ra, 8(sp)
+	sw s0, 4(sp)
+	sw s1, 0(sp)
+	addi s0, sp, 12
+	addi t0, a0, 0
+	lw t1, 0(t0)
+	slli t0, a1, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	lw t0, 0(t0)
+	addi t1, a0, 0
+	lw t2, 0(t1)
+	slli t1, a2, 2
+	addi t1, t1, 4
+	add t1, t2, t1
+	lw s1, 0(t1)
+	addi t1, a0, 0
+	lw t2, 0(t1)
+	slli t1, a1, 2
+	addi t1, t1, 4
+	add t1, t2, t1
+	sw s1, 0(t1)
+	addi t1, a0, 0
+	lw t1, 0(t1)
+	slli t2, a2, 2
+	addi t2, t2, 4
+	add t1, t1, t2
+	sw t0, 0(t1)
+	j .LibroBB12_1
+.LibroBB12_1: 
+	lw s0, 4(sp)
+	lw s1, 0(sp)
+	lw ra, 8(sp)
+	addi sp, sp, 12
+	ret
+_Array_Node_doubleStorage: 
+	addi sp, sp, -24
+	sw ra, 20(sp)
+	sw s0, 16(sp)
+	sw s1, 12(sp)
+	sw s2, 8(sp)
+	sw s3, 4(sp)
+	sw s4, 0(sp)
+	addi s0, sp, 24
+	mv s3, a0
+	addi t0, s3, 0
+	lw s2, 0(t0)
+	addi t0, s3, 4
+	lw s1, 0(t0)
+	addi t0, s2, 0
+	lw t0, 0(t0)
+	slli s4, t0, 1
+	slli t0, s4, 2
+	addi a0, t0, 4
+	call myNew
+	sw s4, 0(a0)
+	addi t0, s3, 0
+	sw a0, 0(t0)
+	addi t1, s3, 4
+	addi t0, zero, 0
+	sw t0, 0(t1)
+	j .LibroBB13_2
+.LibroBB13_1: 
+	j .LibroBB13_5
+.LibroBB13_2: 
+	addi t0, s3, 4
+	lw t0, 0(t0)
+	xor t0, t0, s1
+	beqz t0, .LibroBB13_1
+	j .LibroBB13_4
+.LibroBB13_3: 
+	addi t1, s3, 4
+	lw t0, 0(t1)
+	addi t0, t0, 1
+	sw t0, 0(t1)
+	j .LibroBB13_2
+.LibroBB13_4: 
+	addi t0, s3, 4
+	lw t0, 0(t0)
+	slli t0, t0, 2
+	addi t0, t0, 4
+	add t0, s2, t0
+	lw t2, 0(t0)
+	addi t0, s3, 0
+	lw t1, 0(t0)
+	addi t0, s3, 4
+	lw t0, 0(t0)
+	slli t0, t0, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	sw t2, 0(t0)
+	j .LibroBB13_3
+.LibroBB13_5: 
+	lw s0, 16(sp)
+	lw s1, 12(sp)
+	lw s2, 8(sp)
+	lw s3, 4(sp)
+	lw s4, 0(sp)
+	lw ra, 20(sp)
+	addi sp, sp, 24
+	ret
+_Array_Node_Array_Node: 
+	addi sp, sp, -12
+	sw ra, 8(sp)
+	sw s0, 4(sp)
+	sw s1, 0(sp)
+	addi s0, sp, 12
+	mv s1, a0
+	addi t1, s1, 4
+	addi t0, zero, 0
+	sw t0, 0(t1)
+	addi a0, zero, 68
+	call myNew
 	addi t0, zero, 16
-	sw t0, 8(sp)
-	addi t0, zero, 18
-	sw t0, 12(sp)
-	addi t0, zero, 20
-	sw t0, 16(sp)
-	addi t0, zero, 22
-	sw t0, 20(sp)
-	addi t0, zero, 24
-	sw t0, 24(sp)
-	addi t0, zero, 26
-	sw t0, 28(sp)
-	addi t0, zero, 28
-	sw t0, 32(sp)
-	addi t0, zero, 30
-	sw t0, 36(sp)
-	addi t0, zero, 32
-	sw t0, 40(sp)
-	addi t0, zero, 34
-	sw t0, 44(sp)
-	addi t0, zero, 36
-	sw t0, 48(sp)
-	addi t0, zero, 38
-	sw t0, 52(sp)
-	addi t0, zero, 40
-	sw t0, 56(sp)
-	addi t0, zero, 42
-	sw t0, 60(sp)
-	addi t0, zero, 44
-	sw t0, 64(sp)
-	addi t0, zero, 46
-	sw t0, 68(sp)
-	addi t0, zero, 48
-	sw t0, 72(sp)
-	addi t0, zero, 50
-	sw t0, 76(sp)
-	addi t0, zero, 52
-	sw t0, 80(sp)
-	addi t0, zero, 54
-	sw t0, 84(sp)
-	addi t0, zero, 56
-	sw t0, 88(sp)
-	addi t0, zero, 58
-	sw t0, 92(sp)
-	call gcd
-	addi a0, a0, 1024
+	sw t0, 0(a0)
+	addi t0, s1, 0
+	sw a0, 0(t0)
+	j .LibroBB14_1
+.LibroBB14_1: 
+	lw s0, 4(sp)
+	lw s1, 0(sp)
+	lw ra, 8(sp)
+	addi sp, sp, 12
+	ret
+_Heap_Node_push: 
+	addi sp, sp, -24
+	sw ra, 20(sp)
+	sw s0, 16(sp)
+	sw s1, 12(sp)
+	sw s2, 8(sp)
+	sw s3, 4(sp)
+	sw s4, 0(sp)
+	addi s0, sp, 24
+	mv s4, a0
+	addi t0, s4, 0
+	lw a0, 0(t0)
+	call _Array_Node_push_back
+	mv a0, s4
+	call _Heap_Node_size
+	addi s3, a0, -1
+	j .LibroBB15_2
+.LibroBB15_1: 
+	mv a0, s4
+	mv a1, s3
+	call _Heap_Node_pnt
+	mv s2, a0
+	addi t0, s4, 0
+	lw a0, 0(t0)
+	mv a1, s2
+	call _Array_Node_get
+	call _Node_key_
+	mv s1, a0
+	addi t0, s4, 0
+	lw a0, 0(t0)
+	mv a1, s3
+	call _Array_Node_get
+	call _Node_key_
+	slt t0, s1, a0
+	bnez t0, .LibroBB15_4
+	j .LibroBB15_5
+.LibroBB15_2: 
+	addi t0, zero, 0
+	bge t0, s3, .LibroBB15_3
+	j .LibroBB15_1
+.LibroBB15_3: 
+	j .LibroBB15_6
+.LibroBB15_4: 
+	addi t0, s4, 0
+	lw a0, 0(t0)
+	mv a1, s2
+	mv a2, s3
+	call _Array_Node_swap
+	mv s3, s2
+	j .LibroBB15_2
+.LibroBB15_5: 
+	j .LibroBB15_3
+.LibroBB15_6: 
+	lw s0, 16(sp)
+	lw s1, 12(sp)
+	lw s2, 8(sp)
+	lw s3, 4(sp)
+	lw s4, 0(sp)
+	lw ra, 20(sp)
+	addi sp, sp, 24
+	ret
+_Heap_Node_pop: 
+	addi sp, sp, -20
+	sw ra, 16(sp)
+	sw s0, 12(sp)
+	sw s1, 8(sp)
+	sw s2, 4(sp)
+	sw s3, 0(sp)
+	addi s0, sp, 20
+	mv s3, a0
+	addi t0, s3, 0
+	lw a0, 0(t0)
+	call _Array_Node_front
+	mv s2, a0
+	addi t0, s3, 0
+	lw s1, 0(t0)
+	mv a0, s3
+	call _Heap_Node_size
+	addi a2, a0, -1
+	mv a0, s1
+	addi a1, zero, 0
+	call _Array_Node_swap
+	addi t0, s3, 0
+	lw a0, 0(t0)
+	call _Array_Node_pop_back
+	mv a0, s3
+	addi a1, zero, 0
+	call _Heap_Node_maxHeapify
+	mv a0, s2
+	j .LibroBB16_1
+.LibroBB16_1: 
+	lw s0, 12(sp)
+	lw s1, 8(sp)
+	lw s2, 4(sp)
+	lw s3, 0(sp)
+	lw ra, 16(sp)
+	addi sp, sp, 20
+	ret
+_Heap_Node_top: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 0
+	lw a0, 0(t0)
+	call _Array_Node_front
+	j .LibroBB17_1
+.LibroBB17_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Heap_Node_size: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 0
+	lw a0, 0(t0)
+	call _Array_Node_size
+	j .LibroBB18_1
+.LibroBB18_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Heap_Node_lchild: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	slli t0, a1, 1
+	addi a0, t0, 1
+	j .LibroBB19_1
+.LibroBB19_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Heap_Node_rchild: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	slli t0, a1, 1
+	addi a0, t0, 2
+	j .LibroBB20_1
+.LibroBB20_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Heap_Node_pnt: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a1, -1
+	srai a0, t0, 1
+	j .LibroBB21_1
+.LibroBB21_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+_Heap_Node_maxHeapify: 
+	addi sp, sp, -32
+	sw ra, 28(sp)
+	sw s0, 24(sp)
+	sw s1, 20(sp)
+	sw s2, 16(sp)
+	sw s3, 12(sp)
+	sw s4, 8(sp)
+	sw s5, 4(sp)
+	sw s6, 0(sp)
+	addi s0, sp, 32
+	mv s6, a0
+	mv s5, a1
+	mv a0, s6
+	mv a1, s5
+	call _Heap_Node_lchild
+	mv s3, a0
+	mv a0, s6
+	mv a1, s5
+	call _Heap_Node_rchild
+	mv s4, a0
+	mv s1, s5
+	mv a0, s6
+	call _Heap_Node_size
+	addi t0, zero, 0
+	bge s3, a0, .LibroBB22_2
+	j .LibroBB22_1
+.LibroBB22_1: 
+	addi t0, s6, 0
+	lw a0, 0(t0)
+	mv a1, s3
+	call _Array_Node_get
+	call _Node_key_
+	mv s2, a0
+	addi t0, s6, 0
+	lw a0, 0(t0)
+	mv a1, s1
+	call _Array_Node_get
+	call _Node_key_
+	slt t0, a0, s2
+	j .LibroBB22_2
+.LibroBB22_2: 
+	beqz t0, .LibroBB22_3
+	j .LibroBB22_4
+.LibroBB22_3: 
+	mv a0, s6
+	call _Heap_Node_size
+	addi t0, zero, 0
+	bge s4, a0, .LibroBB22_6
+	j .LibroBB22_5
+.LibroBB22_4: 
+	mv s1, s3
+	j .LibroBB22_3
+.LibroBB22_5: 
+	addi t0, s6, 0
+	lw a0, 0(t0)
+	mv a1, s4
+	call _Array_Node_get
+	call _Node_key_
+	mv s2, a0
+	addi t0, s6, 0
+	lw a0, 0(t0)
+	mv a1, s1
+	call _Array_Node_get
+	call _Node_key_
+	slt t0, a0, s2
+	j .LibroBB22_6
+.LibroBB22_6: 
+	beqz t0, .LibroBB22_7
+	j .LibroBB22_8
+.LibroBB22_7: 
+	xor t0, s1, s5
+	bnez t0, .LibroBB22_10
+	j .LibroBB22_9
+.LibroBB22_8: 
+	mv s1, s4
+	j .LibroBB22_7
+.LibroBB22_9: 
+	j .LibroBB22_11
+.LibroBB22_10: 
+	addi t0, s6, 0
+	lw a0, 0(t0)
+	mv a1, s5
+	mv a2, s1
+	call _Array_Node_swap
+	mv a0, s6
+	mv a1, s1
+	call _Heap_Node_maxHeapify
+	j .LibroBB22_11
+.LibroBB22_11: 
+	lw s0, 24(sp)
+	lw s1, 20(sp)
+	lw s2, 16(sp)
+	lw s3, 12(sp)
+	lw s4, 8(sp)
+	lw s5, 4(sp)
+	lw s6, 0(sp)
+	lw ra, 28(sp)
+	addi sp, sp, 32
+	ret
+_Heap_Node_Heap_Node: 
+	addi sp, sp, -16
+	sw ra, 12(sp)
+	sw s0, 8(sp)
+	sw s1, 4(sp)
+	sw s2, 0(sp)
+	addi s0, sp, 16
+	mv s2, a0
+	addi a0, zero, 8
+	call myNew
+	mv s1, a0
+	mv a0, s1
+	call _Array_Node_Array_Node
+	addi t0, s2, 0
+	sw s1, 0(t0)
+	j .LibroBB23_1
+.LibroBB23_1: 
+	lw s0, 8(sp)
+	lw s1, 4(sp)
+	lw s2, 0(sp)
+	lw ra, 12(sp)
+	addi sp, sp, 16
+	ret
+init: 
+	addi sp, sp, -20
+	sw ra, 16(sp)
+	sw s0, 12(sp)
+	sw s1, 8(sp)
+	sw s2, 4(sp)
+	sw s3, 0(sp)
+	addi s0, sp, 20
+	call getInt
+	la t0, n
+	sw a0, 0(t0)
+	call getInt
+	la t0, m
+	sw a0, 0(t0)
+	addi a0, zero, 16
+	call myNew
+	la t0, g
+	sw a0, 0(t0)
+	la t0, g
+	lw a0, 0(t0)
+	la t0, n
+	lw a1, 0(t0)
+	la t0, m
+	lw a2, 0(t0)
+	call _EdgeList_init
+	addi s2, zero, 0
+	j .LibroBB24_4
+.LibroBB24_1: 
+	call getInt
+	mv s3, a0
+	call getInt
+	mv s1, a0
+	call getInt
+	mv a3, a0
+	la t0, g
+	lw a0, 0(t0)
+	mv a1, s3
+	mv a2, s1
+	call _EdgeList_addEdge
+	j .LibroBB24_2
+.LibroBB24_2: 
+	addi s2, s2, 1
+	j .LibroBB24_4
+.LibroBB24_3: 
+	j .LibroBB24_5
+.LibroBB24_4: 
+	la t0, m
+	lw t0, 0(t0)
+	bge s2, t0, .LibroBB24_3
+	j .LibroBB24_1
+.LibroBB24_5: 
+	lw s0, 12(sp)
+	lw s1, 8(sp)
+	lw s2, 4(sp)
+	lw s3, 0(sp)
+	lw ra, 16(sp)
+	addi sp, sp, 20
+	ret
+_Node_key_: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	addi t0, a0, 4
+	lw t0, 0(t0)
+	addi a0, zero, 0
+	sub a0, a0, t0
+	j .LibroBB25_1
+.LibroBB25_1: 
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
+	ret
+dijkstra: 
+	addi sp, sp, -32
+	sw ra, 28(sp)
+	sw s0, 24(sp)
+	sw s1, 20(sp)
+	sw s2, 16(sp)
+	sw s3, 12(sp)
+	sw s4, 8(sp)
+	sw s5, 4(sp)
+	sw s6, 0(sp)
+	addi s0, sp, 32
+	mv s1, a0
+	la t0, n
+	lw s2, 0(t0)
+	slli t0, s2, 2
+	addi a0, t0, 4
+	call myNew
+	sw s2, 0(a0)
+	mv s5, a0
+	la t0, n
+	lw s2, 0(t0)
+	slli t0, s2, 2
+	addi a0, t0, 4
+	call myNew
+	sw s2, 0(a0)
+	mv s4, a0
+	addi t0, zero, 0
+	j .LibroBB26_2
+.LibroBB26_1: 
+	la t1, INF
+	lw t2, 0(t1)
+	slli t1, t0, 2
+	addi t1, t1, 4
+	add t1, s4, t1
+	sw t2, 0(t1)
+	slli t1, t0, 2
+	addi t1, t1, 4
+	add t2, s5, t1
+	addi t1, zero, 0
+	sw t1, 0(t2)
+	j .LibroBB26_4
+.LibroBB26_2: 
+	la t1, n
+	lw t1, 0(t1)
+	bge t0, t1, .LibroBB26_3
+	j .LibroBB26_1
+.LibroBB26_3: 
+	slli t0, s1, 2
+	addi t0, t0, 4
+	add t1, s4, t0
+	addi t0, zero, 0
+	sw t0, 0(t1)
+	addi a0, zero, 4
+	call myNew
+	mv s2, a0
+	mv a0, s2
+	call _Heap_Node_Heap_Node
+	addi a0, zero, 8
+	call myNew
+	addi t1, a0, 4
+	addi t0, zero, 0
+	sw t0, 0(t1)
+	addi t0, a0, 0
+	sw s1, 0(t0)
+	mv a1, a0
+	mv a0, s2
+	call _Heap_Node_push
+	j .LibroBB26_6
+.LibroBB26_4: 
+	addi t0, t0, 1
+	j .LibroBB26_2
+.LibroBB26_5: 
+	mv a0, s4
+	j .LibroBB26_8
+.LibroBB26_6: 
+	mv a0, s2
+	call _Heap_Node_size
+	addi t0, zero, 0
+	xor t0, a0, t0
+	beqz t0, .LibroBB26_5
+	j .LibroBB26_7
+.LibroBB26_7: 
+	mv a0, s2
+	call _Heap_Node_pop
+	addi t0, a0, 0
+	lw s1, 0(t0)
+	slli t0, s1, 2
+	addi t0, t0, 4
+	add t0, s5, t0
+	lw t1, 0(t0)
+	addi t0, zero, 1
+	xor t0, t1, t0
+	bnez t0, .LibroBB26_9
+	j .LibroBB26_10
+.LibroBB26_8: 
+	lw s0, 24(sp)
+	lw s1, 20(sp)
+	lw s2, 16(sp)
+	lw s3, 12(sp)
+	lw s4, 8(sp)
+	lw s5, 4(sp)
+	lw s6, 0(sp)
+	lw ra, 28(sp)
+	addi sp, sp, 32
+	ret
+.LibroBB26_9: 
+	slli t0, s1, 2
+	addi t0, t0, 4
+	add t1, s5, t0
+	addi t0, zero, 1
+	sw t0, 0(t1)
+	la t0, g
+	lw t0, 0(t0)
+	addi t0, t0, 8
+	lw t1, 0(t0)
+	slli t0, s1, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	lw s3, 0(t0)
+	j .LibroBB26_12
+.LibroBB26_10: 
+	j .LibroBB26_6
+.LibroBB26_11: 
+	j .LibroBB26_6
+.LibroBB26_12: 
+	addi t1, zero, 0
+	addi t0, zero, 1
+	sub t1, t1, t0
+	xor t0, s3, t1
+	beqz t0, .LibroBB26_11
+	j .LibroBB26_14
+.LibroBB26_13: 
+	la t0, g
+	lw t0, 0(t0)
+	addi t0, t0, 4
+	lw t1, 0(t0)
+	slli t0, s3, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	lw s3, 0(t0)
+	j .LibroBB26_12
+.LibroBB26_14: 
+	la t0, g
+	lw t0, 0(t0)
+	addi t0, t0, 0
+	lw t1, 0(t0)
+	slli t0, s3, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	lw t0, 0(t0)
+	addi t0, t0, 4
+	lw s6, 0(t0)
+	la t0, g
+	lw t0, 0(t0)
+	addi t0, t0, 0
+	lw t1, 0(t0)
+	slli t0, s3, 2
+	addi t0, t0, 4
+	add t0, t1, t0
+	lw t0, 0(t0)
+	addi t0, t0, 8
+	lw t0, 0(t0)
+	slli t1, s1, 2
+	addi t1, t1, 4
+	add t1, s4, t1
+	lw t1, 0(t1)
+	add t0, t1, t0
+	slli t1, s6, 2
+	addi t1, t1, 4
+	add t1, s4, t1
+	lw t1, 0(t1)
+	slt t1, t0, t1
+	bnez t1, .LibroBB26_15
+	j .LibroBB26_16
+.LibroBB26_15: 
+	slli t1, s6, 2
+	addi t1, t1, 4
+	add t1, s4, t1
+	sw t0, 0(t1)
+	addi a0, zero, 8
+	call myNew
+	addi t0, a0, 0
+	sw s6, 0(t0)
+	slli t0, s6, 2
+	addi t0, t0, 4
+	add t0, s4, t0
+	lw t1, 0(t0)
+	addi t0, a0, 4
+	sw t1, 0(t0)
+	mv a1, a0
+	mv a0, s2
+	call _Heap_Node_push
+	j .LibroBB26_13
+.LibroBB26_16: 
+	j .LibroBB26_13
+main: 
+	addi sp, sp, -20
+	sw ra, 16(sp)
+	sw s0, 12(sp)
+	sw s1, 8(sp)
+	sw s2, 4(sp)
+	sw s3, 0(sp)
+	addi s0, sp, 20
+	call _GLOBAL_
+	call init
+	addi s2, zero, 0
+	j .LibroBB27_1
+.LibroBB27_1: 
+	la t0, n
+	lw t0, 0(t0)
+	bge s2, t0, .LibroBB27_4
+	j .LibroBB27_2
+.LibroBB27_2: 
+	mv a0, s2
+	call dijkstra
+	mv s1, a0
+	addi s3, zero, 0
+	j .LibroBB27_5
+.LibroBB27_3: 
+	addi s2, s2, 1
+	j .LibroBB27_1
+.LibroBB27_4: 
+	addi a0, zero, 0
+	j .LibroBB27_9
+.LibroBB27_5: 
+	la t0, n
+	lw t0, 0(t0)
+	bge s3, t0, .LibroBB27_8
+	j .LibroBB27_6
+.LibroBB27_6: 
+	slli t0, s3, 2
+	addi t0, t0, 4
+	add t0, s1, t0
+	lw t1, 0(t0)
+	la t0, INF
+	lw t0, 0(t0)
+	xor t0, t1, t0
+	bnez t0, .LibroBB27_11
+	j .LibroBB27_12
+.LibroBB27_7: 
+	addi s3, s3, 1
+	j .LibroBB27_5
+.LibroBB27_8: 
+	la a0, .libro.str.2
+	call println
+	j .LibroBB27_3
+.LibroBB27_9: 
+	lw s0, 12(sp)
+	lw s1, 8(sp)
+	lw s2, 4(sp)
+	lw s3, 0(sp)
+	lw ra, 16(sp)
+	addi sp, sp, 20
+	ret
+.LibroBB27_10: 
+	la a0, .libro.str.1
+	call print
+	j .LibroBB27_7
+.LibroBB27_11: 
+	slli t0, s3, 2
+	addi t0, t0, 4
+	add t0, s1, t0
+	lw a0, 0(t0)
 	call toString
 	addi t0, a0, 4
 	lw a0, 0(t0)
-	call println
-	addi a0, zero, 0
-	j .LibroBB3_1
-.LibroBB3_1: 
-	lw s0, 100(sp)
-	lw ra, 104(sp)
-	addi sp, sp, 108
+	call print
+	j .LibroBB27_10
+.LibroBB27_12: 
+	la a0, .libro.str
+	call print
+	j .LibroBB27_10
+_GLOBAL_: 
+	addi sp, sp, -8
+	sw ra, 4(sp)
+	sw s0, 0(sp)
+	addi s0, sp, 8
+	lw s0, 0(sp)
+	lw ra, 4(sp)
+	addi sp, sp, 8
 	ret
 .data
+	.type	n,@object
+n:
+	.word	0
+	.size	n, 4
+
+	.type	m,@object
+m:
+	.word	0
+	.size	m, 4
+
+	.type	g,@object
+g:
+	.word	0
+	.size	g, 4
+
+	.type	INF,@object
+INF:
+	.word	10000000
+	.size	INF, 4
+
+	.type	.libro.str,@object
+.libro.str:
+	.asciz	"-1"
+	.size	.libro.str, 3
+
+	.type	.libro.str.1,@object
+.libro.str.1:
+	.asciz	" "
+	.size	.libro.str.1, 2
+
+	.type	.libro.str.2,@object
+.libro.str.2:
+	.asciz	""
+	.size	.libro.str.2, 1
+

@@ -1109,7 +1109,7 @@ public class IRBuilder implements ASTVisitor {
             newLoop.Comments = "for new loop";
             //initialize
             currentFunc.push_back(newLoop);
-            currentBlock.push_back(new store(new constant(-irSize + 4), newLoopRd, i64));
+            currentBlock.push_back(new store(new constant(4), newLoopRd, i64));
             currentBlock.push_back(new br(null, checkBlock, null));
             //checkBlock
             currentBlock = checkBlock;

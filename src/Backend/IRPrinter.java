@@ -358,7 +358,7 @@ public class IRPrinter implements Pass {
             out.print(getRegName(con.rd) + " = " + getConvertOp(con.convert) + " " + getType(con.rsType) + " " + getEntityString(con.rs) + " to " + getType(con.rdType));
         } else if (s instanceof getelementptr) {
             getelementptr g = (getelementptr) s;
-            if (g.rsType.cDef != null)
+            if (g.rsType.cDef != null && g.rsType.ptrNum==1)
                 out.print(getRegName(g.rd) + " = getelementptr " + getTypeWithPtrMinus1(g.rsType) + ", " + getType(g.rsType) + " " + getRegName(g.rs) + ", i32 " + getEntityString(g.locator1) + ", i32 " + getEntityString(g.locator2));
             else
                 out.print(getRegName(g.rd) + " = getelementptr " + getTypeWithPtrMinus1(g.rsType) + ", " + getType(g.rsType) + " " + getRegName(g.rs) + ", i32 " + getEntityString(g.locator1));

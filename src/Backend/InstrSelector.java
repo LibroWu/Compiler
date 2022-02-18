@@ -389,8 +389,26 @@ public class InstrSelector implements Pass {
                         } else asmBlock.push_back(new IType(rd, rs, new Imm(constValue), Inst.CalCategory.add));
                     } else {
                         Reg tmp = getAsmReg((register) en);
-                        if (atomSize > 1)
-                            asmBlock.push_back(new IType(tmp, tmp, new Imm(atomSize), Inst.CalCategory.mul));
+                        if (atomSize > 1) {
+                            int constValue = atomSize;
+                            if ((constValue ^ constValue & -constValue) == 0) {
+                                int shiftCount = -1;
+                                while (constValue > 0) {
+                                    ++shiftCount;
+                                    constValue >>= 1;
+                                }
+                                asmBlock.push_back(new IType(tmp, tmp, new Imm(shiftCount), Inst.CalCategory.sll));
+                            } else {
+                                virtualReg constContainer = new virtualReg(cnt++);
+                                if (constValue > 2047 || constValue < -2048) {
+                                    if (((constValue >> 11) & 1) > 0) constValue += 1 << 12;
+                                    asmBlock.push_back(new Lui(constContainer, new Imm(constValue >>> 12)));
+                                    asmBlock.push_back(new IType(constContainer, constContainer, new Imm(getLo(constValue)), Inst.CalCategory.add));
+                                } else
+                                    asmBlock.push_back(new IType(constContainer, zero, new Imm(constValue), Inst.CalCategory.add));
+                                asmBlock.push_back(new RType(tmp, tmp, constContainer, Inst.CalCategory.mul));
+                            }
+                        }
                         asmBlock.push_back(new RType(rd, rs, tmp, Inst.CalCategory.add));
                     }
                 } else {
