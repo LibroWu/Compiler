@@ -62,7 +62,6 @@ public class LivenessAnalysis {
     }
 
     public void work() {
-        collect();
         asmPg.funcS.forEach(this::workInFunc);
         //printLivenessAnalysisResult();
     }

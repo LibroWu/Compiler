@@ -33,7 +33,7 @@ public class Li extends Inst {
     }
     @Override
     public boolean check() {
-        return !liveOut.get(rd.getNumber())&& rd.getNumber()>=32;
+        return !liveOut.get(rd.getNumber());
     }
     @Override
     public String toString() {

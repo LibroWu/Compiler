@@ -4,7 +4,7 @@ import Assembly.Operand.Reg;
 
 import java.util.BitSet;
 
-public class Mv extends Inst {
+public class Mv extends Inst {  
     public Reg rd, rs1;
 
     public Mv(Reg rd, Reg rs1) {
@@ -31,7 +31,7 @@ public class Mv extends Inst {
     }
     @Override
     public boolean check() {
-        return !liveOut.get(rd.getNumber()) && rd.getNumber()>=32;
+        return !liveOut.get(rd.getNumber());
     }
 
     @Override

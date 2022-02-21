@@ -58,10 +58,13 @@ public class Main {
             new IRPrinter(out_llvm).visitProgram(pg);
             AsmPg asmPg = new AsmPg();
             new InstrSelector(asmPg).visitProgram(pg);
-            new LivenessAnalysis(asmPg).work();
-            new RegAlloc(asmPg).work();
+            LivenessAnalysis livenessAnalysis = new LivenessAnalysis(asmPg);
+            livenessAnalysis.collect();
+            livenessAnalysis.work();
+            new RegAlloc(asmPg,livenessAnalysis).work();
             //new RegAlloc_Basic(asmPg).work();
             new AsmOptimizer(asmPg).work();
+            livenessAnalysis.work();
             new AsmPrinter(asmPg,out_asm).print();
         } catch (error er) {
             System.err.println(er.toString());
