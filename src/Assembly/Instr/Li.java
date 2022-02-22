@@ -32,8 +32,8 @@ public class Li extends Inst {
         liveIn.or(tmpBitSet);
     }
     @Override
-    public boolean check() {
-        return !liveOut.get(rd.getNumber());
+    public boolean check(boolean eliminateSwitch) {
+        return !liveOut.get(rd.getNumber())&& (eliminateSwitch || rd.getNumber()>=32);
     }
     @Override
     public String toString() {

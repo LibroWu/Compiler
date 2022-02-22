@@ -15,6 +15,7 @@ public class LivenessAnalysis {
     private int funcCnt = 0;
     //private PrintStream out = new PrintStream("test\\test.live");
     private final PrintStream out = System.out;
+    private boolean eliminateSwitch = false;
     public void collect() {
         asmPg.funcS.forEach(this::collectFunc);
     }
@@ -61,7 +62,8 @@ public class LivenessAnalysis {
         asmBlock.successors.forEach(this::printBlock);
     }
 
-    public void work() {
+    public void work(boolean eliminateSwitch) {
+        this.eliminateSwitch = eliminateSwitch;
         asmPg.funcS.forEach(this::workInFunc);
         //printLivenessAnalysisResult();
     }
@@ -115,7 +117,7 @@ public class LivenessAnalysis {
             Inst currentInst = currentBlock.headInst;
             while (currentInst!=null) {
                 Inst next = currentInst.next;
-                if (currentInst.check())
+                if (currentInst.check(eliminateSwitch))
                     currentBlock.delete_Inst(currentInst);
                 currentInst = next;
             }

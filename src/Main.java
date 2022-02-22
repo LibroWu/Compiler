@@ -60,11 +60,11 @@ public class Main {
             new InstrSelector(asmPg).visitProgram(pg);
             LivenessAnalysis livenessAnalysis = new LivenessAnalysis(asmPg);
             livenessAnalysis.collect();
-            livenessAnalysis.work();
+            livenessAnalysis.work(false);
             new RegAlloc(asmPg,livenessAnalysis).work();
             //new RegAlloc_Basic(asmPg).work();
             new AsmOptimizer(asmPg).work();
-            livenessAnalysis.work();
+            livenessAnalysis.work(true);
             new AsmPrinter(asmPg,out_asm).print();
         } catch (error er) {
             System.err.println(er.toString());

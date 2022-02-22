@@ -28,8 +28,8 @@ public class La extends Inst{
     }
 
     @Override
-    public boolean check() {
-        return !liveOut.get(rd.getNumber());
+    public boolean check(boolean eliminateSwitch) {
+        return !liveOut.get(rd.getNumber())&& (eliminateSwitch || rd.getNumber()>=32);
     }
 
     @Override

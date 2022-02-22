@@ -40,7 +40,7 @@ public class Br extends Inst {
     }
 
     @Override
-    public boolean check() {
+    public boolean check(boolean eliminateSwitch) {
         return false;
     }
 

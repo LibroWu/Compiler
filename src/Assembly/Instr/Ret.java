@@ -6,16 +6,18 @@ public class Ret extends Inst {
 
     @Override
     public void fillSet() {
+        use.set(1,3);
+        use.set(8);
     }
 
     @Override
     public void calcInst() {
-        liveOut = new BitSet(bitSize);
-        liveIn =  new BitSet(bitSize);
+        liveOut = (BitSet) use.clone();
+        liveIn =  (BitSet) use.clone();
     }
 
     @Override
-    public boolean check() {
+    public boolean check(boolean eliminateSwitch) {
         return false;
     }
 
