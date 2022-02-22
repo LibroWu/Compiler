@@ -95,13 +95,13 @@ public class GraphColoring {
                     for (int l = live.nextSetBit(0); l >= 0; l = live.nextSetBit(l + 1)) {
                         AddEdge(l, d);
                     }
-                if (i instanceof FuncCall) {
+                /*if (i instanceof FuncCall) {
                     for (int d = live.nextSetBit(0); d >= 0; d = live.nextSetBit(d + 1)) {
                         for (int l = callerSavedSet.nextSetBit(0); l >= 0; l = callerSavedSet.nextSetBit(l + 1)) {
                             AddEdge(l, d);
                         }
                     }
-                }
+                }*/
                 live.andNot(i.def);
                 live.or(i.use);
             }

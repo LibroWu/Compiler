@@ -12,6 +12,9 @@ public class FuncCall extends Inst {
 
     @Override
     public void fillSet() {
+        def.set(0, 8);
+        def.set(10, 18);
+        def.set(28, 32);
     }
 
     @Override
@@ -20,8 +23,10 @@ public class FuncCall extends Inst {
         if (next != null) {
             liveOut.or(next.liveIn);
         }
-        liveIn = (BitSet) liveOut.clone();
-        liveIn.andNot(def);
+        liveIn = (BitSet) use.clone();
+        BitSet tmpBitSet = (BitSet) liveOut.clone();
+        tmpBitSet.andNot(def);
+        liveIn.or(tmpBitSet);
     }
 
     @Override
