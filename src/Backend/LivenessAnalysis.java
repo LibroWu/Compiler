@@ -4,7 +4,6 @@ import Assembly.AsmBlock;
 import Assembly.AsmFunc;
 import Assembly.AsmPg;
 import Assembly.Instr.Inst;
-import Assembly.Instr.Ret;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -16,7 +15,6 @@ public class LivenessAnalysis {
     private int funcCnt = 0;
     //private PrintStream out = new PrintStream("test\\test.live");
     private final PrintStream out = System.out;
-    private boolean eliminateSwitch = false;
     public void collect() {
         asmPg.funcS.forEach(this::collectFunc);
     }
@@ -63,8 +61,8 @@ public class LivenessAnalysis {
         asmBlock.successors.forEach(this::printBlock);
     }
 
-    public void work(boolean eliminateSwitch) {
-        this.eliminateSwitch = eliminateSwitch;
+    public void work() {
+        collect();
         asmPg.funcS.forEach(this::workInFunc);
         //printLivenessAnalysisResult();
     }
@@ -88,24 +86,14 @@ public class LivenessAnalysis {
     public void workInFunc(AsmFunc func) {
         int bitSize = func.registerCount + 32, blockListSize = func.blockList.size();
         ListIterator<AsmBlock> asmBlockListIterator = func.blockList.listIterator(blockListSize);
-        Ret retInst = null;
         while (asmBlockListIterator.hasPrevious()) {
             AsmBlock currentBlock = asmBlockListIterator.previous();
             Inst currentInst = currentBlock.tailInst;
             while (currentInst.prev != null) {
                 addBitSet(currentInst, bitSize);
-                if (currentInst instanceof Ret) retInst = (Ret) currentInst;
                 currentInst = currentInst.prev;
             }
             addBitSet(currentInst, bitSize);
-            if (currentInst instanceof Ret) retInst = (Ret) currentInst;
-        }
-        if (eliminateSwitch) {
-            BitSet use = new BitSet(32);
-            use.set(1,3);
-            use.set(8,11);
-            use.set(18,28);
-            retInst.use = use;
         }
         boolean quit = false;
         while (!quit) {
@@ -128,7 +116,7 @@ public class LivenessAnalysis {
             Inst currentInst = currentBlock.headInst;
             while (currentInst!=null) {
                 Inst next = currentInst.next;
-                if (currentInst.check(eliminateSwitch))
+                if (currentInst.check())
                     currentBlock.delete_Inst(currentInst);
                 currentInst = next;
             }

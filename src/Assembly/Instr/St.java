@@ -33,7 +33,7 @@ public class St extends Inst {
     }
 
     @Override
-    public boolean check(boolean eliminateSwitch) {
+    public boolean check() {
         return false;
     }
 

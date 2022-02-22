@@ -10,12 +10,12 @@ public class Ret extends Inst {
 
     @Override
     public void calcInst() {
-        liveOut = (BitSet) use.clone();
-        liveIn =  (BitSet) use.clone();
+        liveOut = new BitSet(bitSize);
+        liveIn =  new BitSet(bitSize);
     }
 
     @Override
-    public boolean check(boolean eliminateSwitch) {
+    public boolean check() {
         return false;
     }
 

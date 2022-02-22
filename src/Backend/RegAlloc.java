@@ -18,7 +18,7 @@ public class RegAlloc {
         return (0xfffff800) * ((con >> 11) & 1) + (con & 2047);
     }
 
-    public RegAlloc(AsmPg asmPg,LivenessAnalysis livenessAnalysis) {
+    public RegAlloc(AsmPg asmPg) {
         this.asmPg = asmPg;
         sp = asmPg.phyRegs.get(2);
         t0 = asmPg.phyRegs.get(5);
@@ -29,7 +29,7 @@ public class RegAlloc {
         ra = asmPg.phyRegs.get(1);
         s0 = asmPg.phyRegs.get(8);
         zero = asmPg.phyRegs.get(0);
-        this.livenessAnalysis = livenessAnalysis;
+        livenessAnalysis = new LivenessAnalysis(asmPg);
         phyRegs = asmPg.phyRegs;
     }
 

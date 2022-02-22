@@ -36,8 +36,8 @@ public class IType extends Inst {
     }
 
     @Override
-    public boolean check(boolean eliminateSwitch) {
-        return !liveOut.get(rd.getNumber())&& (eliminateSwitch || +rd.getNumber()>=32);
+    public boolean check() {
+        return !liveOut.get(rd.getNumber())&& rd.getNumber()>=32;
     }
 
     @Override

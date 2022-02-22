@@ -327,7 +327,6 @@ public class InstrSelector implements Pass {
                 call c = (call) s;
                 int parameterCnt = 0;
                 FuncCall funcCall = new FuncCall(c.funcName);
-                if (!c.rdType.isVoid) funcCall.hasRet = true;
                 for (entityTypePair parameter : c.parameters) {
                     Reg rs;
                     entity en = parameter.en;

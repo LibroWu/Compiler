@@ -4,7 +4,7 @@ import Assembly.Operand.Reg;
 
 import java.util.BitSet;
 
-public class Mv extends Inst {  
+public class Mv extends Inst {
     public Reg rd, rs1;
 
     public Mv(Reg rd, Reg rs1) {
@@ -30,8 +30,8 @@ public class Mv extends Inst {
         liveIn.or(tmpBitSet);
     }
     @Override
-    public boolean check(boolean eliminateSwitch) {
-        return !liveOut.get(rd.getNumber()) && (eliminateSwitch || rd.getNumber()>=32);
+    public boolean check() {
+        return !liveOut.get(rd.getNumber()) && rd.getNumber()>=32;
     }
 
     @Override

@@ -6,17 +6,12 @@ import java.util.LinkedList;
 public class FuncCall extends Inst {
     public String funcName;
     public LinkedList<Reg> parameters = new LinkedList<>();
-    public boolean hasRet = false;
     public FuncCall(String funcName) {
         this.funcName = funcName;
     }
 
     @Override
     public void fillSet() {
-        use.set(0, 8);
-        use.set(10, 18);
-        use.set(28, 32);
-        if (hasRet) def.set(10);
     }
 
     @Override
@@ -25,14 +20,12 @@ public class FuncCall extends Inst {
         if (next != null) {
             liveOut.or(next.liveIn);
         }
-        liveIn = (BitSet) use.clone();
-        BitSet tmpBitSet = (BitSet) liveOut.clone();
-        tmpBitSet.andNot(def);
-        liveIn.or(tmpBitSet);
+        liveIn = (BitSet) liveOut.clone();
+        liveIn.andNot(def);
     }
 
     @Override
-    public boolean check(boolean eliminateSwitch) {
+    public boolean check() {
         return false;
     }
 
