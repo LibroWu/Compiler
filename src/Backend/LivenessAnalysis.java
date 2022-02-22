@@ -4,6 +4,7 @@ import Assembly.AsmBlock;
 import Assembly.AsmFunc;
 import Assembly.AsmPg;
 import Assembly.Instr.Inst;
+import Assembly.Instr.Ret;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -87,14 +88,24 @@ public class LivenessAnalysis {
     public void workInFunc(AsmFunc func) {
         int bitSize = func.registerCount + 32, blockListSize = func.blockList.size();
         ListIterator<AsmBlock> asmBlockListIterator = func.blockList.listIterator(blockListSize);
+        Ret retInst = null;
         while (asmBlockListIterator.hasPrevious()) {
             AsmBlock currentBlock = asmBlockListIterator.previous();
             Inst currentInst = currentBlock.tailInst;
             while (currentInst.prev != null) {
                 addBitSet(currentInst, bitSize);
+                if (currentInst instanceof Ret) retInst = (Ret) currentInst;
                 currentInst = currentInst.prev;
             }
             addBitSet(currentInst, bitSize);
+            if (currentInst instanceof Ret) retInst = (Ret) currentInst;
+        }
+        if (eliminateSwitch) {
+            BitSet use = new BitSet(32);
+            use.set(1,3);
+            use.set(8,11);
+            use.set(18,28);
+            retInst.use = use;
         }
         boolean quit = false;
         while (!quit) {

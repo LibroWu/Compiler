@@ -6,8 +6,6 @@ public class Ret extends Inst {
 
     @Override
     public void fillSet() {
-        use.set(1,3);
-        use.set(8);
     }
 
     @Override
