@@ -14,7 +14,7 @@ public class FuncCall extends Inst {
     @Override
     public void fillSet() {
         use.set(10,10+Math.min(parameters.size()-1,7));
-        if (hasRet) def.set(10);
+        //if (hasRet) def.set(10);
     }
 
     @Override
