@@ -6,13 +6,15 @@ import java.util.LinkedList;
 public class FuncCall extends Inst {
     public String funcName;
     public LinkedList<Reg> parameters = new LinkedList<>();
+    public boolean hasRet = false;
     public FuncCall(String funcName) {
         this.funcName = funcName;
     }
 
     @Override
     public void fillSet() {
-        use.set(10,10+parameters.size());
+        use.set(10,10+Math.min(parameters.size()-1,7));
+        if (hasRet) def.set(10);
     }
 
     @Override

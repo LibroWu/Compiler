@@ -390,6 +390,7 @@ public class GraphColoring {
         for (Integer i : spillWorklist) {
             if (i<32) continue;
             double currentPriority = Priority.get(i) / degree.get(i);
+            //System.out.println(i);
             if (((virtualReg)IntToReg.get(i)).isAlloc) currentPriority = 0;
             if (i > asmFunc.originalRegisterCount + 32) currentPriority += 1e6;
             if (currentPriority < chosenThreshold) {
@@ -697,6 +698,7 @@ public class GraphColoring {
     }
 
     public void Main() {
+        //new AsmPrinter(asmPg,System.out).print();
         livenessAnalysis.workInFunc(asmFunc);
         initialize();
         Build();
