@@ -24,13 +24,13 @@ public class  Main {
         String name = "test\\test.mx";
         String llvmOutput = "test\\test.ll";
         String asmOutput = "test\\test.s";
-        //String asmOutput = "output.s";
+        String asmOutput = "output.s";
         //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\e2.mx";
-        InputStream input = new FileInputStream(name);
+        //InputStream input = new FileInputStream(name);
         PrintStream out_llvm = new PrintStream(llvmOutput);
         PrintStream out_asm = new PrintStream(asmOutput);
         //OutputStream out = System.out;
-        //InputStream input = System.in;
+        InputStream input = System.in;
         try {
             RootNode ASTRoot;
             globalScope gScope = new globalScope(null);
@@ -53,7 +53,7 @@ public class  Main {
             if (semanticChecker.hasLambda) return;
             program pg = new program();
             new IRBuilder(pg, gScope,idToDef,idToFuncDef).visit(ASTRoot);
-            new IRPrinter(out_llvm).visitProgram(pg);
+            //new IRPrinter(System.out).visitProgram(pg);
             new Mem2Reg(pg).run();
             //new Optimizer_Base().visitProgram(pg);
             new IRPrinter(out_llvm).visitProgram(pg);
