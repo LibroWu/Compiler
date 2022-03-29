@@ -153,7 +153,7 @@ public class Mem2Reg {
     }
 
     private void Rename(block BB,HashMap<alloca, entity> IncomingValues) {
-        System.out.println(BB + " DF: " + BB.DominatorFrontier + " IDOM: " + BB.IDom);
+        //System.out.println(BB + " DF: " + BB.DominatorFrontier + " IDOM: " + BB.IDom);
         for (statement stmt : BB.stmts) {
             if (stmt instanceof user) {
                 if (stmt instanceof store) {
