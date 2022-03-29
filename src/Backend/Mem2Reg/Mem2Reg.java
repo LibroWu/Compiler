@@ -8,6 +8,8 @@ import java.util.*;
 public class Mem2Reg {
     public program pg;
     private LinkedList<block> postOrderSequence;
+    HashMap<register, alloca> RegToAlloca;
+    HashMap<entity, entity> ValReplace;
 
     //In Mx* all allocas are promotable
     //The proposition is checked by practice
@@ -27,11 +29,15 @@ public class Mem2Reg {
     }
 
     private block intersect(block b1, block b2) {
+        if (b1.depth < b2.depth) {
+            block tmp = b1;
+            b1 = b2;
+            b2 = tmp;
+        }
+        while (b1.depth > b2.depth) b1 = b1.IDom;
         while (b1 != b2) {
-            while (b1.depth > b2.depth)
-                b1 = b1.IDom;
-            while (b2.depth > b1.depth)
-                b2 = b2.IDom;
+            b1 = b1.IDom;
+            b2 = b2.IDom;
         }
         return b1;
     }
@@ -146,6 +152,47 @@ public class Mem2Reg {
         return true;
     }
 
+    private void Rename(block BB,HashMap<alloca, entity> IncomingValues) {
+        System.out.println(BB + " DF: " + BB.DominatorFrontier + " IDOM: " + BB.IDom);
+        for (statement stmt : BB.stmts) {
+            if (stmt instanceof user) {
+                if (stmt instanceof store) {
+                    stmt.replace(ValReplace);
+                    store SI = (store) stmt;
+                    if (!RegToAlloca.containsKey(SI.target) || SI.removed) continue;
+                    alloca AI = RegToAlloca.get(SI.target);
+                    IncomingValues.put(AI, SI.resource);
+                    SI.removed = true;
+                } else {
+                    load LI = (load) stmt;
+                    if (!RegToAlloca.containsKey(LI.ptr)) continue;
+                    if (LI.removed) {
+                        ValReplace.put(LI.rd, LI.recorder);
+                        continue;
+                    }
+                    alloca AI = RegToAlloca.get(LI.ptr);
+                    ValReplace.put(LI.rd, IncomingValues.get(AI));
+                    LI.removed = true;
+                }
+            } else if (stmt instanceof phi) {
+                phi PI = (phi) stmt;
+                if (PI.creator == null) PI.replace(ValReplace);
+                else {
+                    IncomingValues.put(PI.creator, PI.rd);
+                }
+            } else {
+                stmt.replace(ValReplace);
+            }
+        }
+        for (block successor : BB.successors) {
+            for (phi PI : successor.Phis)
+                if (PI.creator != null) PI.push_back(new entityBlockPair(IncomingValues.get(PI.creator), BB));
+        }
+        for (block child : BB.children) {
+            Rename(child,new HashMap<>(IncomingValues));
+        }
+    }
+
     private void runInFunc(funcDef f) {
         //initialize?
         calcDominateTree(f);
@@ -160,15 +207,33 @@ public class Mem2Reg {
             }
             Info.analyseAlloca(AI);
             if (Info.storeCount == 1 && rewriteSingleStoreAlloca(AI, Info)) {
-                iter.remove();
+                //iter.remove();
+                AI.removed = true;
                 continue;
             }
             if (Info.OnlyUsedInOneBlock && promoteSingleBlockAlloca(AI, Info)) {
-                iter.remove();
+                //iter.remove();
+                AI.removed = true;
                 continue;
             }
+            // insert phi
             HashSet<block> phiExist = new HashSet<>();
-            for (user user : AI.users) {
+            LinkedList<block> W = new LinkedList<>(Info.DefiningBlocks);
+            while (!W.isEmpty()) {
+                block n = W.pop();
+                for (block Y : n.DominatorFrontier)
+                    if (!phiExist.contains(Y)) {
+                        phi PI = new phi(new register(), AI.irType);
+                        PI.creator = AI;
+                        Y.Phis.add(PI);
+                        Y.push_front(PI);
+                        phiExist.add(Y);
+                        if (!Info.DefiningBlocks.contains(Y)){
+                            W.add(Y);
+                        }
+                    }
+            }
+            /*for (user user : AI.users) {
                 if (user instanceof store) {
                     block StoreBB = user.parentBlock;
                     for (block DF : StoreBB.DominatorFrontier) {
@@ -181,15 +246,18 @@ public class Mem2Reg {
                         }
                     }
                 }
-            }
+            }*/
         }
         if (f.allocas.isEmpty()) return;
         // rename
         HashMap<alloca, entity> IncomingValues = new HashMap<>();
-        HashMap<register, alloca> RegToAlloca = new HashMap<>();
-        HashMap<entity, entity> ValReplace = new HashMap<>();
+        RegToAlloca = new HashMap<>();
+        ValReplace = new HashMap<>();
         // put undefined value
+        int allocaCnt = 0;
         for (alloca alloca : f.allocas) {
+            // for debug
+            alloca.allocaNumber = allocaCnt++;
             // build the map reg to alloca
             RegToAlloca.put(alloca.rd, alloca);
             // undefined initialization
@@ -198,14 +266,20 @@ public class Mem2Reg {
             else en = new constant(0);
             IncomingValues.put(alloca, en);
         }
+
         for (block block : postOrderSequence) {
             block.visited = false;
+            block.children = new ArrayList<>();
         }
-        LinkedList<block> bfsQue = new LinkedList<>();
-        bfsQue.push(f.rootBlock);
+        for (block block : postOrderSequence) {
+            if (block!=f.rootBlock) block.IDom.children.add(block);
+        }
+        Rename(f.rootBlock,IncomingValues);
+        /*LinkedList<block> bfsQue = new LinkedList<>();
+        bfsQue.add(f.rootBlock);
         while (!bfsQue.isEmpty()) {
             block BB = bfsQue.pop();
-            BB.visited = true;
+            System.out.println(BB + " DF: " + BB.DominatorFrontier + " IDOM: " + BB.IDom);
             for (statement stmt : BB.stmts) {
                 if (stmt instanceof user) {
                     if (stmt instanceof store) {
@@ -239,9 +313,15 @@ public class Mem2Reg {
             for (block successor : BB.successors) {
                 for (phi PI : successor.Phis)
                     if (PI.creator != null) PI.push_back(new entityBlockPair(IncomingValues.get(PI.creator), BB));
-                if (!successor.visited) bfsQue.push(successor);
+                *//*if (!successor.visited) {
+                    successor.visited = true;
+                    bfsQue.add(successor);
+                }*//*
             }
-        }
+            for (block child : BB.children) {
+                bfsQue.add(child);
+            }
+        }*/
         f.allocas.clear();
     }
 

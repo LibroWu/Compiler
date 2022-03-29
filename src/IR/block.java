@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 public class block {
     public LinkedList<statement> stmts = new LinkedList<>();
-    public ArrayList<block> successors = new ArrayList<>(),predecessor = new ArrayList<>();
+    public ArrayList<block> successors = new ArrayList<>(),predecessor = new ArrayList<>(),children = null;
     public LinkedList<phi> Phis = new LinkedList<>();
     //Maybe use hashset better
     public HashSet<block> DominatorFrontier = new HashSet<>();

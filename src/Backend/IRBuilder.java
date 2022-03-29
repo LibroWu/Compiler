@@ -236,7 +236,6 @@ public class IRBuilder implements ASTVisitor {
             }
             currentBlock.push_back(new br(null, currentFunc.returnBlock, null));
         }
-        currentBlock.successors.add(currentFunc.returnBlock);
         currentBlock = currentFunc.returnBlock;
         entity rd = null;
         if (currentFunc.retReg != null) {
@@ -394,7 +393,6 @@ public class IRBuilder implements ASTVisitor {
                 ConvergeBlock.jumpTo = true;
                 if (con.getBoolValue()) {
                     currentBlock.push_back(new br(null, TBlock, null));
-                    currentBlock.successors.add(TBlock);
                     TBlock.jumpTo = true;
                     currentBlock = TBlock;
                     currentScope = new globalScope(currentScope);
@@ -402,7 +400,6 @@ public class IRBuilder implements ASTVisitor {
                     currentScope = currentScope.parentScope();
                 } else {
                     currentBlock.push_back(new br(null, FBlock, null));
-                    currentBlock.successors.add(FBlock);
                     FBlock.jumpTo = true;
                     currentBlock = FBlock;
                     currentScope = new globalScope(currentScope);
@@ -410,7 +407,6 @@ public class IRBuilder implements ASTVisitor {
                     currentScope = currentScope.parentScope();
                 }
                 currentBlock.push_back(new br(null, ConvergeBlock, null));
-                currentBlock.successors.add(ConvergeBlock);
             } else {
                 register rdCmp;
                 if (it.cond.irType.iNum != 1) {
@@ -418,9 +414,6 @@ public class IRBuilder implements ASTVisitor {
                     currentBlock.push_back(new convertOp(rdCmp, it.cond.rd, convertOp.convertType.TRUNC, i1, it.cond.irType));
                 } else rdCmp = (register) it.cond.rd;
                 currentBlock.push_back(new br(rdCmp, TBlock, FBlock));
-                currentBlock.successors.add(TBlock);
-                currentBlock.successors.add(FBlock);
-                currentBlock.successors.add(ConvergeBlock);
                 TBlock.jumpTo = FBlock.jumpTo = ConvergeBlock.jumpTo = true;
                 currentBlock = TBlock;
                 currentScope = new globalScope(currentScope);
@@ -441,15 +434,12 @@ public class IRBuilder implements ASTVisitor {
                 ConvergeBlock.jumpTo = true;
                 if (con.getBoolValue()) {
                     currentBlock.push_back(new br(null, TBlock, null));
-                    currentBlock.successors.add(TBlock);
-                    currentBlock.successors.add(ConvergeBlock);
                     TBlock.jumpTo = true;
                     currentBlock = TBlock;
                     it.trueStmt.accept(this);
                     currentBlock.push_back(new br(null, ConvergeBlock, null));
                 } else {
                     currentBlock.push_back(new br(null, ConvergeBlock, null));
-                    currentBlock.successors.add(ConvergeBlock);
                 }
             } else {
                 register rdCmp;
@@ -458,8 +448,6 @@ public class IRBuilder implements ASTVisitor {
                     currentBlock.push_back(new convertOp(rdCmp, it.cond.rd, convertOp.convertType.TRUNC, i1, it.cond.irType));
                 } else rdCmp = (register) it.cond.rd;
                 currentBlock.push_back(new br(rdCmp, TBlock, ConvergeBlock));
-                currentBlock.successors.add(TBlock);
-                currentBlock.successors.add(ConvergeBlock);
                 TBlock.jumpTo = ConvergeBlock.jumpTo = true;
                 currentBlock = TBlock;
                 it.trueStmt.accept(this);
@@ -484,15 +472,11 @@ public class IRBuilder implements ASTVisitor {
             checkBlock.comment = "loop check block " + currentFunc.funcId + " loopDepth " + loopDepth + " iterCount " + iterCount;
             exitBlock.comment = "loop exit block " + currentFunc.funcId + " loopDepth " + loopDepth + " iterCount " + iterCount;
             incrBlock.comment = "loop increase block " + currentFunc.funcId + " loopDepth " + loopDepth + " iterCount " + iterCount;
-            currentBlock.successors.add(checkBlock);
-            currentBlock.successors.add(body);
             if (it.incrExpr != null) {
                 incrBlock.jumpTo = true;
                 loopContinueBlock = incrBlock;
-                currentBlock.successors.add(incrBlock);
             } else loopContinueBlock = checkBlock;
             loopExitBlock = exitBlock;
-            currentBlock.successors.add(exitBlock);
             if (it.initStmt != null) it.initStmt.accept(this);
             currentBlock.push_back(new br(null, checkBlock, null));
             currentBlock = checkBlock;
@@ -517,9 +501,6 @@ public class IRBuilder implements ASTVisitor {
             loopExitBlock = exitBlock;
             loopContinueBlock = checkBlock;
             body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = true;
-            currentBlock.successors.add(checkBlock);
-            currentBlock.successors.add(body);
-            currentBlock.successors.add(exitBlock);
             currentBlock.push_back(new br(null, checkBlock, null));
             currentBlock = checkBlock;
             it.cond.accept(this);
@@ -700,7 +681,6 @@ public class IRBuilder implements ASTVisitor {
                     currentBlock.push_back(new br((register) firstExpr.rd, exitBl, bl));
                 }
                 p.push_back(new entityBlockPair(new constant(true), currentBlock));
-                currentBlock.successors.add(bl);
                 currentBlock = bl;
                 firstExpr = it.exprList.get(i + 1);
             }
@@ -729,7 +709,6 @@ public class IRBuilder implements ASTVisitor {
                 }
             }
             currentBlock.push_back(new br(null, exitBl, null));
-            currentBlock.successors.add(exitBl);
             currentBlock = exitBl;
         }
         it.rd = res;
@@ -781,7 +760,6 @@ public class IRBuilder implements ASTVisitor {
                     currentBlock.push_back(new br((register) firstExpr.rd, bl, exitBl));
                 }
                 p.push_back(new entityBlockPair(new constant(false), currentBlock));
-                currentBlock.successors.add(bl);
                 currentBlock = bl;
                 firstExpr = it.exprList.get(i + 1);
             }
@@ -810,7 +788,6 @@ public class IRBuilder implements ASTVisitor {
                 }
             }
             currentBlock.push_back(new br(null, exitBl, null));
-            currentBlock.successors.add(exitBl);
             currentBlock = exitBl;
         }
         it.rd = res;
@@ -1139,9 +1116,6 @@ public class IRBuilder implements ASTVisitor {
             checkBlock.comment = "loop created by new check block " + currentFunc.funcId + " loopDepth " + loopDepth + " iterCount " + iterCount;
             exitBlock.comment = "loop created by new exit block " + currentFunc.funcId + " loopDepth " + loopDepth + " iterCount " + iterCount;
             ++iterCount;
-            currentBlock.successors.add(checkBlock);
-            currentBlock.successors.add(body);
-            currentBlock.successors.add(exitBlock);
             register newLoopRd = new register(), iRd = new register(), cmpResult = new register(), addResult = new register();
             alloca newLoop = new alloca(newLoopRd, i64);
             regToAlloca.put(newLoopRd, newLoop);

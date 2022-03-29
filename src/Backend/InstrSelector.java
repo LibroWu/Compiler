@@ -7,11 +7,13 @@ import Assembly.Operand.*;
 import IR.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class InstrSelector implements Pass {
     private HashMap<block, AsmBlock> blockMap = new HashMap<>();
     private HashMap<register, Reg> regMap = new HashMap<>();
     private HashMap<String, Reg> globalVarCache;
+    private HashSet<block> blockVisited = null;
     private int cnt = 0, reserveCnt = 0;
     private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5, a0;
     private Imm ImmZero = new Imm(0);
@@ -83,6 +85,7 @@ public class InstrSelector implements Pass {
 
     @Override
     public void visitFuncDef(funcDef f) {
+        blockVisited = new HashSet<>();
         globalVarCache = new HashMap<>();
         cnt = 0;
         reserveCnt = -2;
@@ -92,7 +95,6 @@ public class InstrSelector implements Pass {
         //todo parameters,ra,sp
         //todo allocas
         //todo parameter re-store
-        AsmBlock rootBlock = getAsmBlock(f.rootBlock);
         int parameterCnt = 0;
         for (register parameterReg : f.parameterRegs) {
             if (parameterCnt < 8) {
@@ -123,6 +125,7 @@ public class InstrSelector implements Pass {
 
     @Override
     public void visitBlock(block b) {
+        blockVisited.add(b);
         AsmBlock asmBlock = getAsmBlock(b);
         b.stmts.forEach(s -> {
             if (s.removed) return;
@@ -578,10 +581,12 @@ public class InstrSelector implements Pass {
                 } else regMap.put(bit.rd, getAsmReg(bit.rs));
             }
         });
-        b.successors.forEach(succ -> {
-            asmBlock.successors.add(getAsmBlock(succ));
-            visitBlock(succ);
-        });
+        for (block successor : b.successors) {
+            if (!blockVisited.contains(successor)) {
+                asmBlock.successors.add(getAsmBlock(successor));
+                visitBlock(successor);
+            }
+        }
     }
 
     @Override

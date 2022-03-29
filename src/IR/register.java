@@ -6,4 +6,11 @@ public class register extends entity{
     public register (){
         super();
     }
+
+    // for debug
+    public int registerCount = 0;
+    @Override
+    public String toString(){
+        return ""+registerCount;
+    }
 }

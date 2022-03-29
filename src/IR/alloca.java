@@ -8,6 +8,8 @@ public class alloca extends statement{
     public int align;
     public IRType irType;
     public LinkedList<user> users;
+    //for debug
+    public int allocaNumber = 0;
 
     public alloca(register rd,IRType irType){
         this.rd = rd;
@@ -19,5 +21,10 @@ public class alloca extends statement{
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
 
+    }
+
+    @Override
+    public String toString() {
+        return allocaNumber + " " + rd;
     }
 }

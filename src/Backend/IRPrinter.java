@@ -4,6 +4,8 @@ import IR.*;
 
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public class IRPrinter implements Pass {
     private PrintStream out;
@@ -12,6 +14,8 @@ public class IRPrinter implements Pass {
     private HashMap<block, Integer> blockIndex = null;
     private HashMap<register, Integer> regIndex = new HashMap<>();
     private HashMap<register, String> regGlobal = new HashMap<>();
+    private HashSet<block> blockVisited =null;
+    private LinkedList<block> blockQueue = null;
 
     public IRPrinter(PrintStream out) {
         this.out = out;
@@ -49,12 +53,11 @@ public class IRPrinter implements Pass {
     @Override
     public void visitBlock(block b) {
         if (b.jumpTo) out.println("\n"+ ((b.comment!=null)?";"+b.comment+"\n":"")  + getBlockName(b) + ":" );
-        out.println(getBlockName(b)+" " +getBlockName(b.IDom));
+        out.println(";"+getBlockName(b)+" " +getBlockName(b.IDom));
         for (statement stmt : b.stmts) {
             print(stmt);
             if (stmt instanceof terminalStmt) break;
         }
-        b.successors.forEach(this::visitBlock);
     }
 
     private void runNaming(block b) {
@@ -62,9 +65,6 @@ public class IRPrinter implements Pass {
         for (statement stmt : b.stmts) {
             runNaming(stmt);
             if (stmt instanceof terminalStmt) break;
-        }
-        for (block successor : b.successors) {
-            runNaming(successor);
         }
     }
 
@@ -103,13 +103,25 @@ public class IRPrinter implements Pass {
         }
     }
 
+    public void collectBlocks(block b){
+        blockVisited.add(b);
+        blockQueue.add(b);
+        for (block successor : b.successors) {
+            if (!blockVisited.contains(successor))
+                collectBlocks(successor);
+        }
+    }
+
     @Override
     public void visitFuncDef(funcDef f) {
         Cnt = 0;
         blockIndex = new HashMap<>();
+        blockVisited = new HashSet<>();
         regIndex = new HashMap<>();
-        int len = f.parameterRegs.size();
+        blockQueue = new LinkedList<>();
+        collectBlocks(f.rootBlock);
         //run naming
+        int len = f.parameterRegs.size();
         for (int i = 0; i < len; ++i) {
             getRegName(f.parameterRegs.get(i));
         }
@@ -117,7 +129,7 @@ public class IRPrinter implements Pass {
         for (alloca alloca : f.allocas) {
             runNaming(alloca);
         }
-        runNaming(f.rootBlock);
+        blockQueue.forEach(this::runNaming);
         //print
         out.print("define " + getType(f.returnType) + " @" + f.funcId + "(");
         for (int i = 0; i < len; ++i) {
@@ -128,7 +140,7 @@ public class IRPrinter implements Pass {
         for (alloca alloca : f.allocas) {
             print(alloca);
         }
-        visitBlock(f.rootBlock);
+        blockQueue.forEach(this::visitBlock);
         out.println("}\n");
     }
 
@@ -223,6 +235,7 @@ public class IRPrinter implements Pass {
     private String getRegName(register r) {
         if (regIndex.containsKey(r)) return "%" + regIndex.get(r);
         if (regGlobal.containsKey(r)) return "@" + regGlobal.get(r);
+        r.registerCount = Cnt;
         regIndex.put(r, Cnt++);
         return "%" + (Cnt - 1);
     }
