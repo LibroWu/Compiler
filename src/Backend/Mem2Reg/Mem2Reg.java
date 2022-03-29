@@ -135,7 +135,7 @@ public class Mem2Reg {
                         load LI = (load) user;
                         LI.removed = true;
                         entity en;
-                        if (LI.rsType.ptrNum > 0) en = new constant();
+                        if (LI.rsType.ptrNum > 0) en = new register();
                         else en = new constant(0);
                         LI.recorder = en;
                     } else return false;
@@ -262,7 +262,7 @@ public class Mem2Reg {
             RegToAlloca.put(alloca.rd, alloca);
             // undefined initialization
             entity en;
-            if (alloca.irType.ptrNum > 0) en = new constant();
+            if (alloca.irType.ptrNum > 0) en = new register();
             else en = new constant(0);
             IncomingValues.put(alloca, en);
         }

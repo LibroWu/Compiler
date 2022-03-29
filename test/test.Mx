@@ -1,25 +1,21 @@
 /*
-Test Package: Codegen
-Author: Pikachu
-Time: 2020-02-02
-Input:
-=== input ===
-1
-=== end ===
-Output:
-=== output ===
-NO
-=== end ===
-ExitCode: 0
-InstLimit: -1
-Origin Package: Codeforces 4A #57460997
+Test Package: Sema_Local_Preview
+Test Target: Scope
+Author: 15' Lianming Zheng
+Time: 2019-10-20
+Verdict: Success
+Origin Package: Semantic Extended
 */
-int w;
-int main(){
-    w = getInt();
-    if ((w%2==0)&& (w>2))
-        print("YES");
-    else
-        print("NO");
-    return 0;
+class A {};
+class B { B() {{{{{ return; }}}}} };  // single return is allowed in constructor
+class C { int func() { return 93; } };
+int main() {}
+void func() {
+    if(false);else;
+    while(true);
+    for(;;);
+    return;
+    {;{{;{{}{}}}};{{};{}}};
+    new A[10][][][];
+    (new C).func() + (new C).func();   // new is a kind of expression
 }

@@ -179,11 +179,11 @@ public class IRBuilder implements ASTVisitor {
             currentFunc.parameterRegs.add(rs);
             currentScope.defineVariable("this", currentStruct, it.pos);
             currentScope.linkRegister("this", rd, tmpIrType.getPtr());
-            alloca tmpAlloca = new alloca(rd, tmpIrType);
-            regToAlloca.put(rd, tmpAlloca);
+            alloca AI = new alloca(rd, tmpIrType);
+            regToAlloca.put(rd, AI);
             store SI = new store(rs, rd, tmpIrType);
-            currentFunc.push_back(tmpAlloca);
-            tmpAlloca.users.add(SI);
+            currentFunc.push_back(AI);
+            AI.users.add(SI);
             currentBlock.push_back(SI);
         } else func = gScope.getFunctionFromName(it.id, it.pos);
         //for return
@@ -192,12 +192,12 @@ public class IRBuilder implements ASTVisitor {
             entity en;
             if (currentFunc.returnType.ptrNum > 0) en = constVoid;
             else en = constZero;
-            alloca tmpAlloca = new alloca(currentFunc.retReg, currentFunc.returnType);
-            regToAlloca.put(currentFunc.retReg, tmpAlloca);
+            alloca AI = new alloca(currentFunc.retReg, currentFunc.returnType);
+            regToAlloca.put(currentFunc.retReg, AI);
             store SI = new store(en, currentFunc.retReg, currentFunc.returnType);
-            tmpAlloca.users.add(SI);
+            AI.users.add(SI);
             currentBlock.push_back(SI);
-            currentFunc.push_back(tmpAlloca);
+            currentFunc.push_back(AI);
         }
         if (it.parameters != null) {
             int loopLen = it.parameters.Id.size();
@@ -213,11 +213,11 @@ public class IRBuilder implements ASTVisitor {
                 currentFunc.parameterRegs.add(rs);
                 currentScope.defineVariable(tmpId, t, it.parameters.pos);
                 currentScope.linkRegister(tmpId, rd, tmpIrType.getPtr());
-                alloca tmpAlloca = new alloca(rd, tmpIrType);
-                regToAlloca.put(rd, tmpAlloca);
+                alloca AI = new alloca(rd, tmpIrType);
+                regToAlloca.put(rd, AI);
                 store SI = new store(rs, rd, tmpIrType);
-                tmpAlloca.users.add(SI);
-                currentFunc.push_back(tmpAlloca);
+                AI.users.add(SI);
+                currentFunc.push_back(AI);
                 currentBlock.push_back(SI);
             }
         }
@@ -290,9 +290,9 @@ public class IRBuilder implements ASTVisitor {
                     if (currentFunc != null) {
                         currentScope.linkRegister(declaratorNode.Identifier, rd, tmpIrType.getPtr());
                         currentScope.defineVariable(declaratorNode.Identifier, t, declaratorNode.pos);
-                        alloca tmpAlloca = new alloca(rd, tmpIrType);
-                        regToAlloca.put(rd, tmpAlloca);
-                        currentFunc.push_back(tmpAlloca);
+                        alloca AI = new alloca(rd, tmpIrType);
+                        regToAlloca.put(rd, AI);
+                        currentFunc.push_back(AI);
                         if (declaratorNode.expr != null) {
                             declaratorNode.expr.accept(this);
                             entity rs;
@@ -307,7 +307,7 @@ public class IRBuilder implements ASTVisitor {
                                 currentBlock.push_back(new convertOp((register) rs, declaratorNode.expr.rd, convert, tmpIrType, declIRType));
                             } else rs = declaratorNode.expr.rd;
                             store SI = new store(rs, rd, tmpIrType);
-                            tmpAlloca.users.add(SI);
+                            AI.users.add(SI);
                             currentBlock.push_back(SI);
                         }
                     } else {
@@ -483,7 +483,10 @@ public class IRBuilder implements ASTVisitor {
             if (it.cond != null) {
                 it.cond.accept(this);
                 currentBlock.push_back(new br((register) it.cond.rd, body, exitBlock));
-            } else currentBlock.push_back(new br(null, body, null));
+            } else {
+                currentBlock.push_back(new br(null, body, null));
+                currentBlock.successors.add(exitBlock);
+            }
             currentBlock = body;
             it.mainStmt.accept(this);
             if (it.incrExpr != null) {
@@ -508,6 +511,7 @@ public class IRBuilder implements ASTVisitor {
                 constant con = (constant) it.cond.rd;
                 if (con.getBoolValue()) {
                     currentBlock.push_back(new br(null, body, null));
+                    currentBlock.successors.add(exitBlock);
                 } else currentBlock.push_back(new br(null, exitBlock, null));
             } else currentBlock.push_back(new br((register) it.cond.rd, body, exitBlock));
             currentBlock = body;
