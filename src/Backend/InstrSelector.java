@@ -6,7 +6,6 @@ import Assembly.Instr.*;
 import Assembly.Operand.*;
 import IR.*;
 
-import javax.swing.plaf.basic.BasicListUI;
 import java.util.HashMap;
 
 public class InstrSelector implements Pass {
@@ -125,7 +124,8 @@ public class InstrSelector implements Pass {
     @Override
     public void visitBlock(block b) {
         AsmBlock asmBlock = getAsmBlock(b);
-        b.stmts().forEach(s -> {
+        b.stmts.forEach(s -> {
+            if (s.removed) return;
             if (s instanceof binary) {
                 binary bi = (binary) s;
                 Inst.CalCategory op;

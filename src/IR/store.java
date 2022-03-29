@@ -1,6 +1,8 @@
 package IR;
 
-public class store extends statement{
+import java.util.HashMap;
+
+public class store extends user{
     public register target;
     public entity resource;
     public int align;
@@ -11,5 +13,10 @@ public class store extends statement{
         this.target = target;
         this.align = resourceType.getAlign();
         this.resourceType = resourceType;
+    }
+
+    @Override
+    public void replace(HashMap<entity, entity> ValReplace) {
+        if (ValReplace.containsKey(resource)) resource = ValReplace.get(resource);
     }
 }

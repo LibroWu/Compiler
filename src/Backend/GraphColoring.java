@@ -65,7 +65,7 @@ public class GraphColoring {
         asmFunc.calleeSavedUsed = calleeSavedUsed;
         /*ArrayList<PhyReg> tmpPhyRegs = asmPg.phyRegs;
         //t0-t6,a0-a7,s1-s11
-        phyRegs = new ArrayList<>(Arrays.asList(tmpPhyRegs.get(5), tmpPhyRegs.get(6), tmpPhyRegs.get(7)));
+        phyRegs = new ArrayList<>(Arrays.asList(tmpPhyRegs.get(5), tmpPhyRegs.get (6), tmpPhyRegs.get(7)));
         for (int i = 28; i < 32; ++i) phyRegs.add(tmpPhyRegs.get(i));
         for (int i = 10; i < 18; ++i) phyRegs.add(tmpPhyRegs.get(i));
         phyRegs.add(tmpPhyRegs.get(9));

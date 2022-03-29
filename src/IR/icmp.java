@@ -1,6 +1,13 @@
 package IR;
 
+import java.util.HashMap;
+
 public class icmp extends statement{
+    @Override
+    public void replace(HashMap<entity, entity> ValReplace) {
+        if (ValReplace.containsKey(rs1)) rs1 = ValReplace.get(rs1);
+        if (ValReplace.containsKey(rs2)) rs2 = ValReplace.get(rs2);
+    }
     public enum cmpOpType {
         SLT,SLE,SGT,SGE,EQ,NEQ
     }

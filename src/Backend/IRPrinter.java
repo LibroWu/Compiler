@@ -49,7 +49,8 @@ public class IRPrinter implements Pass {
     @Override
     public void visitBlock(block b) {
         if (b.jumpTo) out.println("\n"+ ((b.comment!=null)?";"+b.comment+"\n":"")  + getBlockName(b) + ":" );
-        for (statement stmt : b.stmts()) {
+        out.println(getBlockName(b)+" " +getBlockName(b.IDom));
+        for (statement stmt : b.stmts) {
             print(stmt);
             if (stmt instanceof terminalStmt) break;
         }
@@ -58,7 +59,7 @@ public class IRPrinter implements Pass {
 
     private void runNaming(block b) {
         getBlockName(b);
-        for (statement stmt : b.stmts()) {
+        for (statement stmt : b.stmts) {
             runNaming(stmt);
             if (stmt instanceof terminalStmt) break;
         }
@@ -68,6 +69,7 @@ public class IRPrinter implements Pass {
     }
 
     private void runNaming(statement s) {
+        if (s.removed) return;
         if (s instanceof alloca) {
             alloca a = (alloca) s;
             getRegName(a.rd);
@@ -211,6 +213,8 @@ public class IRPrinter implements Pass {
     private String getBlockName(block b) {
         if (blockIndex.containsKey(b)) return blockIndex.get(b) + "";
         else {
+            // for debug
+            if (b!=null) b.blockIndex = Cnt;
             blockIndex.put(b, Cnt++);
             return (Cnt - 1) + "";
         }
@@ -325,6 +329,7 @@ public class IRPrinter implements Pass {
 
 
     private void print(statement s) {
+        if (s.removed) return;
         out.print("\t");
         if (s instanceof alloca) {
             alloca a = (alloca) s;

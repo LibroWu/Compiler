@@ -1,5 +1,6 @@
 package IR;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class call extends statement{
@@ -16,5 +17,12 @@ public class call extends statement{
 
     public void push_back(entityTypePair para){
         parameters.add(para);
+    }
+
+    @Override
+    public void replace(HashMap<entity, entity> ValReplace) {
+        for (entityTypePair parameter : parameters) {
+            if (ValReplace.containsValue(parameter.en)) parameter.en = ValReplace.get(parameter.en);
+        }
     }
 }

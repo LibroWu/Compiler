@@ -22,8 +22,8 @@ public class Optimizer_Base implements Pass {
                 visitBlock(bl);
             }
         }
-        int stmtSize = b.stmts().size();
-        ListIterator<statement> iteratorStmt = b.stmts().listIterator(stmtSize);
+        int stmtSize = b.stmts.size();
+        ListIterator<statement> iteratorStmt = b.stmts.listIterator(stmtSize);
         while (iteratorStmt.hasPrevious()) {
             statement s = iteratorStmt.previous();;
             if (checkStatement(s))iteratorStmt.remove();

@@ -2,3 +2,5 @@
 *antlr-4.9.1*
 gen
 *out
+*.dot
+*.png

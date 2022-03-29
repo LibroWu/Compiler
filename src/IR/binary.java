@@ -1,6 +1,14 @@
 package IR;
 
+import java.util.HashMap;
+
 public class binary extends statement{
+    @Override
+    public void replace(HashMap<entity, entity> ValReplace) {
+        if (ValReplace.containsKey(rs1)) rs1 = ValReplace.get(rs1);
+        if (ValReplace.containsKey(rs2)) rs2 = ValReplace.get(rs2);
+    }
+
     public enum opTye {
         ADD,SUB,MUL,SDIV,MOD,AND,OR,XOR,ASHR,LSHR,SHL
     }

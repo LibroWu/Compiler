@@ -1,5 +1,7 @@
 package IR;
 
+import java.util.HashMap;
+
 public class getelementptr extends statement{
     public register rd,rs;
     public entity locator1,locator2;
@@ -11,5 +13,10 @@ public class getelementptr extends statement{
         this.locator1 = locator1;
         this.locator2 = locator2;
         this.rsType = rsType;
+    }
+
+    @Override
+    public void replace(HashMap<entity, entity> ValReplace) {
+        if (ValReplace.containsKey(rs)) rs = (register) ValReplace.get(rs);
     }
 }

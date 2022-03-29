@@ -1,6 +1,13 @@
 package IR;
 
+import java.util.HashMap;
+
 public class convertOp extends statement{
+    @Override
+    public void replace(HashMap<entity, entity> ValReplace) {
+        if (ValReplace.containsKey(rs)) rs = ValReplace.get(rs);
+    }
+
     public enum convertType{
         TRUNC,ZEXT,SEXT
     }
