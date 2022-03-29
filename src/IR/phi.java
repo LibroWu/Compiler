@@ -1,5 +1,7 @@
 package IR;
 
+import Assembly.AsmBlock;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -9,6 +11,7 @@ public class phi extends statement{
     public register rd;
     public LinkedList<entityBlockPair> entityBlockPairs = new LinkedList<>();
     public alloca creator = null;
+    public AsmBlock parentBlock = null;
 
     public void push_back(entityBlockPair t) {
         entityBlockPairs.add(t);

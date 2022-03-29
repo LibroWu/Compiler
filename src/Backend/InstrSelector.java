@@ -8,6 +8,7 @@ import IR.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class InstrSelector implements Pass {
     private HashMap<block, AsmBlock> blockMap = new HashMap<>();
@@ -19,6 +20,7 @@ public class InstrSelector implements Pass {
     private Imm ImmZero = new Imm(0);
     private AsmBlock tailBlock = null;
     private AsmFunc asmFunc = null;
+    private LinkedList<phi> Phis = new LinkedList<>();
 
     public AsmPg asmPg;
 
@@ -114,8 +116,32 @@ public class InstrSelector implements Pass {
             vr.isAlloc = true;
             regMap.put(alloca.rd, vr);
         }
+        Phis.clear();
         tailBlock = null;
         visitBlock(f.rootBlock);
+        for (phi p : Phis) {
+            Reg rd = getAsmReg(p.rd), rs;
+            for (entityBlockPair entityBlockPair : p.entityBlockPairs) {
+                entity en = entityBlockPair.en;
+                AsmBlock from = getAsmBlock(entityBlockPair.bl);
+                Inst i = p.parentBlock.JumpFrom.get(from);
+                if (i != null) {
+                    if (en instanceof constant) {
+                        rs = new virtualReg(cnt++);
+                        int constValue = getImmValue((constant) en);
+                        if (constValue > 2047 || constValue < -2048) {
+                            if (((constValue >> 11) & 1) > 0) constValue += 1 << 12;
+                            from.insert_before(i, new Lui(rs, new Imm(constValue >>> 12)));
+                            from.insert_before(i, new IType(rs, rs, new Imm(getLo(constValue)), Inst.CalCategory.add));
+                        } else
+                            from.insert_before(i, new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
+                    } else {
+                        rs = getAsmReg((register) en);
+                    }
+                    from.insert_before(i, new Mv(rd, rs));
+                }
+            }
+        }
         asmFunc.tailBlock = tailBlock;
         asmFunc.stackLength = 4 * (cnt - reserveCnt);
         asmFunc.registerCount = asmFunc.originalRegisterCount = cnt;
@@ -505,27 +531,8 @@ public class InstrSelector implements Pass {
                 }
             } else if (s instanceof phi) {
                 phi p = (phi) s;
-                Reg rd = getAsmReg(p.rd), rs;
-                for (entityBlockPair entityBlockPair : p.entityBlockPairs) {
-                    entity en = entityBlockPair.en;
-                    AsmBlock from = getAsmBlock(entityBlockPair.bl);
-                    Inst i = asmBlock.JumpFrom.get(from);
-                    if (i != null) {
-                        if (en instanceof constant) {
-                            rs = new virtualReg(cnt++);
-                            int constValue = getImmValue((constant) en);
-                            if (constValue > 2047 || constValue < -2048) {
-                                if (((constValue >> 11) & 1) > 0) constValue += 1 << 12;
-                                from.insert_before(i, new Lui(rs, new Imm(constValue >>> 12)));
-                                from.insert_before(i, new IType(rs, rs, new Imm(getLo(constValue)), Inst.CalCategory.add));
-                            } else
-                                from.insert_before(i, new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
-                        } else {
-                            rs = getAsmReg((register) en);
-                        }
-                        from.insert_before(i, new Mv(rd, rs));
-                    }
-                }
+                p.parentBlock = asmBlock;
+                Phis.add(p);
             } else if (s instanceof ret) {
                 ret r = (ret) s;
                 tailBlock = asmBlock;
