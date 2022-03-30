@@ -22,7 +22,7 @@ public class call extends statement{
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
         for (entityTypePair parameter : parameters) {
-            if (ValReplace.containsValue(parameter.en)) parameter.en = ValReplace.get(parameter.en);
+            if (ValReplace.containsKey(parameter.en)) parameter.en = ValReplace.get(parameter.en);
         }
     }
 }

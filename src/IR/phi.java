@@ -25,7 +25,7 @@ public class phi extends statement{
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
         for (entityBlockPair entityBlockPair : entityBlockPairs) {
-            if (ValReplace.containsValue(entityBlockPair)) entityBlockPair.en = ValReplace.get(entityBlockPair.en);
+            if (ValReplace.containsKey(entityBlockPair)) entityBlockPair.en = ValReplace.get(entityBlockPair.en);
         }
     }
 }

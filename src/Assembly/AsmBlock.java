@@ -17,6 +17,15 @@ public class AsmBlock {
         this.loopDepth = loopDepth;
     }
 
+    public void push_front(Inst i) {
+        if (headInst == null) headInst = tailInst = i;
+        else {
+            headInst.prev = i;
+            i.next = headInst;
+            headInst = i;
+        }
+    }
+
     public void push_back(Inst i) {
         if (headInst == null) headInst = tailInst = i;
         else {

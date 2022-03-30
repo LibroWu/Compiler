@@ -120,11 +120,12 @@ public class InstrSelector implements Pass {
         tailBlock = null;
         visitBlock(f.rootBlock);
         for (phi p : Phis) {
-            Reg rd = getAsmReg(p.rd), rs;
+            Reg rd = new virtualReg(cnt++), rs;
             for (entityBlockPair entityBlockPair : p.entityBlockPairs) {
                 entity en = entityBlockPair.en;
                 AsmBlock from = getAsmBlock(entityBlockPair.bl);
                 Inst i = p.parentBlock.JumpFrom.get(from);
+                p.parentBlock.push_front(new Mv(getAsmReg(p.rd),rd));
                 if (i != null) {
                     if (en instanceof constant) {
                         rs = new virtualReg(cnt++);

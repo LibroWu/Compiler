@@ -6,7 +6,9 @@ public class register extends entity{
     public register (){
         super();
     }
-
+    public register (int t){
+        registerCount = t;
+    }
     // for debug
     public int registerCount = 0;
     @Override

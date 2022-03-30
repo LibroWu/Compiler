@@ -11,6 +11,9 @@ public class Mem2Reg {
     HashMap<register, alloca> RegToAlloca;
     HashMap<entity, entity> ValReplace;
 
+    //for debug
+    private int counter = -1;
+
     //In Mx* all allocas are promotable
     //The proposition is checked by practice
     public Mem2Reg(program pg) {
@@ -135,7 +138,7 @@ public class Mem2Reg {
                         load LI = (load) user;
                         LI.removed = true;
                         entity en;
-                        if (LI.rsType.ptrNum > 0) en = new register();
+                        if (LI.rsType.ptrNum > 0) en = new register(counter--);
                         else en = new constant(0);
                         LI.recorder = en;
                     } else return false;
@@ -153,6 +156,7 @@ public class Mem2Reg {
     }
 
     private void Rename(block BB,HashMap<alloca, entity> IncomingValues) {
+        //System.out.println( BB+ " " + IncomingValues);
         //System.out.println(BB + " DF: " + BB.DominatorFrontier + " IDOM: " + BB.IDom);
         for (statement stmt : BB.stmts) {
             if (stmt instanceof user) {
@@ -223,7 +227,7 @@ public class Mem2Reg {
                 block n = W.pop();
                 for (block Y : n.DominatorFrontier)
                     if (!phiExist.contains(Y)) {
-                        phi PI = new phi(new register(), AI.irType);
+                        phi PI = new phi(new register(counter--), AI.irType);
                         PI.creator = AI;
                         Y.Phis.add(PI);
                         Y.push_front(PI);
@@ -262,7 +266,7 @@ public class Mem2Reg {
             RegToAlloca.put(alloca.rd, alloca);
             // undefined initialization
             entity en;
-            if (alloca.irType.ptrNum > 0) en = new register();
+            if (alloca.irType.ptrNum > 0) en = new register(counter--);
             else en = new constant(0);
             IncomingValues.put(alloca, en);
         }

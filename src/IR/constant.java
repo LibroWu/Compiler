@@ -35,4 +35,12 @@ public class constant extends entity{
     public String getStringValue() { return stringValue;}
     public boolean getBoolValue() {return boolValue;}
     public void setBoolValue(boolean flag) { boolValue = flag;}
+
+    @Override
+    public String toString(){
+        if (this.genre == Genre.BOOL) return "const "+boolValue;
+        if (this.genre == Genre.INT) return "const "+intValue;
+        if (this.genre == Genre.STRING) return "const "+stringValue;
+        return "const void";
+    }
 }
