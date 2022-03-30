@@ -90,7 +90,7 @@ public class Mem2Reg {
 
     private boolean dominates(block dom, block sub) {
         // check whether dom dominates sub
-        while (sub.depth < dom.depth) {
+        while (sub.depth > dom.depth) {
             sub = sub.IDom;
         }
         return (sub == dom);
@@ -156,7 +156,7 @@ public class Mem2Reg {
     }
 
     private void Rename(block BB,HashMap<alloca, entity> IncomingValues) {
-        System.out.println( BB+ " " + IncomingValues);
+        //System.out.println( BB+ " " + IncomingValues);
         //System.out.println(BB + " DF: " + BB.DominatorFrontier + " IDOM: " + BB.IDom);
         for (statement stmt : BB.stmts) {
             if (stmt instanceof user) {
@@ -224,6 +224,7 @@ public class Mem2Reg {
                 }
             }
         }
+
         Iterator<alloca> iter = f.allocas.listIterator();
         AllocaInfo Info = new AllocaInfo();
         while (iter.hasNext()) {
@@ -301,8 +302,6 @@ public class Mem2Reg {
         for (block block : postOrderSequence) {
             if (block!=f.rootBlock) block.IDom.children.add(block);
         }
-        System.out.println();
-        System.out.println(f.funcId);
         Rename(f.rootBlock,IncomingValues);
         /*LinkedList<block> bfsQue = new LinkedList<>();
         bfsQue.add(f.rootBlock);
