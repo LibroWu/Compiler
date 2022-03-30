@@ -100,8 +100,8 @@ public class InstrSelector implements Pass {
         int parameterCnt = 0;
         for (register parameterReg : f.parameterRegs) {
             if (parameterCnt < 8) {
-                regMap.put(parameterReg, asmPg.phyRegs.get(10 + parameterCnt));
-                //rootBlock.push_back(new Mv(getAsmReg(parameterReg), asmPg.phyRegs.get(10 + parameterCnt)));
+                //regMap.put(parameterReg, asmPg.phyRegs.get(10 + parameterCnt));
+                asmFunc.rootBlock.push_back(new Mv(getAsmReg(parameterReg), asmPg.phyRegs.get(10 + parameterCnt)));
             } else {
                 //rootBlock.push_back(new Ld(getAsmReg(parameterReg), s0, new Imm((parameterCnt - 8) * 4), 4));
                 virtualReg vr = (virtualReg) getAsmReg(parameterReg);

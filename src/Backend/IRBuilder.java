@@ -32,7 +32,6 @@ public class IRBuilder implements ASTVisitor {
     private register lastFuncCaller = null;
     private IRType lastFuncCallerIRType = null;
     private int loopDepth = 0, iterCount = 0, selectCount = 0;
-    private HashMap<register, alloca> regToAlloca = new HashMap<>();
 
     public IRBuilder(program pg, globalScope gScope, HashMap<String, classDef> idToDef, HashMap<String, funcDef> idToFuncDef) {
         this.pg = pg;
@@ -180,11 +179,8 @@ public class IRBuilder implements ASTVisitor {
             currentScope.defineVariable("this", currentStruct, it.pos);
             currentScope.linkRegister("this", rd, tmpIrType.getPtr());
             alloca AI = new alloca(rd, tmpIrType);
-            regToAlloca.put(rd, AI);
-            store SI = new store(rs, rd, tmpIrType);
             currentFunc.push_back(AI);
-            AI.users.add(SI);
-            currentBlock.push_back(SI);
+            currentBlock.push_back(new store(rs, rd, tmpIrType));
         } else func = gScope.getFunctionFromName(it.id, it.pos);
         //for return
         if (func.returnType.typeType != Type.Types.VOID_TYPE && func.returnType.typeType != Type.Types.NULL) {
@@ -193,10 +189,7 @@ public class IRBuilder implements ASTVisitor {
             if (currentFunc.returnType.ptrNum > 0) en = constVoid;
             else en = constZero;
             alloca AI = new alloca(currentFunc.retReg, currentFunc.returnType);
-            regToAlloca.put(currentFunc.retReg, AI);
-            store SI = new store(en, currentFunc.retReg, currentFunc.returnType);
-            AI.users.add(SI);
-            currentBlock.push_back(SI);
+            currentBlock.push_back(new store(en, currentFunc.retReg, currentFunc.returnType));
             currentFunc.push_back(AI);
         }
         if (it.parameters != null) {
@@ -214,11 +207,8 @@ public class IRBuilder implements ASTVisitor {
                 currentScope.defineVariable(tmpId, t, it.parameters.pos);
                 currentScope.linkRegister(tmpId, rd, tmpIrType.getPtr());
                 alloca AI = new alloca(rd, tmpIrType);
-                regToAlloca.put(rd, AI);
-                store SI = new store(rs, rd, tmpIrType);
-                AI.users.add(SI);
                 currentFunc.push_back(AI);
-                currentBlock.push_back(SI);
+                currentBlock.push_back(new store(rs, rd, tmpIrType));
             }
         }
         funcSuite = true;
@@ -228,11 +218,7 @@ public class IRBuilder implements ASTVisitor {
                 entity en;
                 if (currentFunc.returnType.ptrNum > 0) en = constVoid;
                 else en = constZero;
-                store SI = new store(en, currentFunc.retReg, currentFunc.returnType);
-                if (regToAlloca.containsKey(currentFunc.retReg)) {
-                    regToAlloca.get(currentFunc.retReg).users.add(SI);
-                }
-                currentBlock.push_back(SI);
+                currentBlock.push_back(new store(en, currentFunc.retReg, currentFunc.returnType));
             }
             currentBlock.push_back(new br(null, currentFunc.returnBlock, null));
         }
@@ -240,11 +226,8 @@ public class IRBuilder implements ASTVisitor {
         entity rd = null;
         if (currentFunc.retReg != null) {
             rd = new register();
-            load LI = new load((register) rd, currentFunc.retReg, currentFunc.returnType.getPtr());
-            if (regToAlloca.containsKey(currentFunc.retReg)) {
-                regToAlloca.get(currentFunc.retReg).users.add(LI);
-            }
-            currentBlock.push_back(LI);
+            new load((register) rd, currentFunc.retReg, currentFunc.returnType.getPtr());
+            currentBlock.push_back(new load((register) rd, currentFunc.retReg, currentFunc.returnType.getPtr()));
         }
         ret retStmt = new ret(rd, currentFunc.returnType);
         currentBlock.push_back(retStmt);
@@ -291,7 +274,6 @@ public class IRBuilder implements ASTVisitor {
                         currentScope.linkRegister(declaratorNode.Identifier, rd, tmpIrType.getPtr());
                         currentScope.defineVariable(declaratorNode.Identifier, t, declaratorNode.pos);
                         alloca AI = new alloca(rd, tmpIrType);
-                        regToAlloca.put(rd, AI);
                         currentFunc.push_back(AI);
                         if (declaratorNode.expr != null) {
                             declaratorNode.expr.accept(this);
@@ -547,11 +529,7 @@ public class IRBuilder implements ASTVisitor {
                             currentBlock.push_back(new convertOp((register) rd, it.expr.rd, convertType, targetIRType, rsIRType));
                         } else rd = it.expr.rd;
                     } else rd = it.expr.rd;
-                    store SI = new store(rd, currentFunc.retReg, currentFunc.returnType);
-                    if (regToAlloca.containsKey(currentFunc.retReg)) {
-                        regToAlloca.get(currentFunc.retReg).users.add(SI);
-                    }
-                    currentBlock.push_back(SI);
+                    currentBlock.push_back(new store(rd, currentFunc.retReg, currentFunc.returnType));
                     //currentBlock.push_back(new load((register)rd,currentFunc.retReg,currentFunc.returnType.getPtr()));
                 }
                 currentBlock.push_back(new br(null, currentFunc.returnBlock, null));
@@ -629,9 +607,6 @@ public class IRBuilder implements ASTVisitor {
                 }
                 SI = new store(rd, it.logicExpr.idReg, it.logicExpr.irType);
             } else SI = new store(it.rd, it.logicExpr.idReg, it.logicExpr.irType);
-            if (regToAlloca.containsKey(it.logicExpr.idReg)) {
-                regToAlloca.get(it.logicExpr.idReg).users.add(SI);
-            }
             currentBlock.push_back(SI);
         } else {
             it.logicExpr.accept(this);
@@ -1041,9 +1016,6 @@ public class IRBuilder implements ASTVisitor {
                 register rd = new register();
                 currentBlock.push_back(new binary(op, i32, rd, it.unaryExpr.rd, new constant(1)));
                 store SI = new store(rd, it.idReg, i32);
-                if (regToAlloca.containsKey(it.idReg)) {
-                    regToAlloca.get(it.idReg).users.add(SI);
-                }
                 currentBlock.push_back(SI);
                 it.rd = rd;
             } else if (Objects.equals(it.op, "!") || Objects.equals(it.op, "not")) {
@@ -1122,7 +1094,6 @@ public class IRBuilder implements ASTVisitor {
             ++iterCount;
             register newLoopRd = new register(), iRd = new register(), cmpResult = new register(), addResult = new register();
             alloca newLoop = new alloca(newLoopRd, i64);
-            regToAlloca.put(newLoopRd, newLoop);
             newLoop.Comments = "for new loop";
             //initialize
             currentFunc.push_back(newLoop);
@@ -1204,9 +1175,6 @@ public class IRBuilder implements ASTVisitor {
             binary.opTye op = it.isSelfPlus ? binary.opTye.ADD : binary.opTye.SUB;
             currentBlock.push_back(new binary(op, it.irType, rd, it.rd, new constant(1)));
             store SI = new store(rd, it.idReg, it.irType);
-            if (regToAlloca.containsKey(it.idReg)) {
-                regToAlloca.get(it.idReg).users.add(SI);
-            }
             currentBlock.push_back(SI);
         } else if (it.isDotOp) {
             it.postfixExpr.accept(this);
@@ -1360,9 +1328,6 @@ public class IRBuilder implements ASTVisitor {
             it.rd = new register();
             it.idReg = regType.reg;
             load LI = new load((register) it.rd, it.idReg, regType.irType);
-            if (regToAlloca.containsKey(it.idReg)) {
-                regToAlloca.get(it.idReg).users.add(LI);
-            }
             currentBlock.push_back(LI);
             it.irType = regType.irType.reducePtr();
         } else if (it.isIdExpr) {
@@ -1443,9 +1408,6 @@ public class IRBuilder implements ASTVisitor {
             regType = currentScope.getEntity("this", true);
             register thisReg = new register(), ptrReg = new register();
             load LI = new load(thisReg, regType.reg, regType.irType);
-            if (regToAlloca.containsKey(regType.reg)) {
-                regToAlloca.get(regType.reg).users.add(LI);
-            }
             currentBlock.push_back(LI);
             it.rd = new register();
             IRTypeWithCounter tmp = regType.irType.cDef.memberType.get(it.Id);
@@ -1464,9 +1426,6 @@ public class IRBuilder implements ASTVisitor {
             regTypePair tmp = currentScope.getEntity("this", true);
             register tmpReg = new register();
             load LI = new load(tmpReg, tmp.reg, tmp.irType);
-            if (regToAlloca.containsKey(tmp.reg)) {
-                regToAlloca.get(tmp.reg).users.add(LI);
-            }
             currentBlock.push_back(LI);
             lastFuncCaller = tmpReg;
             lastFuncCallerIRType = tmp.irType.reducePtr();
@@ -1482,9 +1441,6 @@ public class IRBuilder implements ASTVisitor {
         it.irType = regType.irType.reducePtr();
         it.rd = new register();
         load LI = new load((register) it.rd, it.idReg, regType.irType);
-        if (regToAlloca.containsKey(it.idReg)) {
-            regToAlloca.get(it.idReg).users.add(LI);
-        }
         currentBlock.push_back(LI);
     }
 

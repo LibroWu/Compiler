@@ -33,11 +33,11 @@ public class block {
     }
 
     public void push_back(statement stmt) {
+        if (tailStmt != null) return;//todo throw new internalError("multiple tails of a block",new position(0,0));
         if (stmt instanceof user) {
             ((user) stmt).parentBlock = this;
         }
         if (stmt instanceof terminalStmt) {
-            if (tailStmt != null) return;//todo throw new internalError("multiple tails of a block",new position(0,0));
             tailStmt = (terminalStmt) stmt;
             if (tailStmt instanceof br) {
                 br b = (br) tailStmt;

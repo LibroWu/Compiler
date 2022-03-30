@@ -138,7 +138,7 @@ public class Mem2Reg {
                         load LI = (load) user;
                         LI.removed = true;
                         entity en;
-                        if (LI.rsType.ptrNum > 0) en = new register(counter--);
+                        if (LI.rsType.ptrNum > 1) en = new constant();
                         else en = new constant(0);
                         LI.recorder = en;
                     } else return false;
@@ -198,9 +198,31 @@ public class Mem2Reg {
     }
 
     private void runInFunc(funcDef f) {
-        //initialize?
+        // initialize?
         calcDominateTree(f);
         calcDominanceFrontier();
+        // collect information
+        RegToAlloca = new HashMap<>();
+        for (alloca AI : f.allocas) {
+            RegToAlloca.put(AI.rd,AI);
+        }
+        for (block BB : postOrderSequence) {
+            for (statement stmt : BB.stmts) {
+                if (stmt instanceof user) {
+                    if (stmt instanceof store) {
+                        store SI = (store) stmt;
+                        if (RegToAlloca.containsKey(SI.target)) {
+                            RegToAlloca.get(SI.target).users.add(SI);
+                        }
+                    } else {
+                        load LI = (load) stmt;
+                        if (RegToAlloca.containsKey(LI.ptr)) {
+                            RegToAlloca.get(LI.ptr).users.add(LI);
+                        }
+                    }
+                }
+            }
+        }
         Iterator<alloca> iter = f.allocas.listIterator();
         AllocaInfo Info = new AllocaInfo();
         while (iter.hasNext()) {
@@ -266,7 +288,7 @@ public class Mem2Reg {
             RegToAlloca.put(alloca.rd, alloca);
             // undefined initialization
             entity en;
-            if (alloca.irType.ptrNum > 0) en = new register(counter--);
+            if (alloca.irType.ptrNum > 0) en = new constant();
             else en = new constant(0);
             IncomingValues.put(alloca, en);
         }
