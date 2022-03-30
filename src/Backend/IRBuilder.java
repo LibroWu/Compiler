@@ -289,7 +289,6 @@ public class IRBuilder implements ASTVisitor {
                                 currentBlock.push_back(new convertOp((register) rs, declaratorNode.expr.rd, convert, tmpIrType, declIRType));
                             } else rs = declaratorNode.expr.rd;
                             store SI = new store(rs, rd, tmpIrType);
-                            AI.users.add(SI);
                             currentBlock.push_back(SI);
                         }
                     } else {
@@ -1098,17 +1097,14 @@ public class IRBuilder implements ASTVisitor {
             //initialize
             currentFunc.push_back(newLoop);
             store SI = new store(new constant(4), newLoopRd, i64);
-            newLoop.users.add(SI);
             currentBlock.push_back(SI);
             currentBlock.push_back(new br(null, checkBlock, null));
             //checkBlock
             currentBlock = checkBlock;
             load LI = new load(iRd, newLoopRd, i64.getPtr());
-            newLoop.users.add(LI);
             currentBlock.push_back(LI);
             currentBlock.push_back(new binary(binary.opTye.ADD, i64, addResult, iRd, constIRSize));
             SI = new store(addResult, newLoopRd, i64);
-            newLoop.users.add(SI);
             currentBlock.push_back(SI);
             currentBlock.push_back(new icmp(cmpResult, iRd, mallocSize, icmp.cmpOpType.SLT, i64));
             currentBlock.push_back(new br(cmpResult, body, exitBlock));

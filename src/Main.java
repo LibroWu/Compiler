@@ -53,7 +53,7 @@ public class  Main {
             if (semanticChecker.hasLambda) return;
             program pg = new program();
             new IRBuilder(pg, gScope,idToDef,idToFuncDef).visit(ASTRoot);
-            //new IRPrinter(System.out).visitProgram(pg);
+            new IRPrinter(System.out).visitProgram(pg);
             new Mem2Reg(pg).run();
             //new Optimizer_Base().visitProgram(pg);
             new IRPrinter(out_llvm).visitProgram(pg);

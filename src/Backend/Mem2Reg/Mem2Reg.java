@@ -169,6 +169,7 @@ public class Mem2Reg {
                     SI.removed = true;
                 } else {
                     load LI = (load) stmt;
+                    LI.replace(ValReplace);
                     if (!RegToAlloca.containsKey(LI.ptr)) continue;
                     if (LI.removed) {
                         ValReplace.put(LI.rd, LI.recorder);

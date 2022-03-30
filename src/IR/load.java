@@ -17,6 +17,6 @@ public class load extends user{
 
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
-
+        if (recorder!=null && ValReplace.containsKey(recorder)) recorder = ValReplace.get(recorder);
     }
 }
