@@ -22,5 +22,7 @@ public class getelementptr extends statement{
             entity en = ValReplace.get(rs);
             if (en instanceof register) rs =(register) en;
         }
+        if (locator1 != null && ValReplace.containsKey(locator1)) locator1 = ValReplace.get(locator1);
+        if (locator2 != null && ValReplace.containsKey(locator2)) locator2 = ValReplace.get(locator2);
     }
 }
