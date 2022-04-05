@@ -1,5 +1,7 @@
 package IR;
 
+import java.util.Objects;
+
 public class constant extends entity{
     public enum Genre {
         STRING,INT,VOID,BOOL
@@ -29,6 +31,14 @@ public class constant extends entity{
         super();
         this.stringValue = value;
         genre = Genre.STRING;
+    }
+
+    public boolean constEquals(constant other){
+        if (genre!=other.genre) return false;
+        if (this.genre == Genre.BOOL) return boolValue==other.boolValue;
+        if (this.genre == Genre.INT) return intValue==other.intValue;
+        if (this.genre == Genre.STRING) return Objects.equals(stringValue,other.stringValue);
+        return true;
     }
 
     public int getIntValue() { return intValue;}

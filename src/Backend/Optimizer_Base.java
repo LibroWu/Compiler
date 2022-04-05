@@ -16,10 +16,8 @@ public class Optimizer_Base implements Pass {
     public void visitBlock(block b) {
         int successorsSize = b.successors.size();
         if (successorsSize > 0) {
-            ListIterator<block> iterator = b.successors.listIterator(successorsSize );
-            while (iterator.hasPrevious()) {
-                block bl = iterator.previous();
-                visitBlock(bl);
+            for (block successor : b.successors) {
+                visitBlock(b);
             }
         }
         statement prev=null;

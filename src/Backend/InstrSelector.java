@@ -124,8 +124,8 @@ public class InstrSelector implements Pass {
             for (entityBlockPair entityBlockPair : p.entityBlockPairs) {
                 entity en = entityBlockPair.en;
                 AsmBlock from = getAsmBlock(entityBlockPair.bl);
-                Inst i = p.parentBlock.JumpFrom.get(from);
-                p.parentBlock.push_front(new Mv(getAsmReg(p.rd),rd));
+                Inst i = p.asmParentBlock.JumpFrom.get(from);
+                p.asmParentBlock.push_front(new Mv(getAsmReg(p.rd),rd));
                 if (i != null) {
                     if (en instanceof constant) {
                         rs = new virtualReg(cnt++);
@@ -532,7 +532,7 @@ public class InstrSelector implements Pass {
                 }
             } else if (s instanceof phi) {
                 phi p = (phi) s;
-                p.parentBlock = asmBlock;
+                p.asmParentBlock = asmBlock;
                 Phis.add(p);
             } else if (s instanceof ret) {
                 ret r = (ret) s;

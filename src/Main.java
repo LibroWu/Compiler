@@ -26,7 +26,7 @@ public class  Main {
         //String asmOutput = "test\\test.s";
         String asmOutput = "output.s";
         //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\e2.mx";
-        //InputStream input = new FileInputStream(name);
+        //inputStream input = new FileInputStream(name);
         PrintStream out_llvm = new PrintStream(llvmOutput);
         PrintStream out_asm = new PrintStream(asmOutput);
         //OutputStream out = System.out;
@@ -55,7 +55,8 @@ public class  Main {
             new IRBuilder(pg, gScope,idToDef,idToFuncDef).visit(ASTRoot);
             //new IRPrinter(System.out).visitProgram(pg);
             new Mem2Reg(pg).run();
-            //new Optimizer_Base().visitProgram(pg);
+            //new IRPrinter(System.out).visitProgram(pg);
+            new IROptimizer(pg).run();
             new IRPrinter(out_llvm).visitProgram(pg);
             AsmPg asmPg = new AsmPg();
             new InstrSelector(asmPg).visitProgram(pg);

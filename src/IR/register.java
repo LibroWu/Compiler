@@ -1,8 +1,12 @@
 package IR;
 
+import java.util.LinkedList;
+
 public class register extends entity{
     public String label = null;
     public int loopDepth = 0;
+    public LinkedList<statement> uses;
+    public statement def;
     public register (){
         super();
     }

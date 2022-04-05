@@ -29,6 +29,7 @@ public class Mem2Reg {
         }
         postOrderSequence.add(b);
         b.IDom = null;
+        b.depth = block.MaxDepth;
     }
 
     private block intersect(block b1, block b2) {
@@ -59,9 +60,13 @@ public class Mem2Reg {
             while (iter.hasPrevious()) {
                 block b = iter.previous(), new_IDom = null;
                 for (block predecessor : b.predecessor) {
-                    if (new_IDom == null) {
+                    if (predecessor.depth!= block.MaxDepth) {
                         new_IDom = predecessor;
-                    } else if (predecessor.IDom != null) {
+                        break;
+                    }
+                }
+                for (block predecessor : b.predecessor) {
+                    if (predecessor.IDom != null) {
                         new_IDom = intersect(predecessor, new_IDom);
                     }
                 }
@@ -198,6 +203,16 @@ public class Mem2Reg {
         }
     }
 
+    private void removeDeadStmts() {
+        for (block BB : postOrderSequence) {
+            statement nxt;
+            for (statement stmt = BB.headStatement; stmt != null; stmt = nxt) {
+                nxt = stmt.next;
+                if (stmt.removed) BB.delete_Statement(stmt);
+            }
+        }
+    }
+
     private void runInFunc(funcDef f) {
         // initialize?
         calcDominateTree(f);
@@ -297,7 +312,7 @@ public class Mem2Reg {
 
         for (block block : postOrderSequence) {
             block.visited = false;
-            block.children = new ArrayList<>();
+            block.children = new HashSet<>();
         }
         for (block block : postOrderSequence) {
             if (block != f.rootBlock) block.IDom.children.add(block);
@@ -351,6 +366,7 @@ public class Mem2Reg {
             }
         }*/
         f.allocas.clear();
+        removeDeadStmts();
     }
 
     public void run() {

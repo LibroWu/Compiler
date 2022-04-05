@@ -1,6 +1,7 @@
 package IR;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class bitcast extends statement{
     public register rd,rs;
@@ -12,6 +13,33 @@ public class bitcast extends statement{
             entity en = ValReplace.get(rs);
             if (en instanceof register) rs =(register) en;
         }
+    }
+
+    @Override
+    public void init() {
+        rd.uses = new LinkedList<>();
+    }
+
+    @Override
+    public void analyseUseDef() {
+        rd.def = this;
+        rs.uses.add(this);
+    }
+
+    @Override
+    public boolean isResConst() {
+        return false;
+    }
+
+    @Override
+    public void removeStmt(LinkedList<statement> W) {
+        // will not call this function?
+    }
+
+    @Override
+    public statement replaceRegWithEntity(register rs, entity en) {
+        if (this.rs == rs) throw new RuntimeException("bitcast's rd can not be converted to constant");
+        return this;
     }
 
     public bitcast(register rd,register rs,IRType rdType,IRType rsType){

@@ -25,4 +25,38 @@ public class call extends statement{
             if (ValReplace.containsKey(parameter.en)) parameter.en = ValReplace.get(parameter.en);
         }
     }
+
+    @Override
+    public void init() {
+        if (rd!=null) rd.uses = new LinkedList<>();
+    }
+
+    @Override
+    public void analyseUseDef() {
+        if (rd!=null) rd.def = this;
+        for (entityTypePair parameter : parameters) {
+            if (parameter.en instanceof register) {
+                register rs = (register) parameter.en;
+                rs.uses.add(this);
+            }
+        }
+    }
+
+    @Override
+    public boolean isResConst() {
+        return false;
+    }
+
+    @Override
+    public void removeStmt(LinkedList<statement> W) {
+        // will not call this function
+    }
+
+    @Override
+    public statement replaceRegWithEntity(register rs, entity en) {
+        for (entityTypePair parameter : parameters) {
+            if (parameter.en == rs) parameter.en = en;
+        }
+        return this;
+    }
 }
