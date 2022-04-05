@@ -19,22 +19,29 @@ import java.io.*;
 import java.util.HashMap;
 
 
-public class  Main {
+public class Main {
     public static void main(String[] args) throws Exception {
-        //String name = "test\\test.mx";
+        String name = "test\\test.mx";
         String llvmOutput = "test\\test.ll";
         String asmOutput = "test\\test.s";
         //String asmOutput = "output.s";
         //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\e2.mx";
-        //InputStream input = new FileInputStream(name);
+        InputStream input = new FileInputStream(name);
         PrintStream out_llvm = new PrintStream(llvmOutput);
         PrintStream out_asm = new PrintStream(asmOutput);
         //OutputStream out = System.out;
-        InputStream input = System.in;
-        boolean semantic = false,codegen=false,optimize=false;
+        //InputStream input = System.in;
+        boolean semantic = true, codegen = true, optimize = true;
         for (String arg : args) {
-            if (arg.equals("sema")) semantic = true;
-            else if (arg.equals("codegen")) codegen = true;
+            if (arg.equals("sema")) {
+                semantic = true;
+                codegen = false;
+                optimize = false;
+                input = System.in;
+            } else if (arg.equals("codegen")) {
+                asmOutput = "output.s";
+                codegen = true;
+            }
             else if (arg.equals("opt")) optimize = true;
         }
         try {
@@ -49,8 +56,8 @@ public class  Main {
             ParseTree parseTreeRoot = parser.program();
             ASTBuilder astBuilder = new ASTBuilder(gScope);
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
-            HashMap<String,classDef> idToDef = new HashMap<>();
-            HashMap<String,funcDef> idToFuncDef = new HashMap<>();
+            HashMap<String, classDef> idToDef = new HashMap<>();
+            HashMap<String, funcDef> idToFuncDef = new HashMap<>();
             gScope.setIdToDef(idToDef);
             gScope.setIdToFuncDef(idToFuncDef);
             new SymbolCollector(gScope).visit(ASTRoot);
@@ -60,7 +67,7 @@ public class  Main {
             }
             if (!codegen) return;
             program pg = new program();
-            new IRBuilder(pg, gScope,idToDef,idToFuncDef).visit(ASTRoot);
+            new IRBuilder(pg, gScope, idToDef, idToFuncDef).visit(ASTRoot);
             new IRPrinter(System.out).visitProgram(pg);
             new Mem2Reg(pg).run();
             new IRPrinter(System.out).visitProgram(pg);
@@ -72,7 +79,7 @@ public class  Main {
             new RegAlloc(asmPg).work();
             //new RegAlloc_Basic(asmPg).work();
             new AsmOptimizer(asmPg).work();
-            new AsmPrinter(asmPg,out_asm).print();
+            new AsmPrinter(asmPg, out_asm).print();
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();
