@@ -155,7 +155,7 @@ public class InstrSelector implements Pass {
         blockVisited.add(b);
         AsmBlock asmBlock = getAsmBlock(b);
         for (statement s=b.headStatement;s!=null;s=s.next) {
-            if (s.removed) return;
+            if (s.removed) continue;
             if (s instanceof binary) {
                 binary bi = (binary) s;
                 Inst.CalCategory op;
