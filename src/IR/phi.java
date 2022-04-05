@@ -32,11 +32,11 @@ public class phi extends statement{
     @Override
     public void init() {
         rd.uses = new LinkedList<>();
+        rd.def = this;
     }
 
     @Override
     public void analyseUseDef() {
-        rd.def = this;
         for (entityBlockPair entityBlockPair : entityBlockPairs) {
             if (entityBlockPair.en instanceof register) {
                 register rs = (register) entityBlockPair.en;

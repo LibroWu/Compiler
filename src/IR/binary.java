@@ -13,11 +13,11 @@ public class binary extends statement{
     @Override
     public void init() {
         rd.uses = new LinkedList<>();
+        rd.def = this;
     }
 
     @Override
     public void analyseUseDef() {
-        rd.def = this;
         if (rs1 instanceof register) {
             register rs = (register) rs1;
             rs.uses.add(this);

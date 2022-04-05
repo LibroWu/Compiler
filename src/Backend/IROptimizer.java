@@ -30,6 +30,9 @@ public class IROptimizer {
     /* | Constant Propagation | */
     /* ------------------------ */
     private LinkedList<statement> getWorklist(funcDef f){
+        for (register parameterReg : f.parameterRegs) {
+            parameterReg.uses = new LinkedList<>();
+        }
         LinkedList<statement> W = new LinkedList<>(f.allocas);
         for (alloca alloca : f.allocas) {
             alloca.init();

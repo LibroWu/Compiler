@@ -24,11 +24,11 @@ public class load extends user {
     @Override
     public void init() {
         rd.uses = new LinkedList<>();
+        rd.def = this;
     }
 
     @Override
     public void analyseUseDef() {
-        rd.def = this;
         if (ptr.label == null) ptr.uses.add(this);
     }
 

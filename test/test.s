@@ -2,57 +2,137 @@
 	.globl main
 	.p2align	2
 	.type	main,@function
-test: 
+abs: 
 	addi sp, sp, -8
 	sw ra, 4(sp)
 	sw s0, 0(sp)
 	addi s0, sp, 8
-	addi a0, zero, 0
+	mv t0, a0
 	addi t1, zero, 0
+	bge t1, t0, .LibroBB0_2
 	j .LibroBB0_1
 .LibroBB0_1: 
-	addi t0, zero, 200
-	bge t1, t0, .LibroBB0_2
+	mv a0, t0
 	j .LibroBB0_3
 .LibroBB0_2: 
-	j .LibroBB0_4
+	addi a0, zero, 0
+	sub a0, a0, t0
+	j .LibroBB0_3
 .LibroBB0_3: 
-	j .LibroBB0_5
-.LibroBB0_4: 
 	lw s0, 0(sp)
 	lw ra, 4(sp)
 	addi sp, sp, 8
 	ret
-.LibroBB0_5: 
-	j .LibroBB0_6
-.LibroBB0_6: 
-	addi t0, zero, 1
-	j .LibroBB0_7
-.LibroBB0_7: 
-	beqz t0, .LibroBB0_8
-	j .LibroBB0_9
-.LibroBB0_8: 
-	j .LibroBB0_10
-.LibroBB0_9: 
-	addi t1, t1, 1
-	addi a0, a0, 1
-	j .LibroBB0_10
-.LibroBB0_10: 
-	j .LibroBB0_11
-.LibroBB0_11: 
-	addi t1, t1, 1
-	j .LibroBB0_1
 main: 
-	addi sp, sp, -8
-	sw ra, 4(sp)
-	sw s0, 0(sp)
-	addi s0, sp, 8
-	call test
-	addi a0, a0, -100
+	addi sp, sp, -12
+	sw ra, 8(sp)
+	sw s0, 4(sp)
+	sw s1, 0(sp)
+	addi s0, sp, 12
+	addi t1, zero, 0
+	la t0, i
+	sw t1, 0(t0)
 	j .LibroBB1_1
 .LibroBB1_1: 
-	lw s0, 0(sp)
-	lw ra, 4(sp)
-	addi sp, sp, 8
+	la t0, i
+	lw t1, 0(t0)
+	addi t0, zero, 5
+	bge t1, t0, .LibroBB1_2
+	j .LibroBB1_3
+.LibroBB1_2: 
+	la t0, r
+	lw t0, 0(t0)
+	addi a0, zero, 2
+	sub a0, a0, t0
+	call abs
+	mv s1, a0
+	la t0, c
+	lw t0, 0(t0)
+	addi a0, zero, 2
+	sub a0, a0, t0
+	call abs
+	add a0, s1, a0
+	call printInt
+	j .LibroBB1_4
+.LibroBB1_3: 
+	addi t1, zero, 0
+	la t0, j
+	sw t1, 0(t0)
+	j .LibroBB1_5
+.LibroBB1_4: 
+	li a0, 0
+	lw s0, 4(sp)
+	lw s1, 0(sp)
+	lw ra, 8(sp)
+	addi sp, sp, 12
 	ret
+.LibroBB1_5: 
+	la t0, j
+	lw t1, 0(t0)
+	addi t0, zero, 5
+	bge t1, t0, .LibroBB1_7
+	j .LibroBB1_6
+.LibroBB1_6: 
+	call getInt
+	la t0, n
+	sw a0, 0(t0)
+	la t0, n
+	lw t1, 0(t0)
+	addi t0, zero, 1
+	xor t0, t1, t0
+	bnez t0, .LibroBB1_8
+	j .LibroBB1_9
+.LibroBB1_7: 
+	j .LibroBB1_10
+.LibroBB1_8: 
+	j .LibroBB1_11
+.LibroBB1_9: 
+	la t0, i
+	lw t1, 0(t0)
+	la t0, r
+	sw t1, 0(t0)
+	la t0, j
+	lw t1, 0(t0)
+	la t0, c
+	sw t1, 0(t0)
+	j .LibroBB1_8
+.LibroBB1_10: 
+	la t0, i
+	lw t0, 0(t0)
+	addi t1, t0, 1
+	la t0, i
+	sw t1, 0(t0)
+	j .LibroBB1_1
+.LibroBB1_11: 
+	la t0, j
+	lw t0, 0(t0)
+	addi t0, t0, 1
+	la t1, j
+	sw t0, 0(t1)
+	j .LibroBB1_5
 .data
+	.type	n,@object
+n:
+	.word	0
+	.size	n, 4
+
+	.type	r,@object
+r:
+	.word	0
+	.size	r, 4
+
+	.type	c,@object
+c:
+	.word	0
+	.size	c, 4
+
+	.type	i,@object
+i:
+	.word	0
+	.size	i, 4
+
+	.type	j,@object
+j:
+	.word	0
+	.size	j, 4
+

@@ -28,12 +28,14 @@ public class call extends statement{
 
     @Override
     public void init() {
-        if (rd!=null) rd.uses = new LinkedList<>();
+        if (rd!=null) {
+            rd.uses = new LinkedList<>();
+            rd.def = this;
+        }
     }
 
     @Override
     public void analyseUseDef() {
-        if (rd!=null) rd.def = this;
         for (entityTypePair parameter : parameters) {
             if (parameter.en instanceof register) {
                 register rs = (register) parameter.en;

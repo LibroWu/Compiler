@@ -18,12 +18,12 @@ public class bitcast extends statement{
     @Override
     public void init() {
         rd.uses = new LinkedList<>();
+        rd.def = this;
     }
 
     @Override
     public void analyseUseDef() {
-        rd.def = this;
-        rs.uses.add(this);
+        if (rs.label==null) rs.uses.add(this);
     }
 
     @Override
