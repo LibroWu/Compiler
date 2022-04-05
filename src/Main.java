@@ -21,25 +21,24 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String name = "test\\test.mx";
-        String llvmOutput = "test\\test.ll";
-        String asmOutput = "test\\test.s";
-        //String asmOutput = "output.s";
-        //String name = "D:\\workspace\\libro_workspace\\archive\\Compiler-2021-testcases\\codegen\\e2.mx";
-        InputStream input = new FileInputStream(name);
-        PrintStream out_llvm = new PrintStream(llvmOutput);
-        PrintStream out_asm = new PrintStream(asmOutput);
-        //OutputStream out = System.out;
-        //InputStream input = System.in;
+        InputStream input;
+        PrintStream out_llvm = new PrintStream("test\\test.ll");
+        PrintStream out_asm;
+        if (args.length>0) {
+            input = System.in;
+            out_asm = new PrintStream("output.s");
+        } else {
+            // debug
+            input = new FileInputStream("test\\test.mx");
+            out_asm = new PrintStream("test\\test.s");
+        }
         boolean semantic = true, codegen = true, optimize = true;
         for (String arg : args) {
             if (arg.equals("sema")) {
                 semantic = true;
                 codegen = false;
                 optimize = false;
-                input = System.in;
             } else if (arg.equals("codegen")) {
-                asmOutput = "output.s";
                 codegen = true;
             }
             else if (arg.equals("opt")) optimize = true;
