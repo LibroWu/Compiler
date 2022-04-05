@@ -20,11 +20,11 @@ public class binary extends statement{
     public void analyseUseDef() {
         if (rs1 instanceof register) {
             register rs = (register) rs1;
-            rs.uses.add(this);
+            if (rs.label==null)rs.uses.add(this);
         }
         if (rs2 instanceof register) {
             register rs = (register) rs2;
-            rs.uses.add(this);
+            if (rs.label==null)rs.uses.add(this);
         }
     }
 
@@ -40,8 +40,12 @@ public class binary extends statement{
             case ADD  : con = new constant(con1.getIntValue()+con2.getIntValue()); break;
             case SUB  : con = new constant(con1.getIntValue()-con2.getIntValue()); break;
             case MUL  : con = new constant(con1.getIntValue()*con2.getIntValue()); break;
-            case SDIV : con = new constant(con1.getIntValue()/con2.getIntValue()); break;
-            case MOD  : con = new constant(con1.getIntValue()%con2.getIntValue()); break;
+            case SDIV :
+                if (con2.getIntValue()==0) con = new constant(~(1<<31));
+                else con = new constant(con1.getIntValue()/con2.getIntValue()); break;
+            case MOD  :
+                if (con2.getIntValue()==0) con = new constant(~(1<<31));
+                else con = new constant(con1.getIntValue()%con2.getIntValue()); break;
             case AND  : con = new constant(con1.getIntValue()&con2.getIntValue()); break;
             case OR   : con = new constant(con1.getIntValue()|con2.getIntValue()); break;
             case XOR  : con = new constant(con1.getIntValue()^con2.getIntValue()); break;

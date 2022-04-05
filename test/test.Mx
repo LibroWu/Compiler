@@ -1,33 +1,47 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: codeforces
-Author: Pikachu
-Time: 2020-02-03
+Test Target: Classes
+Author: 15' Bowen Tan
+Time: 2019-10-20
 Verdict: Success
-Origin Package:  Codeforces 263A #48540584
+Origin Package: Semantic Extended
 */
+class AAA {
+    string str;
 
-int n;
-int r;
-int c;
-int i;
-int j;
-int abs(int c){
-    if(c>0) return c;
-    return -c;
-}
+    AAA() {
+        str = "abcde";
+    }
 
-int main()
-{
-	// int n,r,c,i,j;
-	for (i=0;i<5;i++)
-		for (j=0;j<5;j++)
-		{
-            n = getInt();
-		//scanf("%d", &n);
-		if (n==1)
-		{r=i;c=j;}}
-    printInt(abs(2-r) + abs(2-c));
-	// printf("%d",abs(2-r)+abs(2-c));
-	return 0;
+    void AAAprint() {
+        print(str);
+        print(toString(str.length()));
+    }
+};
+
+class BBB {
+    AAA a;
+
+    BBB() {
+        a.str = a.str + "1234567890";
+    }
+};
+
+int main() {
+    int a;
+    int b = a + a * a % a;
+
+    BBB[][] bb = new BBB[10][10];
+
+    int i;
+    for (i = 1; i <= 10; i++) {
+        bool i = false;
+        if (i) {
+            print("a");
+        } else {
+            println("b");
+        }
+    }
+
+    bb[5][5].a.AAAprint();
 }
