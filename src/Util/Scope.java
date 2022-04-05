@@ -29,11 +29,12 @@ public class Scope {
         members.put(name, t);
     }
 
-    public boolean containsVariable(String name, boolean lookUpon) {
+    public boolean containsVariable(String name, boolean lookUponToGlobal) {
+        if (parentScope==null && !lookUponToGlobal) return false;
         if (members.containsKey(name)) return true;
-        else if (parentScope != null && lookUpon)
-            return parentScope.containsVariable(name, true);
-        else return false;
+        if (parentScope != null)
+            return parentScope.containsVariable(name, lookUponToGlobal);
+        return false;
     }
 
     public Type getType(String name, boolean lookUpon) {

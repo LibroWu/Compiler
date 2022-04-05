@@ -155,10 +155,10 @@ public class Mem2Reg {
         return true;
     }
 
-    private void Rename(block BB,HashMap<alloca, entity> IncomingValues) {
+    private void Rename(block BB, HashMap<alloca, entity> IncomingValues) {
         //System.out.println( BB+ " " + IncomingValues);
         //System.out.println(BB + " DF: " + BB.DominatorFrontier + " IDOM: " + BB.IDom);
-        for (statement stmt : BB.stmts) {
+        for (statement stmt = BB.headStatement; stmt != null; stmt = stmt.next) {
             if (stmt instanceof user) {
                 if (stmt instanceof store) {
                     stmt.replace(ValReplace);
@@ -194,7 +194,7 @@ public class Mem2Reg {
                 if (PI.creator != null) PI.push_back(new entityBlockPair(IncomingValues.get(PI.creator), BB));
         }
         for (block child : BB.children) {
-            Rename(child,new HashMap<>(IncomingValues));
+            Rename(child, new HashMap<>(IncomingValues));
         }
     }
 
@@ -205,10 +205,10 @@ public class Mem2Reg {
         // collect information
         RegToAlloca = new HashMap<>();
         for (alloca AI : f.allocas) {
-            RegToAlloca.put(AI.rd,AI);
+            RegToAlloca.put(AI.rd, AI);
         }
         for (block BB : postOrderSequence) {
-            for (statement stmt : BB.stmts) {
+            for (statement stmt = BB.headStatement; stmt != null; stmt = stmt.next) {
                 if (stmt instanceof user) {
                     if (stmt instanceof store) {
                         store SI = (store) stmt;
@@ -256,7 +256,7 @@ public class Mem2Reg {
                         Y.Phis.add(PI);
                         Y.push_front(PI);
                         phiExist.add(Y);
-                        if (!Info.DefiningBlocks.contains(Y)){
+                        if (!Info.DefiningBlocks.contains(Y)) {
                             W.add(Y);
                         }
                     }
@@ -300,9 +300,9 @@ public class Mem2Reg {
             block.children = new ArrayList<>();
         }
         for (block block : postOrderSequence) {
-            if (block!=f.rootBlock) block.IDom.children.add(block);
+            if (block != f.rootBlock) block.IDom.children.add(block);
         }
-        Rename(f.rootBlock,IncomingValues);
+        Rename(f.rootBlock, IncomingValues);
         /*LinkedList<block> bfsQue = new LinkedList<>();
         bfsQue.add(f.rootBlock);
         while (!bfsQue.isEmpty()) {

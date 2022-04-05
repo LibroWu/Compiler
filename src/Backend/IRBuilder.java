@@ -337,11 +337,11 @@ public class IRBuilder implements ASTVisitor {
         currentScope = new Scope(currentScope);
         currentClassDef = idToDef.get(it.name);
         pg.push_back(currentClassDef);
-        it.declList.forEach(decl -> {
+        /*it.declList.forEach(decl -> {
             if (decl.isDeclStmt) {
                 decl.accept(this);
             }
-        });
+        });*/
         it.declList.forEach(decl -> {
             if (decl.isFuncDef) {
                 decl.accept(this);
@@ -376,14 +376,14 @@ public class IRBuilder implements ASTVisitor {
                     currentBlock.push_back(new br(null, TBlock, null));
                     TBlock.jumpTo = true;
                     currentBlock = TBlock;
-                    currentScope = new globalScope(currentScope);
+                    currentScope = new Scope(currentScope);
                     it.trueStmt.accept(this);
                     currentScope = currentScope.parentScope();
                 } else {
                     currentBlock.push_back(new br(null, FBlock, null));
                     FBlock.jumpTo = true;
                     currentBlock = FBlock;
-                    currentScope = new globalScope(currentScope);
+                    currentScope = new Scope(currentScope);
                     it.falseStmt.accept(this);
                     currentScope = currentScope.parentScope();
                 }
@@ -397,19 +397,19 @@ public class IRBuilder implements ASTVisitor {
                 currentBlock.push_back(new br(rdCmp, TBlock, FBlock));
                 TBlock.jumpTo = FBlock.jumpTo = ConvergeBlock.jumpTo = true;
                 currentBlock = TBlock;
-                currentScope = new globalScope(currentScope);
+                currentScope = new Scope(currentScope);
                 it.trueStmt.accept(this);
                 currentScope = currentScope.parentScope();
                 currentBlock.push_back(new br(null, ConvergeBlock, null));
                 currentBlock = FBlock;
-                currentScope = new globalScope(currentScope);
+                currentScope = new Scope(currentScope);
                 it.falseStmt.accept(this);
                 currentScope = currentScope.parentScope();
                 currentBlock.push_back(new br(null, ConvergeBlock, null));
             }
             currentBlock = ConvergeBlock;
         } else {
-            currentScope = new globalScope(currentScope);
+            currentScope = new Scope(currentScope);
             if (it.cond.rd instanceof constant) {
                 constant con = (constant) it.cond.rd;
                 ConvergeBlock.jumpTo = true;
@@ -1399,7 +1399,7 @@ public class IRBuilder implements ASTVisitor {
         regTypePair regType;
         ////System.out.println("^^^" + it.Id);
         if (currentScope.containsVariable(it.Id, false)) {
-            regType = currentScope.getEntity(it.Id, false);
+            regType = currentScope.getEntity(it.Id, true);
         } else if (currentStruct != null && currentStruct.members.containsKey(it.Id)) {
             regType = currentScope.getEntity("this", true);
             register thisReg = new register(), ptrReg = new register();

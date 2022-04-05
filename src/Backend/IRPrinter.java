@@ -54,7 +54,7 @@ public class IRPrinter implements Pass {
     public void visitBlock(block b) {
         if (b.jumpTo) out.println("\n"+ ((b.comment!=null)?";"+b.comment+"\n":"")  + getBlockName(b) + ":" );
         out.println(";"+getBlockName(b)+" " +getBlockName(b.IDom));
-        for (statement stmt : b.stmts) {
+        for (statement stmt=b.headStatement; stmt!=null;stmt=stmt.next) {
             print(stmt);
             if (stmt instanceof terminalStmt) break;
         }
@@ -62,7 +62,7 @@ public class IRPrinter implements Pass {
 
     private void runNaming(block b) {
         getBlockName(b);
-        for (statement stmt : b.stmts) {
+        for (statement stmt = b.headStatement;stmt!=null;stmt=stmt.next) {
             runNaming(stmt);
             if (stmt instanceof terminalStmt) break;
         }

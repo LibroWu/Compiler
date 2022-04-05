@@ -22,12 +22,19 @@ public class Optimizer_Base implements Pass {
                 visitBlock(bl);
             }
         }
-        int stmtSize = b.stmts.size();
+        statement prev=null;
+        for (statement s=b.tailStatement;s!=null;s=prev) {
+            prev = s.prev;
+            if (checkStatement(s))  {
+                b.delete_Statement(s);
+            }
+        }
+        /*int stmtSize = b.stmts.size();
         ListIterator<statement> iteratorStmt = b.stmts.listIterator(stmtSize);
         while (iteratorStmt.hasPrevious()) {
             statement s = iteratorStmt.previous();;
             if (checkStatement(s))iteratorStmt.remove();
-        }
+        }*/
     }
 
     private boolean checkStatement(statement s) {

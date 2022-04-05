@@ -154,7 +154,7 @@ public class InstrSelector implements Pass {
     public void visitBlock(block b) {
         blockVisited.add(b);
         AsmBlock asmBlock = getAsmBlock(b);
-        b.stmts.forEach(s -> {
+        for (statement s=b.headStatement;s!=null;s=s.next) {
             if (s.removed) return;
             if (s instanceof binary) {
                 binary bi = (binary) s;
@@ -588,7 +588,7 @@ public class InstrSelector implements Pass {
                     asmBlock.push_back(new La(getAsmReg(bit.rd), bit.rs.label));
                 } else regMap.put(bit.rd, getAsmReg(bit.rs));
             }
-        });
+        }
         for (block successor : b.successors) {
             if (!blockVisited.contains(successor)) {
                 asmBlock.successors.add(getAsmBlock(successor));
