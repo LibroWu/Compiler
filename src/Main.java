@@ -67,7 +67,7 @@ public class Main {
             if (!codegen) return;
             program pg = new program();
             new IRBuilder(pg, gScope, idToDef, idToFuncDef).visit(ASTRoot);
-            new IRPrinter(System.out).visitProgram(pg);
+            //new IRPrinter(System.out).visitProgram(pg);
             new Mem2Reg(pg).run();
             new IRPrinter(System.out).visitProgram(pg);
             if (optimize) new IROptimizer(pg).run();
