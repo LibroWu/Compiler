@@ -66,6 +66,9 @@ public class IROptimizer {
         LinkedList<statement> W = getWorklist(f);
         while (!W.isEmpty()) {
             statement s = W.pop();
+            //boolean flag = false;
+            //if (s.parentBlock!=null) flag = s.parentBlock.reachable;
+            //System.out.println("***"+s.parentBlock+" "+flag);
             s.inWorklist = false;
             if (!s.removed && s.parentBlock.reachable && s.isResConst()) s.removeStmt(W);
         }

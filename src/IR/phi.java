@@ -47,12 +47,11 @@ public class phi extends statement{
 
     @Override
     public boolean isResConst() {
-        constant en=null;
+        entity en=null;
         for (entityBlockPair entityBlockPair : entityBlockPairs) {
             if (parentBlock.predecessor.contains(entityBlockPair.bl) ) {
-                if (entityBlockPair.en instanceof register)return false;
-                if (en == null) en = (constant) entityBlockPair.en;
-                else if (!en.constEquals((constant) entityBlockPair.en)) return false;
+                if (en == null) en = entityBlockPair.en;
+                else if (!en.entityEquals(entityBlockPair.en)) return false;
             }
         }
         return true;
@@ -60,10 +59,10 @@ public class phi extends statement{
 
     @Override
     public void removeStmt(LinkedList<statement> W) {
-        constant con = null;
+        entity con = null;
         for (entityBlockPair entityBlockPair : entityBlockPairs) {
             if (parentBlock.predecessor.contains(entityBlockPair.bl) ) {
-                con = (constant) entityBlockPair.en;
+                con = entityBlockPair.en;
                 break;
             }
         }
@@ -71,7 +70,7 @@ public class phi extends statement{
             statement stmt = use.replaceRegWithEntity(rd,con);
             if (!stmt.inWorklist) {
                 stmt.inWorklist = true;
-                W.add(stmt);
+                W.push(stmt);
             }
         }
         parentBlock.delete_Statement(this);

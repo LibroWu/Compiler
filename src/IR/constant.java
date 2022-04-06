@@ -34,7 +34,9 @@ public class constant extends entity {
         genre = Genre.STRING;
     }
 
-    public boolean constEquals(constant other) {
+    public boolean entityEquals(entity en) {
+        if (en instanceof register) return false;
+        constant other = (constant) en;
         if (genre != other.genre) return false;
         if (this.genre == Genre.BOOL) return intValue == other.intValue;
         if (this.genre == Genre.INT) return intValue == other.intValue;

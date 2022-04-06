@@ -19,4 +19,10 @@ public class register extends entity{
     public String toString(){
         return ""+registerCount;
     }
+
+    @Override
+    public boolean entityEquals(entity en) {
+        if (en instanceof constant) return false;
+        return this==en;
+    }
 }

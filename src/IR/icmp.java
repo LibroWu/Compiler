@@ -50,7 +50,7 @@ public class icmp extends statement{
             statement stmt = use.replaceRegWithEntity(rd,con);
             if (!stmt.inWorklist) {
                 stmt.inWorklist = true;
-                W.add(stmt);
+                W.push(stmt);
             }
         }
         parentBlock.delete_Statement(this);

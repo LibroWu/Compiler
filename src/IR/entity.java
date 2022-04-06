@@ -1,4 +1,5 @@
 package IR;
 
-public class entity {
+public abstract class entity {
+    abstract public boolean entityEquals(entity en);
 }
