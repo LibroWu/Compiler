@@ -1,56 +1,44 @@
 %struct.string = type { i32, i8* }
 
-define i32 @main(){
+define i32 @test(){
 ;0 0
 	br label %1
 
+;loop check block test loopDepth 1 iterCount 0
 1:
 ;1 0
-	%2 = sext i1 0 to i8
-	%3 = trunc i8 %2 to i1
-	br i1 %3, label %4, label %16
+	%2 = phi i32 [ 0, %0 ], [ %8, %9 ]
+	%3 = phi i32 [ 0, %0 ], [ %10, %9 ]
+	%4 = icmp slt i32 %3, 200
+	br i1 %4, label %6, label %5
 
-;True block in main selectCount 0
-4:
-;4 1
-	br label %5
-
-;Converge block in main selectCount 0
 5:
-;5 1
-	%6 = phi i32 [ 10, %4 ], [ 20, %16 ]
-	%7 = icmp eq i32 %6, 10
-	br i1 %7, label %8, label %9
+;5 11
+	ret i32 %2
 
-8:
-;8 5
+;True block in test selectCount 0
+6:
+;6 12
+	%7 = add i32 %3, 1
+	%8 = add i32 %2, 1
 	br label %9
 
+;loop increase block test loopDepth 1 iterCount 0
 9:
-;9 5
-	%10 = sext i1 1 to i8
-	%11 = trunc i8 %10 to i1
-	br i1 %11, label %15, label %12
+;9 13
+	%10 = add i32 %7, 1
+	br label %1
+}
 
-;Converge block in main selectCount 1
-12:
-;12 9
-	%13 = phi i32 [ %6, %9 ], [ 30, %15 ]
-	br label %14
+define i32 @main(){
+;0 0
+	%1 = call i32 @test()
+	%2 = sub i32 %1, 100
+	br label %3
 
-14:
-;14 12
-	ret i32 %13
-
-;True block in main selectCount 1
-15:
-;15 9
-	br label %12
-
-;False block in main selectCount 0
-16:
-;16 1
-	br label %5
+3:
+;3 0
+	ret i32 %2
 }
 
 

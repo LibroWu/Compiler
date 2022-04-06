@@ -88,6 +88,7 @@ public class IROptimizer {
         while (!bfsQue.isEmpty()) {
             block BB = bfsQue.pop();
             for (phi phi : BB.Phis) {
+                if (phi.removed) continue;
                 for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
                     entityBlockPair.bl.contributesToPhi = true;
                 }
