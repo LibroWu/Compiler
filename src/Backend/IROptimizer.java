@@ -64,17 +64,18 @@ public class IROptimizer {
         return W;
     }
 
-    private block shrinkChain(block bl,block BB){
-        block prev=BB;
-        while (bl.headStatement==bl.tailStatement && bl.tailStatement instanceof br) {
+    private block shrinkChain(block bl, block BB) {
+        block prev = BB;
+        while (bl.headStatement == bl.tailStatement && bl.tailStatement instanceof br) {
             br BI = (br) bl.tailStatement;
-            if (BI.val!=null) break;
+            if (BI.val != null) break;
             prev = bl;
             bl = BI.trueBranch;
         }
         for (phi phi : bl.Phis) {
+            if (phi.removed) continue;
             for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
-                if (entityBlockPair.bl==prev) entityBlockPair.bl=BB;
+                if (entityBlockPair.bl == prev) entityBlockPair.bl = BB;
             }
         }
         return bl;
@@ -90,15 +91,18 @@ public class IROptimizer {
             BB.predecessor.clear();
             if (BB.tailStatement instanceof br) {
                 br BI = (br) BB.tailStatement;
-                if (BI.val==null) {
-                    BI.trueBranch = shrinkChain(BI.trueBranch,BB);
+                if (BI.val == null) {
+                    BI.trueBranch = shrinkChain(BI.trueBranch, BB);
+                    BB.successors.add(BI.trueBranch);
                     if (!blockVisited.contains(BI.trueBranch)) {
                         blockVisited.add(BI.trueBranch);
                         bfsQue.add(BI.trueBranch);
                     }
                 } else {
-                    BI.trueBranch = shrinkChain(BI.trueBranch,BB);
-                    BI.falseBranch = shrinkChain(BI.falseBranch,BB);
+                    BI.trueBranch = shrinkChain(BI.trueBranch, BB);
+                    BI.falseBranch = shrinkChain(BI.falseBranch, BB);
+                    BB.successors.add(BI.trueBranch);
+                    BB.successors.add(BI.falseBranch);
                     if (!blockVisited.contains(BI.trueBranch)) {
                         blockVisited.add(BI.trueBranch);
                         bfsQue.add(BI.trueBranch);
@@ -111,33 +115,15 @@ public class IROptimizer {
             }
         }
         // build successors & predecessors
-        bfsQue.clear();
         blockVisited.clear();
         bfsQue.add(f.rootBlock);
         while (!bfsQue.isEmpty()) {
             block BB = bfsQue.pop();
-            if (BB.tailStatement instanceof br) {
-                br BI = (br) BB.tailStatement;
-                if (BI.val == null) {
-                    BB.successors.add(BI.trueBranch);
-                    BI.trueBranch.predecessor.add(BB);
-                    if (!blockVisited.contains(BI.trueBranch)) {
-                        blockVisited.add(BI.trueBranch);
-                        bfsQue.add(BI.trueBranch);
-                    }
-                } else {
-                    BB.successors.add(BI.trueBranch);
-                    BB.successors.add(BI.falseBranch);
-                    BI.trueBranch.predecessor.add(BB);
-                    BI.falseBranch.predecessor.add(BB);
-                    if (!blockVisited.contains(BI.trueBranch)) {
-                        blockVisited.add(BI.trueBranch);
-                        bfsQue.add(BI.trueBranch);
-                    }
-                    if (!blockVisited.contains(BI.falseBranch)) {
-                        blockVisited.add(BI.falseBranch);
-                        bfsQue.add(BI.falseBranch);
-                    }
+            for (block successor : BB.successors) {
+                successor.predecessor.add(BB);
+                if (!blockVisited.contains(successor)) {
+                    blockVisited.add(successor);
+                    bfsQue.add(successor);
                 }
             }
         }

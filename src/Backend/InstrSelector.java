@@ -120,7 +120,7 @@ public class InstrSelector implements Pass {
         tailBlock = null;
         visitBlock(f.rootBlock);
         for (phi p : Phis) {
-            Reg rd = new virtualReg(cnt++), rs;
+            Reg rd = new virtualReg(cnt++);
             for (entityBlockPair entityBlockPair : p.entityBlockPairs) {
                 entity en = entityBlockPair.en;
                 AsmBlock from = getAsmBlock(entityBlockPair.bl);
@@ -128,18 +128,16 @@ public class InstrSelector implements Pass {
                 p.asmParentBlock.push_front(new Mv(getAsmReg(p.rd),rd));
                 if (i != null) {
                     if (en instanceof constant) {
-                        rs = new virtualReg(cnt++);
                         int constValue = getImmValue((constant) en);
                         if (constValue > 2047 || constValue < -2048) {
                             if (((constValue >> 11) & 1) > 0) constValue += 1 << 12;
-                            from.insert_before(i, new Lui(rs, new Imm(constValue >>> 12)));
-                            from.insert_before(i, new IType(rs, rs, new Imm(getLo(constValue)), Inst.CalCategory.add));
+                            from.insert_before(i, new Lui(rd, new Imm(constValue >>> 12)));
+                            from.insert_before(i, new IType(rd, rd, new Imm(getLo(constValue)), Inst.CalCategory.add));
                         } else
-                            from.insert_before(i, new IType(rs, zero, new Imm(constValue), Inst.CalCategory.add));
+                            from.insert_before(i, new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
                     } else {
-                        rs = getAsmReg((register) en);
+                        from.insert_before(i, new Mv(rd, getAsmReg((register) en)));
                     }
-                    from.insert_before(i, new Mv(rd, rs));
                 }
             }
         }
