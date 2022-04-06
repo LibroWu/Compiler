@@ -20,7 +20,7 @@ public class block {
     public boolean jumpTo = false,reachable;
     public int loopDepth;
     public String comment = null;
-    public boolean visited = false;
+    public boolean visited = false,contributesToPhi = false;
     static public int MaxDepth = 100000000;
     public int depth = MaxDepth;
     //for debug

@@ -66,7 +66,7 @@ public class IROptimizer {
 
     private block shrinkChain(block bl, block BB) {
         block prev = BB;
-        while (bl.headStatement == bl.tailStatement && bl.tailStatement instanceof br) {
+        while (bl.headStatement == bl.tailStatement && bl.tailStatement instanceof br && !bl.contributesToPhi) {
             br BI = (br) bl.tailStatement;
             if (BI.val != null) break;
             prev = bl;
@@ -84,6 +84,22 @@ public class IROptimizer {
     private void emptyIRBlockRemove(funcDef f) {
         LinkedList<block> bfsQue = new LinkedList<>();
         HashSet<block> blockVisited = new HashSet<>();
+        bfsQue.add(f.rootBlock);
+        while (!bfsQue.isEmpty()) {
+            block BB = bfsQue.pop();
+            for (phi phi : BB.Phis) {
+                for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
+                    entityBlockPair.bl.contributesToPhi = true;
+                }
+            }
+            for (block successor : BB.successors) {
+                if (!blockVisited.contains(successor)) {
+                    blockVisited.add(successor);
+                    bfsQue.add(successor);
+                }
+            }
+        }
+        blockVisited.clear();
         bfsQue.add(f.rootBlock);
         while (!bfsQue.isEmpty()) {
             block BB = bfsQue.pop();
@@ -136,7 +152,7 @@ public class IROptimizer {
                 }
             }
         }
-        // build successors & predecessors
+        // build predecessors
         blockVisited.clear();
         bfsQue.add(f.rootBlock);
         while (!bfsQue.isEmpty()) {
