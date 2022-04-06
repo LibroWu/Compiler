@@ -200,6 +200,6 @@ public class IROptimizer {
 
     public void run() {
         pg.funcDefs.forEach(this::RunCP);
-        pg.funcDefs.forEach(this::emptyIRBlockRemove);
+        //pg.funcDefs.forEach(this::emptyIRBlockRemove);
     }
 }
