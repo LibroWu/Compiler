@@ -101,6 +101,28 @@ public class IROptimizer {
                 } else {
                     BI.trueBranch = shrinkChain(BI.trueBranch, BB);
                     BI.falseBranch = shrinkChain(BI.falseBranch, BB);
+                    if (BI.trueBranch == BI.falseBranch) {
+                        BB.replace(BB.tailStatement,new br(null,BI.trueBranch,null));
+                        for (phi phi : BI.trueBranch.Phis) {
+                            if (phi.removed) continue;
+                            boolean flag =false;
+                            for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
+                                if (entityBlockPair.bl==BB) flag = true;
+                            }
+                            if (!flag) continue;
+                            flag = false;
+                            LinkedList<entityBlockPair> entityBlockPairs = new LinkedList<>();
+                            for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
+                                if (entityBlockPair.bl == BB) {
+                                    if (flag) continue;
+                                    entityBlockPair.en = BI.val;
+                                    flag = true;
+                                }
+                                entityBlockPairs.add(entityBlockPair);
+                            }
+                            phi.entityBlockPairs = entityBlockPairs;
+                        }
+                    }
                     BB.successors.add(BI.trueBranch);
                     BB.successors.add(BI.falseBranch);
                     if (!blockVisited.contains(BI.trueBranch)) {

@@ -74,15 +74,11 @@ public class GraphColoring {
 
     private void Build() {
         asmFunc.blockList.forEach(asmBlock -> {
-            BitSet live =  (BitSet) asmBlock.tailInst.liveOut.clone();;
-            // bugs here
-            /*Inst secondTailInst = asmBlock.tailInst.prev;
-            if (secondTailInst instanceof Br) {
-                live = (BitSet) secondTailInst.liveOut.clone();
-            } else live = (BitSet) asmBlock.tailInst.liveOut.clone();*/
+            BitSet live = (BitSet) asmBlock.tailInst.liveOut.clone();
+            // have bugs here
             for (Inst i = asmBlock.tailInst; i != null; i = i.prev) {
                 if (i instanceof Br) {
-                    live = (BitSet) i.liveOut.clone();
+                    live.or(i.liveOut);
                 }
                 if (i instanceof Mv) {
                     Mv mv = (Mv) i;
@@ -114,6 +110,7 @@ public class GraphColoring {
 
     private void AddEdge(int u, int v) {
         if (!adjSet.contains(u * finalRegCount + v) && u != v) {
+            System.out.println("add edge"+u+" "+v);
             adjSet.add(u * finalRegCount + v);
             adjSet.add(v * finalRegCount + u);
             //u not in precolored
@@ -701,6 +698,7 @@ public class GraphColoring {
     }
 
     public void Main() {
+        System.out.println("in func " + asmFunc.funcName);
         livenessAnalysis.workInFunc(asmFunc);
         initialize();
         Build();

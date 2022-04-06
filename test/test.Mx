@@ -1,82 +1,105 @@
 /*
 Test Package: Codegen
-Author: 15' Bowen Tan
-Time: 2020-02-03
+Author: 09' Xiao Jia
+Time: 2020-02-02
 Input:
 === input ===
-989898987
 === end ===
 Output:
 === output ===
-3
-989898983 2 2
+49
 === end ===
 ExitCode: 0
 InstLimit: -1
-Origin Package: Codegen Pretest-871
+Origin Package: Codegen Pretest-565
 */
-int n;
+int[][] c;
+int ans = 0;
+int[] visit = new int[110];
+int[] pre = new int[110];
+int[] f = new int[110];
+int i;
+int j;
+int open;
+int closed;
 
-void init() {
-    n = getInt();
+void origin(int N)
+{
+	c = new int[N][];
+    for (i = 0; i < N; i ++ ) {
+		c[i] = new int[N];
+        for (j = 0; j < N; j ++ )
+        c[i][j] = 0;
+    }
 }
 
-bool is_prime(int x) {
-    if (x == 1) {
-        return false;
-    }
-    int i;
-    for (i = 2; i * i <= x; i ++) {
-        if (x % i == 0) {
-            return false;
+int build(int start, int ending) {
+    for (i = 1; i <= 49; i++) {
+        for (j = 50; j <= 98-i+1; j++) {
+            c[i][j] = 1;
         }
     }
-    return true;
+    for (i = 1; i <= 49; i++)
+        c[start][i] = 1;
+    for (i = 50; i <= 98; i++)
+        c[i][ending] = 1;
+    return 0;
 }
 
-void find(int x, int pre) {
-    if (is_prime(x)) {
-        if (pre > 0) {
-            //printf("2\n");
-            println("2");
-            //printf("%d %d\n", pre, x);
-            println(toString(pre) + " " + toString(x));
-        } else {
-            //printf("1\n%d\n", x);
-            println("1");
-            println(toString(x));
-        }
-        return ;
+int find(int ending, int start, int flag) {
+    open = 0;
+    closed = 1;
+    for (i = 1; i <= ending; i++) {
+        visit[i] = 0;
     }
-    int i = 5;
-    if (pre == -1) {
-        int i = 6;
-        for (i = x - 2; ; i --) {
-            if (is_prime(i)) {
-                find(x - i, i);
-                return ;
+    f[1]=start;
+    visit[start]=1;
+    pre[start]=0;
+    flag=0;
+    while (open<closed && flag==0) {
+        open++;
+        i=f[open];
+        for (j = 1; j <= ending; j++)
+            if (c[i][j]>0 && visit[j]==0) {
+                visit[j]=1;
+                closed++;
+                f[closed]=j;
+                pre[j]=i;
+                if (closed==ending) flag=1;
             }
-        }
-    } else {
-        for (i = x - 1; ; i --) {
-            if (is_prime(i) && is_prime(x - i)) {
-                //printf("3\n%d %d %d\n", pre, i, x - i);
-                println("3");
-                println(toString(pre) + " " + toString(i) + " " + toString(x - i));
-                return ;
-            }
-        }
     }
+    return flag;
 }
 
-void work() {
-    find(n, -1);
+int improve(int ending) {
+    i=ending;
+    ans++;
+    while (pre[i]>0) {
+        j=pre[i];
+        c[j][i]--;
+        c[i][j]++;
+        i=j;
+    }
+    return 0;
 }
 
 int main() {
+	origin(110);
+    int k;
+	int start;
+	int ending;
+    int flag;
+    int i1;
 
-    init();
-    work();
+    k = 0;
+    start = 99;
+    ending = 100;
+    flag = 0;
 
+    build(start, ending);
+    while (find(ending, start, flag)>0) {
+        improve(ending);
+    }
+	println(toString(ans));
     return 0;
 }
