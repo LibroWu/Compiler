@@ -32,6 +32,7 @@ public class block {
 
     public void push_front(statement stmt) {
         stmt.parentBlock = this;
+        if (stmt instanceof phi) Phis.push((phi) stmt);
         if (headStatement == null) headStatement = tailStatement = stmt;
         else {
             headStatement.prev = stmt;
@@ -43,6 +44,7 @@ public class block {
     public void push_back(statement stmt) {
         if (tailStmt != null) return;//todo throw new internalError("multiple tails of a block",new position(0,0));
         stmt.parentBlock = this;
+        if (stmt instanceof phi) Phis.push((phi) stmt);
         if (stmt instanceof terminalStmt) {
             tailStmt = (terminalStmt) stmt;
             if (tailStmt instanceof br) {

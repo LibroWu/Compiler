@@ -43,13 +43,15 @@ public class br extends terminalStmt {
 
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
-        constant con = (constant) en;
         statement newBr = this;
-        if (rs == val) {
+        if (en instanceof register) {
+            val = (register) en;
+        } else if (rs == val) {
+            constant con = (constant) en;
             block Parent = parentBlock;
             if (con.getBoolValue()) {
                 newBr = new br(null, trueBranch, null);
-                Parent.replace(this,newBr );
+                Parent.replace(this, newBr);
                 falseBranch.predecessor.remove(Parent);
                 if (falseBranch.predecessor.size() == 0) removeUnreachableBlock(falseBranch);
                 Parent.successors.clear();

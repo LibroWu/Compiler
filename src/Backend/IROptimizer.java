@@ -11,7 +11,7 @@ import java.util.LinkedList;
 public class IROptimizer {
     public program pg;
 
-    public IROptimizer(program pg){
+    public IROptimizer(program pg) {
         this.pg = pg;
     }
 
@@ -19,17 +19,19 @@ public class IROptimizer {
     /* | Dead Code Elimination | */
     /* ------------------------- */
 
-    public void RunDCE(){}
+    public void RunDCE() {
+    }
 
     /* ------------------------------------ */
     /* | Aggressive Dead Code Elimination | */
     /* ------------------------------------ */
-    public void RunADCE(){}
+    public void RunADCE() {
+    }
 
     /* ------------------------ */
     /* | Constant Propagation | */
     /* ------------------------ */
-    private LinkedList<statement> getWorklist(funcDef f){
+    private LinkedList<statement> getWorklist(funcDef f) {
         for (register parameterReg : f.parameterRegs) {
             parameterReg.uses = new LinkedList<>();
         }
@@ -43,7 +45,7 @@ public class IROptimizer {
         while (!bfsQue.isEmpty()) {
             block BB = bfsQue.pop();
             BB.reachable = true;
-            for (statement s = BB.headStatement;s!=null;s=s.next) {
+            for (statement s = BB.headStatement; s != null; s = s.next) {
                 W.add(s);
                 s.init();
             }
@@ -62,7 +64,86 @@ public class IROptimizer {
         return W;
     }
 
-    public void RunCP(funcDef f){
+    private block shrinkChain(block bl,block BB){
+        block prev=BB;
+        while (bl.headStatement==bl.tailStatement && bl.tailStatement instanceof br) {
+            br BI = (br) bl.tailStatement;
+            if (BI.val!=null) break;
+            prev = bl;
+            bl = BI.trueBranch;
+        }
+        for (phi phi : bl.Phis) {
+            for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
+                if (entityBlockPair.bl==prev) entityBlockPair.bl=BB;
+            }
+        }
+        return bl;
+    }
+
+    private void emptyIRBlockRemove(funcDef f) {
+        LinkedList<block> bfsQue = new LinkedList<>();
+        HashSet<block> blockVisited = new HashSet<>();
+        bfsQue.add(f.rootBlock);
+        while (!bfsQue.isEmpty()) {
+            block BB = bfsQue.pop();
+            BB.successors.clear();
+            BB.predecessor.clear();
+            if (BB.tailStatement instanceof br) {
+                br BI = (br) BB.tailStatement;
+                if (BI.val==null) {
+                    BI.trueBranch = shrinkChain(BI.trueBranch,BB);
+                    if (!blockVisited.contains(BI.trueBranch)) {
+                        blockVisited.add(BI.trueBranch);
+                        bfsQue.add(BI.trueBranch);
+                    }
+                } else {
+                    BI.trueBranch = shrinkChain(BI.trueBranch,BB);
+                    BI.falseBranch = shrinkChain(BI.falseBranch,BB);
+                    if (!blockVisited.contains(BI.trueBranch)) {
+                        blockVisited.add(BI.trueBranch);
+                        bfsQue.add(BI.trueBranch);
+                    }
+                    if (!blockVisited.contains(BI.falseBranch)) {
+                        blockVisited.add(BI.falseBranch);
+                        bfsQue.add(BI.falseBranch);
+                    }
+                }
+            }
+        }
+        // build successors & predecessors
+        bfsQue.clear();
+        blockVisited.clear();
+        bfsQue.add(f.rootBlock);
+        while (!bfsQue.isEmpty()) {
+            block BB = bfsQue.pop();
+            if (BB.tailStatement instanceof br) {
+                br BI = (br) BB.tailStatement;
+                if (BI.val == null) {
+                    BB.successors.add(BI.trueBranch);
+                    BI.trueBranch.predecessor.add(BB);
+                    if (!blockVisited.contains(BI.trueBranch)) {
+                        blockVisited.add(BI.trueBranch);
+                        bfsQue.add(BI.trueBranch);
+                    }
+                } else {
+                    BB.successors.add(BI.trueBranch);
+                    BB.successors.add(BI.falseBranch);
+                    BI.trueBranch.predecessor.add(BB);
+                    BI.falseBranch.predecessor.add(BB);
+                    if (!blockVisited.contains(BI.trueBranch)) {
+                        blockVisited.add(BI.trueBranch);
+                        bfsQue.add(BI.trueBranch);
+                    }
+                    if (!blockVisited.contains(BI.falseBranch)) {
+                        blockVisited.add(BI.falseBranch);
+                        bfsQue.add(BI.falseBranch);
+                    }
+                }
+            }
+        }
+    }
+
+    public void RunCP(funcDef f) {
         LinkedList<statement> W = getWorklist(f);
         while (!W.isEmpty()) {
             statement s = W.pop();
@@ -77,16 +158,23 @@ public class IROptimizer {
     /* ------------------------------------ */
     /* | Common Subexpression Elimination | */
     /* ------------------------------------ */
-    public void  RunCSE(){}
+    public void RunCSE() {
+    }
+
     /* -------------------- */
     /* | Inline Expansion | */
     /* -------------------- */
-    public void RunIE(){}
+    public void RunIE() {
+    }
+
     /* --------------------- */
     /* | Loop Optimization | */
     /* --------------------- */
-    public void RunLoop(){}
-    public void run(){
+    public void RunLoop() {
+    }
+
+    public void run() {
         pg.funcDefs.forEach(this::RunCP);
+        pg.funcDefs.forEach(this::emptyIRBlockRemove);
     }
 }

@@ -268,7 +268,6 @@ public class Mem2Reg {
                     if (!phiExist.contains(Y)) {
                         phi PI = new phi(new register(counter--), AI.irType);
                         PI.creator = AI;
-                        Y.Phis.add(PI);
                         Y.push_front(PI);
                         phiExist.add(Y);
                         if (!Info.DefiningBlocks.contains(Y)) {

@@ -7,53 +7,26 @@ define i32 @test(){
 ;loop check block test loopDepth 1 iterCount 0
 1:
 ;1 0
-	%2 = phi i32 [ 0, %0 ], [ %13, %15 ]
-	%3 = phi i32 [ 0, %0 ], [ %16, %15 ]
+	%2 = phi i32 [ 0, %0 ], [ %8, %9 ]
+	%3 = phi i32 [ 0, %0 ], [ %10, %9 ]
 	%4 = icmp slt i32 %3, 200
-	br i1 %4, label %7, label %5
+	br i1 %4, label %6, label %5
 
-;loop exit block test loopDepth 1 iterCount 0
 5:
-;5 1
-	br label %6
-
-6:
-;6 5
+;5 11
 	ret i32 %2
 
-;loop body test loopDepth 1 iterCount 0
-7:
-;7 1
-	br label %8
-
-8:
-;8 7
+;True block in test selectCount 0
+6:
+;6 12
+	%7 = add i32 %3, 1
+	%8 = add i32 %2, 1
 	br label %9
 
-9:
-;9 8
-	br label %10
-
-10:
-;10 7
-	br label %11
-
-;True block in test selectCount 0
-11:
-;11 10
-	%12 = add i32 %3, 1
-	%13 = add i32 %2, 1
-	br label %14
-
-;Converge block in test selectCount 0
-14:
-;14 10
-	br label %15
-
 ;loop increase block test loopDepth 1 iterCount 0
-15:
-;15 14
-	%16 = add i32 %12, 1
+9:
+;9 13
+	%10 = add i32 %7, 1
 	br label %1
 }
 
