@@ -3,10 +3,7 @@ package Backend;
 import Assembly.Instr.Li;
 import IR.*;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.*;
 
 public class IROptimizer {
     public program pg;
@@ -25,7 +22,88 @@ public class IROptimizer {
     /* ------------------------------------ */
     /* | Aggressive Dead Code Elimination | */
     /* ------------------------------------ */
-    public void RunADCE() {
+    private LinkedList<block> postOrderSequence;
+    private HashSet<block> blockMark;
+    private void calcPostOrderSequence(block b) {
+        blockMark.add(b);
+        for (block predecessor : b.predecessor) {
+            if (!blockMark.contains(predecessor))
+                calcPostOrderSequence(predecessor);
+        }
+        postOrderSequence.add(b);
+        b.ctrlIDom = null;
+        b.ctrlDepth = block.MaxDepth;
+    }
+
+    private block intersect(block b1, block b2) {
+        if (b1.ctrlDepth < b2.ctrlDepth) {
+            block tmp = b1;
+            b1 = b2;
+            b2 = tmp;
+        }
+        while (b1.ctrlDepth > b2.ctrlDepth) b1 = b1.ctrlIDom;
+        while (b1 != b2) {
+            b1 = b1.ctrlIDom;
+            b2 = b2.ctrlIDom;
+        }
+        return b1;
+    }
+
+    public void calcDominateTree(funcDef f) {
+        postOrderSequence = new LinkedList<>();
+        calcPostOrderSequence(f.returnBlock);
+        f.returnBlock.ctrlIDom = f.returnBlock;
+        f.returnBlock.ctrlDepth = 0;
+        boolean Changed = true;
+        while (Changed) {
+            Changed = false;
+            ListIterator<block> iter = postOrderSequence.listIterator(postOrderSequence.size());
+            //skip the start_node
+            iter.previous();
+            while (iter.hasPrevious()) {
+                block b = iter.previous(), new_IDom = null;
+                for (block successor : b.successors) {
+                    if (successor.ctrlDepth!= block.MaxDepth) {
+                        new_IDom = successor;
+                        break;
+                    }
+                }
+                for (block successor : b.successors) {
+                    if (successor.ctrlIDom != null) {
+                        new_IDom = intersect(successor, new_IDom);
+                    }
+                }
+                if (b.ctrlIDom != new_IDom) {
+                    b.ctrlDepth = new_IDom.ctrlDepth + 1;
+                    b.ctrlIDom = new_IDom;
+                    Changed = true;
+                }
+            }
+        }
+    }
+
+    private void calcDominanceFrontier() {
+        for (block b : postOrderSequence) {
+            if (b.successors.size() > 1) {
+                for (block p : b.predecessor) {
+                    block runner = p;
+                    while (runner != b.IDom) {
+                        runner.DominatorFrontier.add(b);
+                        runner = runner.IDom;
+                    }
+                }
+            }
+        }
+    }
+
+    public void RunADCE(funcDef f) {
+        f.entryBlock = new block(0);
+        f.entryBlock.successors.add(f.rootBlock);
+        f.entryBlock.successors.add(f.returnBlock);
+        f.rootBlock.predecessor.add(f.entryBlock);
+        f.returnBlock.predecessor.add(f.entryBlock);
+        blockMark = new HashSet<>();
+        calcDominateTree(f);
     }
 
     /* ------------------------ */
@@ -64,18 +142,21 @@ public class IROptimizer {
         return W;
     }
 
+    // try to shrink BB's next block bl with BB
     private block shrinkChain(block bl, block BB) {
-        block prev = BB;
-        while (bl.headStatement == bl.tailStatement && bl.tailStatement instanceof br && !bl.contributesToPhi) {
+        if (bl.visited) return bl;
+        BB.visited = true;
+        if (bl.headStatement==bl.tailStatement && bl.tailStatement instanceof br){
             br BI = (br) bl.tailStatement;
-            if (BI.val != null) break;
-            prev = bl;
-            bl = BI.trueBranch;
-        }
-        for (phi phi : bl.Phis) {
-            if (phi.removed) continue;
-            for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
-                if (entityBlockPair.bl == prev) entityBlockPair.bl = BB;
+            if (BI.val==null) {
+                BI.trueBranch = shrinkChain(BI.trueBranch,bl);
+                for (phi phi : BI.trueBranch.Phis) {
+                    if (phi.removed) continue;
+                    for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
+                        if (entityBlockPair.bl == bl) entityBlockPair.bl = BB;
+                    }
+                }
+                bl = BI.trueBranch;
             }
         }
         return bl;
@@ -87,6 +168,7 @@ public class IROptimizer {
         bfsQue.add(f.rootBlock);
         while (!bfsQue.isEmpty()) {
             block BB = bfsQue.pop();
+            BB.visited = false;
             for (phi phi : BB.Phis) {
                 if (phi.removed) continue;
                 for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
@@ -200,6 +282,7 @@ public class IROptimizer {
 
     public void run() {
         pg.funcDefs.forEach(this::RunCP);
+        pg.funcDefs.forEach(this::RunADCE);
         pg.funcDefs.forEach(this::emptyIRBlockRemove);
     }
 }

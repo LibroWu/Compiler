@@ -10,19 +10,18 @@ import java.util.LinkedList;
 
 public class block {
     public statement headStatement = null, tailStatement = null;
-    //public LinkedList<statement> stmts = new LinkedList<>();
-    public HashSet<block> successors = new HashSet<>(), predecessor = new HashSet<>(), children = null;
+    public HashSet<block> successors = new HashSet<>(), predecessor = new HashSet<>(), children = null, ctrlChildren = null,reverseSuccessors = null;
     public LinkedList<phi> Phis = new LinkedList<>();
     //Maybe use hashset better
-    public HashSet<block> DominatorFrontier = new HashSet<>();
-    public block IDom = null;
+    public HashSet<block> DominatorFrontier = null,ctrlDF = null;
+    public block IDom = null,ctrlIDom = null;
     public terminalStmt tailStmt = null;
     public boolean jumpTo = false,reachable;
     public int loopDepth;
     public String comment = null;
     public boolean visited = false,contributesToPhi = false;
     static public int MaxDepth = 100000000;
-    public int depth = MaxDepth;
+    public int depth = MaxDepth,ctrlDepth = MaxDepth;
     //for debug
     public int blockIndex = 0;
 

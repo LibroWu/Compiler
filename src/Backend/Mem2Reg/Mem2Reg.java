@@ -22,6 +22,7 @@ public class Mem2Reg {
 
     private void calcPostOrderSequence(block b) {
         b.visited = true;
+        b.DominatorFrontier = new HashSet<>();
         for (block successor : b.successors) {
             successor.predecessor.add(b);
             if (!successor.visited)

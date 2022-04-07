@@ -141,6 +141,10 @@ public class InstrSelector implements Pass {
                 }
             }
         }
+        if (tailBlock==null) {
+            visitBlock(f.returnBlock);
+            tailBlock = getAsmBlock(f.returnBlock);
+        }
         asmFunc.tailBlock = tailBlock;
         asmFunc.stackLength = 4 * (cnt - reserveCnt);
         asmFunc.registerCount = asmFunc.originalRegisterCount = cnt;
