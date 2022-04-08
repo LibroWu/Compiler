@@ -23,7 +23,12 @@ public class block {
     public boolean visited = false, contributesToPhi = false, isActivate = false;
     static public int MaxDepth = 100000000;
     public int depth = MaxDepth, ctrlDepth = MaxDepth;
-    //for debug
+    // for adce
+    public block deadFrontier = null,nextAlive = null;
+    public LinkedList<block> alivePredecessors = null;
+    public HashSet<block> deadPredecessors = null;
+    public boolean inStack = false;
+    // for debug
     public int blockIndex = 0;
 
     public block(int loopDepth) {

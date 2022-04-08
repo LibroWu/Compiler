@@ -29,6 +29,10 @@ public class IROptimizer {
         b.postDF = new HashSet<>();
         b.ctrlSuccessors = new HashSet<>();
         b.ctrlPredecessor = new HashSet<>();
+        b.inStack = false;
+        b.nextAlive = null;
+        b.deadFrontier = null;
+        b.deadPredecessors = new HashSet<>();
         for (block predecessor : b.predecessor) {
             if (!blockMark.contains(predecessor))
                 calcPostOrderSequence(predecessor);
@@ -62,7 +66,7 @@ public class IROptimizer {
         while (Changed) {
             Changed = false;
             ListIterator<block> iter = postOrderSequence.listIterator(postOrderSequence.size());
-            //skip the start_node
+            // skip the start_node
             iter.previous();
             while (iter.hasPrevious()) {
                 block b = iter.previous(), new_IDom = null;
@@ -115,6 +119,33 @@ public class IROptimizer {
         }
     }
 
+    private block findDeadFrontier(block B) {
+        if (B.deadFrontier != null) return B.deadFrontier;
+        if (B.inStack) return null;
+        B.inStack = true;
+        br BI = (br) B.tailStatement;
+        if (BI.trueBranch.isActivate) {
+            B.deadFrontier = B;
+            B.nextAlive = BI.trueBranch;
+            BI.trueBranch.deadPredecessors.add(B);
+            B.alivePredecessors = new LinkedList<>();
+            return B;
+        }
+        B.deadFrontier = findDeadFrontier(BI.trueBranch);
+        if (B.deadFrontier != null) return B.deadFrontier;
+        if (BI.falseBranch == null) throw new RuntimeException("can not find Dead Frontier!");
+        if (BI.falseBranch.isActivate) {
+            B.deadFrontier = B;
+            B.nextAlive = BI.falseBranch;
+            BI.trueBranch.deadPredecessors.add(B);
+            B.alivePredecessors = new LinkedList<>();
+            return B;
+        }
+        B.deadFrontier = findDeadFrontier(BI.falseBranch);
+        if (B.deadFrontier != null) return B.deadFrontier;
+        throw new RuntimeException("can not find Dead Frontier!!");
+    }
+
     public void RunADCE(funcDef f) {
         f.entryBlock = new block(0);
         f.entryBlock.blockIndex = -16;
@@ -145,6 +176,7 @@ public class IROptimizer {
         }
         while (!W.isEmpty()) {
             statement s = W.pop();
+            if (s.removed) continue;
             s.activatePropagate(W);
             if (!s.parentBlock.isActivate) {
                 s.parentBlock.isActivate = true;
@@ -158,15 +190,83 @@ public class IROptimizer {
                 }
             }
         }
+        // debug print
+        System.out.println("in func "+f.funcId);
         for (block BB : postOrderSequence) {
-            System.out.println("block "+BB+" "+BB.isActivate);
-            for (statement s=BB.headStatement;s!=null;s=s.next) {
-                System.out.println(s+" "+s.isActivate);
+            System.out.println("block " + BB + " " + BB.isActivate);
+            /*for (statement s = BB.headStatement; s != null; s = s.next) {
+                System.out.println(s + " " + s.isActivate);
+            }*/
+        }
+        LinkedList<block> surviveBlock = new LinkedList<>();
+        for (block BB : postOrderSequence) {
+            if (BB != f.entryBlock && !BB.isActivate) {
+                findDeadFrontier(BB);
             }
         }
-        LinkedList<block> bfsQue = new LinkedList<>();
-        HashSet<block> surviveBlock = new HashSet<>();
-        for (block CS : f.entryBlock.ctrlSuccessors) {
+        for (block BB : postOrderSequence) {
+            if (BB.isActivate) {
+                surviveBlock.add(BB);
+                if (BB.tailStatement instanceof br) {
+                    br BI = (br) BB.tailStatement;
+                    if (!BI.trueBranch.isActivate) {
+                        block BT = BI.trueBranch;
+                        BI.trueBranch = BT.deadFrontier.nextAlive;
+                        BT.deadFrontier.alivePredecessors.add(BB);
+                    }
+                    if (BI.falseBranch != null && !BI.falseBranch.isActivate) {
+                        block BF = BI.falseBranch;
+                        BI.falseBranch = BF.deadFrontier.nextAlive;
+                        BF.deadFrontier.alivePredecessors.add(BB);
+                    }
+                    if (BI.falseBranch == BI.trueBranch) {
+                        BI.val = null;
+                        BI.falseBranch = null;
+                    }
+                    BI.isActivate = true;
+                }
+            }
+        }
+        // rewrite phi and clear predecessors and successors
+        for (block BB : surviveBlock) {
+            BB.successors.clear();
+            BB.predecessor.clear();
+            if (BB.deadPredecessors.size() == 0) continue;
+            for (phi phi : BB.Phis) {
+                boolean flag = false;
+                for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
+                    if (BB.deadPredecessors.contains(entityBlockPair.bl)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) continue;
+                LinkedList<entityBlockPair> entityBlockPairs = new LinkedList<>();
+                for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
+                    if (BB.deadPredecessors.contains(entityBlockPair.bl)) {
+                        for (block alivePredecessor : entityBlockPair.bl.alivePredecessors) {
+                            entityBlockPairs.add(new entityBlockPair(entityBlockPair.en, alivePredecessor));
+                        }
+                    } else entityBlockPairs.add(entityBlockPair);
+                }
+                phi.entityBlockPairs = entityBlockPairs;
+            }
+        }
+        for (block BB : surviveBlock) {
+            for (statement s = BB.headStatement; s != null; s = s.next) {
+                if (!s.isActivate) BB.delete_Statement(s);
+            }
+            if (BB.tailStatement instanceof br) {
+                br BI = (br) BB.tailStatement;
+                BB.successors.add(BI.trueBranch);
+                BI.trueBranch.predecessor.add(BB);
+                if (BI.falseBranch != null) {
+                    BB.successors.add(BI.falseBranch);
+                    BI.falseBranch.predecessor.add(BB);
+                }
+            }
+        }
+        /*for (block CS : f.entryBlock.ctrlSuccessors) {
             if (CS.isActivate) {
                 bfsQue.add(CS);
                 surviveBlock.add(CS);
@@ -178,52 +278,8 @@ public class IROptimizer {
             BB.successors.clear();
             if (BB.tailStatement instanceof br) {
                 br BI = (br) BB.tailStatement;
-                if (BI.val == null) {
-                    if (BI.trueBranch.isActivate) {
-                        BI.isActivate = true;
-                        if (!surviveBlock.contains(BI.trueBranch)) {
-                            bfsQue.add(BI.trueBranch);
-                            surviveBlock.add(BB);
-                        }
-                    } else {
-                        BI.isActivate = true;
-                        BI.trueBranch = f.returnBlock;
-                        throw new RuntimeException("error: activate block jump to inactivate block");
-                    }
-                } else {
-                    if (BI.trueBranch.isActivate) {
-                        BI.isActivate = true;
-                        if (!surviveBlock.contains(BI.trueBranch)) {
-                            bfsQue.add(BI.trueBranch);
-                            surviveBlock.add(BI.trueBranch);
-                        }
-                        if (BI.falseBranch.isActivate) {
-                            if (!surviveBlock.contains(BI.falseBranch)) {
-                                bfsQue.add(BI.falseBranch);
-                                surviveBlock.add(BI.falseBranch);
-                            }
-                        } else {
-                            br newBI = new br(null,BI.trueBranch,null);
-                            newBI.isActivate = true;
-                            BB.replace(BI,newBI);
-                        }
-                    } else if (BI.falseBranch.isActivate) {
-                        BI.isActivate = true;
-                        if (!surviveBlock.contains(BI.falseBranch)) {
-                            bfsQue.add(BI.falseBranch);
-                            surviveBlock.add(BI.falseBranch);
-                        }
-                        br newBI = new br(null,BI.falseBranch,null);
-                        newBI.isActivate = true;
-                        BB.replace(BI,newBI);
-                    } else {
-                        BI.isActivate = true;
-                        BI.val = null;
-                        BI.trueBranch = f.returnBlock;
-                        BI.falseBranch = null;
-                        throw new RuntimeException("error: activate block jump to two inactivate blocks");
-                    }
-                }
+
+
             }
             for (statement s = BB.headStatement; s != null; s = s.next) {
                 if (!s.isActivate) BB.delete_Statement(s);
@@ -232,7 +288,7 @@ public class IROptimizer {
         for (block survived : surviveBlock) {
             if (survived.tailStatement instanceof br) {
                 br BI = (br) survived.tailStatement;
-                if (BI.val==null) {
+                if (BI.val == null) {
                     survived.successors.add(BI.trueBranch);
                     BI.trueBranch.predecessor.add(survived);
                 } else {
@@ -244,11 +300,11 @@ public class IROptimizer {
             }
         }
         for (block survived : surviveBlock) {
-            if (survived.predecessor.size()==0) {
+            if (survived.predecessor.size() == 0) {
                 f.rootBlock = survived;
                 break;
             }
-        }
+        }*/
         System.out.println(surviveBlock);
     }
 
@@ -430,6 +486,6 @@ public class IROptimizer {
         pg.funcDefs.forEach(this::RunCP);
         new IRPrinter(System.out).visitProgram(pg);
         pg.funcDefs.forEach(this::RunADCE);
-        pg.funcDefs.forEach(this::emptyIRBlockRemove);
+        //pg.funcDefs.forEach(this::emptyIRBlockRemove);
     }
 }

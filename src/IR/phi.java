@@ -86,6 +86,12 @@ public class phi extends statement{
     @Override
     public void activatePropagate(LinkedList<statement> W) {
         for (entityBlockPair entityBlockPair : entityBlockPairs) {
+            statement s = entityBlockPair.bl.tailStatement;
+            if (!s.inWorklist) {
+                s.inWorklist = true;
+                s.isActivate = true;
+                W.add(s);
+            }
             if (entityBlockPair.en instanceof register) {
                 register rs = (register) entityBlockPair.en;
                 if (rs.def!=null && !rs.def.inWorklist) {
