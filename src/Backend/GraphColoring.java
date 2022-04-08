@@ -110,7 +110,6 @@ public class GraphColoring {
 
     private void AddEdge(int u, int v) {
         if (!adjSet.contains(u * finalRegCount + v) && u != v) {
-            System.out.println("add edge"+u+" "+v);
             adjSet.add(u * finalRegCount + v);
             adjSet.add(v * finalRegCount + u);
             //u not in precolored
@@ -698,7 +697,6 @@ public class GraphColoring {
     }
 
     public void Main() {
-        System.out.println("in func " + asmFunc.funcName);
         livenessAnalysis.workInFunc(asmFunc);
         initialize();
         Build();
@@ -714,12 +712,7 @@ public class GraphColoring {
         if (spilledNodes.isEmpty()) {
             Replace();
         } else {
-            //System.out.println("*****************");
-            //new AsmPrinter(asmPg,System.out).print();
-            //System.out.println(spilledNodes);
             RewriteProgram();
-            //new AsmPrinter(asmPg,System.out).print();
-            //System.out.println("*****************");
             this.Main();
         }
     }

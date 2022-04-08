@@ -42,7 +42,19 @@ public class ret extends terminalStmt {
 
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
-        if (rs==value) value = en;
+        if (rs == value) value = en;
         return this;
+    }
+
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        if (value instanceof register) {
+            register rs = (register) value;
+            if (rs.def != null && !rs.def.inWorklist) {
+                rs.def.inWorklist = true;
+                rs.def.isActivate = true;
+                W.add(rs.def);
+            }
+        }
     }
 }

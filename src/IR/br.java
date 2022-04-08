@@ -68,6 +68,15 @@ public class br extends terminalStmt {
         return newBr;
     }
 
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        if (val!=null && !val.def.inWorklist) {
+            val.def.inWorklist = true;
+            val.def.isActivate = true;
+            W.add(val.def);
+        }
+    }
+
     public br(register val, block trueBranch, block falseBranch) {
         this.val = val;
         this.trueBranch = trueBranch;

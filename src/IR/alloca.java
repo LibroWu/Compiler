@@ -50,6 +50,11 @@ public class alloca extends statement {
     }
 
     @Override
+    public void activatePropagate(LinkedList<statement> W) {
+
+    }
+
+    @Override
     public String toString() {
         return allocaNumber + " " + rd;
     }

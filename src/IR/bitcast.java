@@ -42,6 +42,15 @@ public class bitcast extends statement{
         return this;
     }
 
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        if (rs.def!=null && !rs.def.inWorklist) {
+            rs.def.inWorklist = true;
+            rs.def.isActivate = true;
+            W.add(rs.def);
+        }
+    }
+
     public bitcast(register rd,register rs,IRType rdType,IRType rsType){
         this.rd = rd;
         this.rs = rs;

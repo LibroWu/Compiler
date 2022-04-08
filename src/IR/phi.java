@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class phi extends statement{
-
     public IRType rdType;
     public register rd;
     public LinkedList<entityBlockPair> entityBlockPairs = new LinkedList<>();
@@ -82,5 +81,19 @@ public class phi extends statement{
             if (entityBlockPair.en == rs) entityBlockPair.en = en;
         }
         return this;
+    }
+
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        for (entityBlockPair entityBlockPair : entityBlockPairs) {
+            if (entityBlockPair.en instanceof register) {
+                register rs = (register) entityBlockPair.en;
+                if (rs.def!=null && !rs.def.inWorklist) {
+                    rs.def.inWorklist = true;
+                    rs.def.isActivate = true;
+                    W.add(rs.def);
+                }
+            }
+        }
     }
 }

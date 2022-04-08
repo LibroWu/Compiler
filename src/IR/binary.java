@@ -71,6 +71,26 @@ public class binary extends statement{
         return this;
     }
 
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        if (rs1 instanceof register){
+             register rs = (register) rs1;
+             if (rs.def !=null && !rs.def.inWorklist) {
+                 rs.def.inWorklist = true;
+                 rs.def.isActivate = true;
+                 W.add(rs.def);
+             }
+        }
+        if (rs2 instanceof register){
+            register rs = (register) rs2;
+            if (rs.def !=null && !rs.def.inWorklist) {
+                rs.def.inWorklist = true;
+                rs.def.isActivate = true;
+                W.add(rs.def);
+            }
+        }
+    }
+
     public enum opTye {
         ADD,SUB,MUL,SDIV,MOD,AND,OR,XOR,ASHR,LSHR,SHL
     }

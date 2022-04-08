@@ -50,4 +50,21 @@ public class store extends user {
         if (resource == rs) resource = en;
         return this;
     }
+
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        if (target.def!=null && !target.def.inWorklist) {
+            target.def.inWorklist = true;
+            target.def.isActivate = true;
+            W.add(target.def);
+        }
+        if (resource instanceof register) {
+            register rs = (register) resource;
+            if (rs.def!=null && !rs.def.inWorklist) {
+                rs.def.inWorklist = true;
+                rs.def.isActivate = true;
+                W.add(rs.def);
+            }
+        }
+    }
 }

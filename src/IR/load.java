@@ -47,4 +47,13 @@ public class load extends user {
         if (rs == ptr) throw new RuntimeException("load pointer can not be converted to constant");
         return this;
     }
+
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        if (ptr.def!=null && !ptr.def.inWorklist) {
+            ptr.def.inWorklist = true;
+            ptr.def.isActivate = true;
+            W.add(ptr.def);
+        }
+    }
 }

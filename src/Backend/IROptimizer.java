@@ -1,6 +1,5 @@
 package Backend;
 
-import Assembly.Instr.Li;
 import IR.*;
 
 import java.util.*;
@@ -24,14 +23,18 @@ public class IROptimizer {
     /* ------------------------------------ */
     private LinkedList<block> postOrderSequence;
     private HashSet<block> blockMark;
+
     private void calcPostOrderSequence(block b) {
         blockMark.add(b);
+        b.postDF = new HashSet<>();
+        b.ctrlSuccessors = new HashSet<>();
+        b.ctrlPredecessor = new HashSet<>();
         for (block predecessor : b.predecessor) {
             if (!blockMark.contains(predecessor))
                 calcPostOrderSequence(predecessor);
         }
         postOrderSequence.add(b);
-        b.ctrlIDom = null;
+        b.postIDom = null;
         b.ctrlDepth = block.MaxDepth;
     }
 
@@ -41,10 +44,10 @@ public class IROptimizer {
             b1 = b2;
             b2 = tmp;
         }
-        while (b1.ctrlDepth > b2.ctrlDepth) b1 = b1.ctrlIDom;
+        while (b1.ctrlDepth > b2.ctrlDepth) b1 = b1.postIDom;
         while (b1 != b2) {
-            b1 = b1.ctrlIDom;
-            b2 = b2.ctrlIDom;
+            b1 = b1.postIDom;
+            b2 = b2.postIDom;
         }
         return b1;
     }
@@ -52,7 +55,8 @@ public class IROptimizer {
     public void calcDominateTree(funcDef f) {
         postOrderSequence = new LinkedList<>();
         calcPostOrderSequence(f.returnBlock);
-        f.returnBlock.ctrlIDom = f.returnBlock;
+        System.out.println(postOrderSequence);
+        f.returnBlock.postIDom = f.returnBlock;
         f.returnBlock.ctrlDepth = 0;
         boolean Changed = true;
         while (Changed) {
@@ -63,19 +67,19 @@ public class IROptimizer {
             while (iter.hasPrevious()) {
                 block b = iter.previous(), new_IDom = null;
                 for (block successor : b.successors) {
-                    if (successor.ctrlDepth!= block.MaxDepth) {
+                    if (successor.ctrlDepth != block.MaxDepth) {
                         new_IDom = successor;
                         break;
                     }
                 }
                 for (block successor : b.successors) {
-                    if (successor.ctrlIDom != null) {
+                    if (successor.postIDom != null) {
                         new_IDom = intersect(successor, new_IDom);
                     }
                 }
-                if (b.ctrlIDom != new_IDom) {
+                if (b.postIDom != new_IDom) {
                     b.ctrlDepth = new_IDom.ctrlDepth + 1;
-                    b.ctrlIDom = new_IDom;
+                    b.postIDom = new_IDom;
                     Changed = true;
                 }
             }
@@ -85,25 +89,167 @@ public class IROptimizer {
     private void calcDominanceFrontier() {
         for (block b : postOrderSequence) {
             if (b.successors.size() > 1) {
-                for (block p : b.predecessor) {
-                    block runner = p;
-                    while (runner != b.IDom) {
-                        runner.DominatorFrontier.add(b);
-                        runner = runner.IDom;
+                for (block s : b.successors) {
+                    block runner = s;
+                    while (runner != b.postIDom) {
+                        runner.postDF.add(b);
+                        runner = runner.postIDom;
                     }
                 }
             }
+        }
+        for (block b : postOrderSequence) {
+            System.out.println("DF " + b + " " + b.postDF);
+        }
+    }
+
+    private void buildCDG() {
+        for (block b : postOrderSequence) {
+            for (block f : b.postDF) {
+                f.ctrlSuccessors.add(b);
+                b.ctrlPredecessor.add(f);
+            }
+        }
+        for (block b : postOrderSequence) {
+            System.out.println(b + " " + b.postIDom + " " + b.ctrlSuccessors);
         }
     }
 
     public void RunADCE(funcDef f) {
         f.entryBlock = new block(0);
+        f.entryBlock.blockIndex = -16;
         f.entryBlock.successors.add(f.rootBlock);
         f.entryBlock.successors.add(f.returnBlock);
         f.rootBlock.predecessor.add(f.entryBlock);
         f.returnBlock.predecessor.add(f.entryBlock);
         blockMark = new HashSet<>();
         calcDominateTree(f);
+        calcDominanceFrontier();
+        buildCDG();
+        // belong to buildCDG
+        f.entryBlock.ctrlSuccessors.add(f.returnBlock);
+        f.returnBlock.ctrlPredecessor.add(f.entryBlock);
+        LinkedList<statement> W = new LinkedList<>();
+        for (block B : postOrderSequence) {
+            B.isActivate = false;
+            for (statement s = B.headStatement; s != null; s = s.next) {
+                if (s instanceof store || s instanceof call || s instanceof ret) {
+                    W.add(s);
+                    s.inWorklist = true;
+                    s.isActivate = true;
+                } else {
+                    s.inWorklist = false;
+                    s.isActivate = false;
+                }
+            }
+        }
+        while (!W.isEmpty()) {
+            statement s = W.pop();
+            s.activatePropagate(W);
+            if (!s.parentBlock.isActivate) {
+                s.parentBlock.isActivate = true;
+                for (block p : s.parentBlock.ctrlPredecessor) {
+                    if (p == f.entryBlock) continue;
+                    if (!p.tailStatement.inWorklist) {
+                        p.tailStatement.inWorklist = true;
+                        p.tailStatement.isActivate = true;
+                        W.add(p.tailStatement);
+                    }
+                }
+            }
+        }
+        for (block BB : postOrderSequence) {
+            System.out.println("block "+BB+" "+BB.isActivate);
+            for (statement s=BB.headStatement;s!=null;s=s.next) {
+                System.out.println(s+" "+s.isActivate);
+            }
+        }
+        LinkedList<block> bfsQue = new LinkedList<>();
+        HashSet<block> surviveBlock = new HashSet<>();
+        for (block CS : f.entryBlock.ctrlSuccessors) {
+            if (CS.isActivate) {
+                bfsQue.add(CS);
+                surviveBlock.add(CS);
+            }
+        }
+        while (!bfsQue.isEmpty()) {
+            block BB = bfsQue.pop();
+            BB.predecessor.clear();
+            BB.successors.clear();
+            if (BB.tailStatement instanceof br) {
+                br BI = (br) BB.tailStatement;
+                if (BI.val == null) {
+                    if (BI.trueBranch.isActivate) {
+                        BI.isActivate = true;
+                        if (!surviveBlock.contains(BI.trueBranch)) {
+                            bfsQue.add(BI.trueBranch);
+                            surviveBlock.add(BB);
+                        }
+                    } else {
+                        BI.isActivate = true;
+                        BI.trueBranch = f.returnBlock;
+                        throw new RuntimeException("error: activate block jump to inactivate block");
+                    }
+                } else {
+                    if (BI.trueBranch.isActivate) {
+                        BI.isActivate = true;
+                        if (!surviveBlock.contains(BI.trueBranch)) {
+                            bfsQue.add(BI.trueBranch);
+                            surviveBlock.add(BI.trueBranch);
+                        }
+                        if (BI.falseBranch.isActivate) {
+                            if (!surviveBlock.contains(BI.falseBranch)) {
+                                bfsQue.add(BI.falseBranch);
+                                surviveBlock.add(BI.falseBranch);
+                            }
+                        } else {
+                            br newBI = new br(null,BI.trueBranch,null);
+                            newBI.isActivate = true;
+                            BB.replace(BI,newBI);
+                        }
+                    } else if (BI.falseBranch.isActivate) {
+                        BI.isActivate = true;
+                        if (!surviveBlock.contains(BI.falseBranch)) {
+                            bfsQue.add(BI.falseBranch);
+                            surviveBlock.add(BI.falseBranch);
+                        }
+                        br newBI = new br(null,BI.falseBranch,null);
+                        newBI.isActivate = true;
+                        BB.replace(BI,newBI);
+                    } else {
+                        BI.isActivate = true;
+                        BI.val = null;
+                        BI.trueBranch = f.returnBlock;
+                        BI.falseBranch = null;
+                        throw new RuntimeException("error: activate block jump to two inactivate blocks");
+                    }
+                }
+            }
+            for (statement s = BB.headStatement; s != null; s = s.next) {
+                if (!s.isActivate) BB.delete_Statement(s);
+            }
+        }
+        for (block survived : surviveBlock) {
+            if (survived.tailStatement instanceof br) {
+                br BI = (br) survived.tailStatement;
+                if (BI.val==null) {
+                    survived.successors.add(BI.trueBranch);
+                    BI.trueBranch.predecessor.add(survived);
+                } else {
+                    survived.successors.add(BI.trueBranch);
+                    BI.trueBranch.predecessor.add(survived);
+                    survived.successors.add(BI.falseBranch);
+                    BI.falseBranch.predecessor.add(survived);
+                }
+            }
+        }
+        for (block survived : surviveBlock) {
+            if (survived.predecessor.size()==0) {
+                f.rootBlock = survived;
+                break;
+            }
+        }
+        System.out.println(surviveBlock);
     }
 
     /* ------------------------ */
@@ -146,10 +292,10 @@ public class IROptimizer {
     private block shrinkChain(block bl, block BB) {
         if (bl.visited) return bl;
         BB.visited = true;
-        if (bl.headStatement==bl.tailStatement && bl.tailStatement instanceof br){
+        if (bl.headStatement == bl.tailStatement && bl.tailStatement instanceof br) {
             br BI = (br) bl.tailStatement;
-            if (BI.val==null) {
-                BI.trueBranch = shrinkChain(BI.trueBranch,bl);
+            if (BI.val == null) {
+                BI.trueBranch = shrinkChain(BI.trueBranch, bl);
                 for (phi phi : BI.trueBranch.Phis) {
                     if (phi.removed) continue;
                     for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
@@ -201,12 +347,12 @@ public class IROptimizer {
                     BI.trueBranch = shrinkChain(BI.trueBranch, BB);
                     BI.falseBranch = shrinkChain(BI.falseBranch, BB);
                     if (BI.trueBranch == BI.falseBranch) {
-                        BB.replace(BB.tailStatement,new br(null,BI.trueBranch,null));
+                        BB.replace(BB.tailStatement, new br(null, BI.trueBranch, null));
                         for (phi phi : BI.trueBranch.Phis) {
                             if (phi.removed) continue;
-                            boolean flag =false;
+                            boolean flag = false;
                             for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
-                                if (entityBlockPair.bl==BB) flag = true;
+                                if (entityBlockPair.bl == BB) flag = true;
                             }
                             if (!flag) continue;
                             flag = false;
@@ -282,6 +428,7 @@ public class IROptimizer {
 
     public void run() {
         pg.funcDefs.forEach(this::RunCP);
+        new IRPrinter(System.out).visitProgram(pg);
         pg.funcDefs.forEach(this::RunADCE);
         pg.funcDefs.forEach(this::emptyIRBlockRemove);
     }

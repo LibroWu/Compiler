@@ -61,4 +61,18 @@ public class call extends statement{
         }
         return this;
     }
+
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        for (entityTypePair parameter : parameters) {
+            if (parameter.en instanceof register) {
+                register rs = (register) parameter.en;
+                if (rs.def!=null && !rs.def.inWorklist) {
+                    rs.def.inWorklist = true;
+                    rs.def.isActivate = true;
+                    W.add(rs.def);
+                }
+            }
+        }
+    }
 }

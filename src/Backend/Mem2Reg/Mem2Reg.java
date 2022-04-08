@@ -1,6 +1,5 @@
 package Backend.Mem2Reg;
 
-import Assembly.Instr.Li;
 import IR.*;
 
 import java.util.*;
@@ -22,7 +21,7 @@ public class Mem2Reg {
 
     private void calcPostOrderSequence(block b) {
         b.visited = true;
-        b.DominatorFrontier = new HashSet<>();
+        b.DF = new HashSet<>();
         for (block successor : b.successors) {
             successor.predecessor.add(b);
             if (!successor.visited)
@@ -86,7 +85,7 @@ public class Mem2Reg {
                 for (block p : b.predecessor) {
                     block runner = p;
                     while (runner != b.IDom) {
-                        runner.DominatorFrontier.add(b);
+                        runner.DF.add(b);
                         runner = runner.IDom;
                     }
                 }
@@ -265,7 +264,7 @@ public class Mem2Reg {
             LinkedList<block> W = new LinkedList<>(Info.DefiningBlocks);
             while (!W.isEmpty()) {
                 block n = W.pop();
-                for (block Y : n.DominatorFrontier)
+                for (block Y : n.DF)
                     if (!phiExist.contains(Y)) {
                         phi PI = new phi(new register(counter--), AI.irType);
                         PI.creator = AI;

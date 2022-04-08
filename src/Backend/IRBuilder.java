@@ -39,7 +39,7 @@ public class IRBuilder implements ASTVisitor {
         this.idToFuncDef = idToFuncDef;
         currentScope = this.gScope = gScope;
         globalInitializer.returnType = voidIrType;
-        globalInitializer.rootBlock = new block(loopDepth);
+        globalInitializer.returnBlock = globalInitializer.rootBlock = new block(loopDepth);
         globalInitializer.funcId = "_GLOBAL_";
         voidIrType.isVoid = true;
         set_declares();

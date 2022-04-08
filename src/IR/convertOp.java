@@ -3,7 +3,7 @@ package IR;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class convertOp extends statement{
+public class convertOp extends statement {
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
         if (ValReplace.containsKey(rs)) rs = ValReplace.get(rs);
@@ -35,19 +35,32 @@ public class convertOp extends statement{
 
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
-        if (this.rs==rs) this.rs = en;
+        if (this.rs == rs) this.rs = en;
         return this;
     }
 
-    public enum convertType{
-        TRUNC,ZEXT,SEXT
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        if (rs instanceof register) {
+            register R = (register) rs;
+            if (R.def!=null && !R.def.inWorklist) {
+                R.def.inWorklist = true;
+                R.def.isActivate = true;
+                W.add(R.def);
+            }
+        }
     }
+
+    public enum convertType {
+        TRUNC, ZEXT, SEXT
+    }
+
     public register rd;
     public entity rs;
     public convertType convert;
-    public IRType rsType,rdType;
+    public IRType rsType, rdType;
 
-    public convertOp(register rd,entity rs,convertType convert,IRType rdType,IRType rsType) {
+    public convertOp(register rd, entity rs, convertType convert, IRType rdType, IRType rsType) {
         this.rd = rd;
         this.rs = rs;
         this.convert = convert;

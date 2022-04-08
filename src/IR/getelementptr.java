@@ -63,4 +63,29 @@ public class getelementptr extends statement {
         if (locator2 == rs) locator2 = en;
         return this;
     }
+
+    @Override
+    public void activatePropagate(LinkedList<statement> W) {
+        if (rs.def!=null && !rs.def.inWorklist) {
+            rs.def.inWorklist = true;
+            rs.def.isActivate = true;
+            W.add(rs.def);
+        }
+        if (locator1 instanceof register) {
+            register R = (register) locator1;
+            if (R.def!=null && !R.def.inWorklist) {
+                R.def.inWorklist = true;
+                R.def.isActivate = true;
+                W.add(R.def);
+            }
+        }
+        if (locator2 instanceof register) {
+            register R = (register) locator2;
+            if (R.def!=null && !R.def.inWorklist) {
+                R.def.inWorklist = true;
+                R.def.isActivate = true;
+                W.add(R.def);
+            }
+        }
+    }
 }
