@@ -35,7 +35,7 @@ public class getelementptr extends statement {
 
     @Override
     public void analyseUseDef() {
-        if (rs.label==null)rs.uses.add(this);
+        if (rs.label == null) rs.uses.add(this);
         if (locator1 instanceof register) {
             register loc = (register) locator1;
             loc.uses.add(this);
@@ -59,21 +59,29 @@ public class getelementptr extends statement {
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
         if (this.rs == rs) throw new RuntimeException("getelementptr's rs can not be converted to constant");
-        if (locator1 == rs) locator1 = en;
-        if (locator2 == rs) locator2 = en;
+        boolean flag = false;
+        if (locator1 == rs) {
+            locator1 = en;
+            flag = true;
+        }
+        if (locator2 == rs) {
+            locator2 = en;
+            flag = true;
+        }
+        if (flag && en instanceof register) ((register) en).uses.add(this);
         return this;
     }
 
     @Override
     public void activatePropagate(LinkedList<statement> W) {
-        if (rs.def!=null && !rs.def.inWorklist) {
+        if (rs.def != null && !rs.def.inWorklist) {
             rs.def.inWorklist = true;
             rs.def.isActivate = true;
             W.add(rs.def);
         }
         if (locator1 instanceof register) {
             register R = (register) locator1;
-            if (R.def!=null && !R.def.inWorklist) {
+            if (R.def != null && !R.def.inWorklist) {
                 R.def.inWorklist = true;
                 R.def.isActivate = true;
                 W.add(R.def);
@@ -81,7 +89,7 @@ public class getelementptr extends statement {
         }
         if (locator2 instanceof register) {
             register R = (register) locator2;
-            if (R.def!=null && !R.def.inWorklist) {
+            if (R.def != null && !R.def.inWorklist) {
                 R.def.inWorklist = true;
                 R.def.isActivate = true;
                 W.add(R.def);

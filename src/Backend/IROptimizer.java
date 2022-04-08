@@ -29,7 +29,7 @@ public class IROptimizer {
         b.postDF = new HashSet<>();
         b.ctrlSuccessors = new HashSet<>();
         b.ctrlPredecessor = new HashSet<>();
-        b.inStack = false;
+        b.falseEdgeVisited = b.trueEdgeVisited = false;
         b.nextAlive = null;
         b.deadFrontier = null;
         b.deadPredecessors = new HashSet<>();
@@ -120,33 +120,43 @@ public class IROptimizer {
     }
 
     private block findDeadFrontier(block B) {
+        System.out.println("find DeadFrontier "+B);
         if (B.deadFrontier != null) return B.deadFrontier;
-        if (B.inStack) return null;
-        B.inStack = true;
         br BI = (br) B.tailStatement;
-        if (BI.trueBranch.isActivate) {
-            B.deadFrontier = B;
-            B.nextAlive = BI.trueBranch;
-            BI.trueBranch.deadPredecessors.add(B);
-            B.alivePredecessors = new LinkedList<>();
-            return B;
+        if (!B.trueEdgeVisited) {
+            B.trueEdgeVisited = true;
+            if (BI.trueBranch.isActivate) {
+                B.deadFrontier = B;
+                B.nextAlive = BI.trueBranch;
+                BI.trueBranch.deadPredecessors.add(B);
+                B.alivePredecessors = new LinkedList<>();
+                return B;
+            }
+            B.deadFrontier = findDeadFrontier(BI.trueBranch);
+            if (B.deadFrontier != null) return B.deadFrontier;
         }
-        B.deadFrontier = findDeadFrontier(BI.trueBranch);
-        if (B.deadFrontier != null) return B.deadFrontier;
-        if (BI.falseBranch == null) throw new RuntimeException("can not find Dead Frontier!");
-        if (BI.falseBranch.isActivate) {
-            B.deadFrontier = B;
-            B.nextAlive = BI.falseBranch;
-            BI.trueBranch.deadPredecessors.add(B);
-            B.alivePredecessors = new LinkedList<>();
-            return B;
+        if (BI.falseBranch == null) {
+            return null;
+            //throw new RuntimeException("can not find Dead Frontier!");
         }
-        B.deadFrontier = findDeadFrontier(BI.falseBranch);
-        if (B.deadFrontier != null) return B.deadFrontier;
-        throw new RuntimeException("can not find Dead Frontier!!");
+        if (!B.falseEdgeVisited) {
+            B.falseEdgeVisited = true;
+            if (BI.falseBranch.isActivate) {
+                B.deadFrontier = B;
+                B.nextAlive = BI.falseBranch;
+                BI.trueBranch.deadPredecessors.add(B);
+                B.alivePredecessors = new LinkedList<>();
+                return B;
+            }
+            B.deadFrontier = findDeadFrontier(BI.falseBranch);
+            if (B.deadFrontier != null) return B.deadFrontier;
+        }
+        return null;
+        //throw new RuntimeException("can not find Dead Frontier!!");
     }
 
     public void RunADCE(funcDef f) {
+        System.out.println("in func "+f.funcId);
         f.entryBlock = new block(0);
         f.entryBlock.blockIndex = -16;
         f.entryBlock.successors.add(f.rootBlock);
@@ -191,7 +201,6 @@ public class IROptimizer {
             }
         }
         // debug print
-        System.out.println("in func "+f.funcId);
         for (block BB : postOrderSequence) {
             System.out.println("block " + BB + " " + BB.isActivate);
             /*for (statement s = BB.headStatement; s != null; s = s.next) {
@@ -227,6 +236,7 @@ public class IROptimizer {
                 }
             }
         }
+        if (!f.rootBlock.isActivate) f.rootBlock = f.rootBlock.deadFrontier.nextAlive;
         // rewrite phi and clear predecessors and successors
         for (block BB : surviveBlock) {
             BB.successors.clear();
@@ -460,7 +470,8 @@ public class IROptimizer {
             //if (s.parentBlock!=null) flag = s.parentBlock.reachable;
             //System.out.println("***"+s.parentBlock+" "+flag);
             s.inWorklist = false;
-            if (!s.removed && s.parentBlock.reachable && s.isResConst()) s.removeStmt(W);
+            if (!s.removed && s.parentBlock.reachable && s.isResConst())
+                s.removeStmt(W);
         }
     }
 
@@ -483,8 +494,8 @@ public class IROptimizer {
     }
 
     public void run() {
-        pg.funcDefs.forEach(this::RunCP);
         new IRPrinter(System.out).visitProgram(pg);
+        pg.funcDefs.forEach(this::RunCP);
         pg.funcDefs.forEach(this::RunADCE);
         //pg.funcDefs.forEach(this::emptyIRBlockRemove);
     }

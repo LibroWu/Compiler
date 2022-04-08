@@ -27,7 +27,7 @@ public class block {
     public block deadFrontier = null,nextAlive = null;
     public LinkedList<block> alivePredecessors = null;
     public HashSet<block> deadPredecessors = null;
-    public boolean inStack = false;
+    public boolean trueEdgeVisited = false,falseEdgeVisited = false;
     // for debug
     public int blockIndex = 0;
 

@@ -47,7 +47,10 @@ public class store extends user {
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
         if (target == rs) throw new RuntimeException("target can not be converted to constant");
-        if (resource == rs) resource = en;
+        if (resource == rs) {
+            resource = en;
+            if (en instanceof register) ((register) en).uses.add(this);
+        }
         return this;
     }
 

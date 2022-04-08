@@ -46,6 +46,7 @@ public class br extends terminalStmt {
         statement newBr = this;
         if (en instanceof register) {
             val = (register) en;
+            ((register) en).uses.add(this);
         } else if (rs == val) {
             constant con = (constant) en;
             block Parent = parentBlock;

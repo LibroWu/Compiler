@@ -42,7 +42,10 @@ public class ret extends terminalStmt {
 
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
-        if (rs == value) value = en;
+        if (rs == value) {
+            value = en;
+            if (en instanceof register) ((register) en).uses.add(this);
+        }
         return this;
     }
 

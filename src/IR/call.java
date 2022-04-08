@@ -56,8 +56,15 @@ public class call extends statement{
 
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
+        boolean flag =false;
         for (entityTypePair parameter : parameters) {
-            if (parameter.en == rs) parameter.en = en;
+            if (parameter.en == rs) {
+                parameter.en = en;
+                flag = true;
+            }
+        }
+        if (flag && en instanceof register) {
+            ((register) en).uses.add(this);
         }
         return this;
     }

@@ -77,9 +77,14 @@ public class phi extends statement{
 
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
+        boolean flag = false;
         for (entityBlockPair entityBlockPair : entityBlockPairs) {
-            if (entityBlockPair.en == rs) entityBlockPair.en = en;
+            if (entityBlockPair.en == rs) {
+                entityBlockPair.en = en;
+                flag = true;
+            }
         }
+        if (flag && en instanceof register) ((register) en).uses.add(this);
         return this;
     }
 

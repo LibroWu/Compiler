@@ -36,6 +36,7 @@ public class convertOp extends statement {
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
         if (this.rs == rs) this.rs = en;
+        if (en instanceof register) ((register) en).uses.add(this);
         return this;
     }
 

@@ -58,8 +58,16 @@ public class icmp extends statement{
 
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
-        if (rs1==rs) rs1 = en;
-        if (rs2==rs) rs2 = en;
+        boolean flag = false;
+        if (rs1==rs) {
+            rs1 = en;
+            flag = true;
+        }
+        if (rs2==rs) {
+            rs2 = en;
+            flag = true;
+        }
+        if (flag && en instanceof register) ((register) en).uses.add(this);
         return this;
     }
 
