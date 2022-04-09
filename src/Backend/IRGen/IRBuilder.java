@@ -1301,6 +1301,7 @@ public class IRBuilder implements ASTVisitor {
             //currentBlock.push_back(new getelementptr(ptrReg,(register) it.postfixExpr.rd,ptrIRType,it.Expr.rd,constZero));
             it.irType = new IRType(ptrIRType);
             it.irType.ptrNum--;
+            if (it.irType.ptrNum==1 && it.irType.cDef!=null && it.irType.cDef.structName.equals("string")) it.irType.isString = true;
             currentBlock.push_back(new load((register) it.rd, ptrReg, ptrIRType));
             it.idReg = ptrReg;
         } else {
