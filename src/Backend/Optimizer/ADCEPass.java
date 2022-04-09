@@ -186,6 +186,8 @@ public class ADCEPass {
                 }
             }
         }
+        f.rootBlock.isActivate = true;
+        f.rootBlock.tailStatement.isActivate = true;
         // debug print
         for (block BB : postOrderSequence) {
             System.out.println("block " + BB + " " + BB.isActivate);

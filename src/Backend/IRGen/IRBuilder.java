@@ -301,8 +301,9 @@ public class IRBuilder implements ASTVisitor {
                             currentFunc = new funcDef();
                             currentFunc.returnType = voidIrType;
                             currentFunc.funcId = "_global_var_init." + initFuncCounter++;
-                            currentFunc.returnBlock=currentFunc.rootBlock = currentBlock;
+                            currentFunc.rootBlock = currentBlock;
                             declaratorNode.expr.accept(this);
+                            currentFunc.returnBlock = currentBlock;
                             if (declaratorNode.expr.rd instanceof constant) en = declaratorNode.expr.rd;
                             else {
                                 if (tmpIrType.ptrNum > 0) en = constVoid;

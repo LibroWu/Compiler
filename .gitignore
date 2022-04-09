@@ -4,3 +4,5 @@ gen
 *out
 *.dot
 *.png
+test*
+runContain

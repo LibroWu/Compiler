@@ -444,6 +444,26 @@ public class Mem2Reg {
                     globalToCur.keySet().removeAll(CI.funcAssociated.globalVariableUsed);
                 }
             }
+            globalToCur.clear();
+            ListIterator<statement> iter = BB.globalAssociated.listIterator(BB.globalAssociated.size());
+            while (iter.hasPrevious()) {
+                statement stmt = iter.previous();
+                if (stmt instanceof store) {
+                    store SI = (store) stmt;
+                    if (globalToCur.containsKey(SI.target)) {
+                        BB.delete_Statement(SI);
+                    } else {
+                        globalToCur.put(SI.target, null);
+                    }
+                } else if (stmt instanceof load){
+                    load LI = (load) stmt;
+                    if (LI.removed) continue;
+                    globalToCur.remove(LI.ptr);
+                } else if (stmt instanceof call) {
+                    call CI = (call)stmt;
+                    globalToCur.keySet().removeAll(CI.funcAssociated.globalVariableUsed);
+                }
+            }
             for (block successor : BB.successors)
                 if (!blockVisited.contains(successor)) {
                     blockVisited.add(successor);
@@ -454,6 +474,6 @@ public class Mem2Reg {
 
     public void run() {
         pg.funcDefs.forEach(this::runInFunc);
-        pg.funcDefs.forEach(this::promoteGlobalVariable);
+        //pg.funcDefs.forEach(this::promoteGlobalVariable);
     }
 }

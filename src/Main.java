@@ -8,6 +8,7 @@ import Backend.Mem2Reg.Mem2Reg;
 import Backend.Optimizer.IROptimizer;
 import Backend.RegisterAllocation.LivenessAnalysis;
 import Backend.RegisterAllocation.RegAlloc;
+import Backend.RegisterAllocation.RegAlloc_Basic;
 import IR.*;
 import Assembly.*;
 import Frontend.ASTBuilder;
@@ -33,7 +34,7 @@ public class Main {
         PrintStream out_asm;
         if (args.length>0) {
             input = System.in;
-            out_asm = new PrintStream("output.s");
+            out_asm = new PrintStream("test.s");
         } else {
             // debug
             input = new FileInputStream("test\\test.mx");
@@ -75,15 +76,15 @@ public class Main {
             program pg = new program();
             new IRBuilder(pg, gScope, idToDef, idToFuncDef).visit(ASTRoot);
             new IRPrinter(System.out).visitProgram(pg);
-            new Mem2Reg(pg).run();
+            //new Mem2Reg(pg).run();
             new IRPrinter(System.out).visitProgram(pg);
-            if (optimize) new IROptimizer(pg).run();
+            //if (optimize) new IROptimizer(pg).run();
             new IRPrinter(out_llvm).visitProgram(pg);
             AsmPg asmPg = new AsmPg();
             new InstrSelector(asmPg).visitProgram(pg);
             new LivenessAnalysis(asmPg).work();
-            new RegAlloc(asmPg).work();
-            //new RegAlloc_Basic(asmPg).work();
+            //new RegAlloc(asmPg).work();
+            new RegAlloc_Basic(asmPg).work();
             new AsmOptimizer(asmPg).work();
             new AsmPrinter(asmPg, out_asm).print();
         } catch (error er) {
