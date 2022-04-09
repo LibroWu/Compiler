@@ -1,5 +1,6 @@
-package Backend;
+package Backend.Optimizer;
 
+import Backend.Pass;
 import IR.*;
 
 import javax.swing.plaf.InsetsUIResource;
@@ -9,7 +10,7 @@ import java.util.ListIterator;
 //todo: remove empty block
 //todo: remove dead code
 //todo: calc const expression
-public class Optimizer_Base implements Pass {
+public class asmOptimizer_Base implements Pass {
     private final HashSet<register> hasUsedReg = new HashSet<>();
 
     @Override

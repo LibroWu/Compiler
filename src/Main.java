@@ -1,6 +1,13 @@
 import AST.RootNode;
-import Backend.*;
+import Backend.CodeGen.AsmOptimizer;
+import Backend.CodeGen.AsmPrinter;
+import Backend.CodeGen.InstrSelector;
+import Backend.IRGen.IRBuilder;
+import Backend.IRGen.IRPrinter;
 import Backend.Mem2Reg.Mem2Reg;
+import Backend.Optimizer.IROptimizer;
+import Backend.RegisterAllocation.LivenessAnalysis;
+import Backend.RegisterAllocation.RegAlloc;
 import IR.*;
 import Assembly.*;
 import Frontend.ASTBuilder;

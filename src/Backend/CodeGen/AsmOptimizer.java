@@ -1,4 +1,4 @@
-package Backend;
+package Backend.CodeGen;
 
 import Assembly.AsmBlock;
 import Assembly.AsmFunc;

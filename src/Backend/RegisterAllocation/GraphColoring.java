@@ -1,4 +1,4 @@
-package Backend;
+package Backend.RegisterAllocation;
 
 import Assembly.AsmBlock;
 import Assembly.AsmFunc;

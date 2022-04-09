@@ -1,5 +1,6 @@
-package Backend;
+package Backend.IRGen;
 
+import Backend.Pass;
 import IR.*;
 
 import java.io.PrintStream;

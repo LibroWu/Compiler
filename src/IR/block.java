@@ -21,8 +21,10 @@ public class block {
     public int loopDepth;
     public String comment = null;
     public boolean visited = false, contributesToPhi = false, isActivate = false;
+    // for mem2reg
     static public int MaxDepth = 100000000;
     public int depth = MaxDepth, ctrlDepth = MaxDepth;
+    public LinkedList<statement> globalAssociated = null;
     // for adce
     public block deadFrontier = null,nextAlive = null;
     public LinkedList<block> alivePredecessors = null;

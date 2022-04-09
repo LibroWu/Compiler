@@ -60,7 +60,7 @@ public class Mem2Reg {
             while (iter.hasPrevious()) {
                 block b = iter.previous(), new_IDom = null;
                 for (block predecessor : b.predecessor) {
-                    if (predecessor.depth!= block.MaxDepth) {
+                    if (predecessor.depth != block.MaxDepth) {
                         new_IDom = predecessor;
                         break;
                     }
@@ -223,6 +223,7 @@ public class Mem2Reg {
             RegToAlloca.put(AI.rd, AI);
         }
         for (block BB : postOrderSequence) {
+            BB.globalAssociated = new LinkedList<>();
             for (statement stmt = BB.headStatement; stmt != null; stmt = stmt.next) {
                 if (stmt instanceof user) {
                     if (stmt instanceof store) {
@@ -230,13 +231,21 @@ public class Mem2Reg {
                         if (RegToAlloca.containsKey(SI.target)) {
                             RegToAlloca.get(SI.target).users.add(SI);
                         }
+                        if (SI.target.label != null) {
+                            f.globalVariableUsed.add(SI.target);
+                            BB.globalAssociated.add(SI);
+                        }
                     } else {
                         load LI = (load) stmt;
                         if (RegToAlloca.containsKey(LI.ptr)) {
                             RegToAlloca.get(LI.ptr).users.add(LI);
                         }
+                        if (LI.ptr.label != null) {
+                            f.globalVariableUsed.add(LI.ptr);
+                            BB.globalAssociated.add(LI);
+                        }
                     }
-                }
+                } else if (stmt instanceof call) BB.globalAssociated.add(stmt);
             }
         }
 
@@ -368,7 +377,83 @@ public class Mem2Reg {
         removeDeadStmts();
     }
 
+    private void analysisUseDef(funcDef f) {
+        for (register parameterReg : f.parameterRegs) {
+            parameterReg.uses = new LinkedList<>();
+        }
+        LinkedList<statement> W = new LinkedList<>(f.allocas);
+        for (IR.alloca alloca : f.allocas) {
+            alloca.init();
+        }
+        LinkedList<block> bfsQue = new LinkedList<>(),que = new LinkedList<>();
+        HashSet<block> blockVisited = new HashSet<>();
+        bfsQue.add(f.rootBlock);
+        while (!bfsQue.isEmpty()) {
+            block BB = bfsQue.pop();
+            BB.reachable = true;
+            que.add(BB);
+            for (statement s = BB.headStatement; s != null; s = s.next) {
+                W.add(s);
+                s.init();
+            }
+            for (block successor : BB.successors) {
+                if (!blockVisited.contains(successor)) {
+                    blockVisited.add(successor);
+                    bfsQue.add(successor);
+                }
+            }
+        }
+        for (statement s : W) {
+            if (!s.parentBlock.reachable) continue;
+            s.analyseUseDef();
+        }
+        for (block BB : que) {
+            BB.reachable = false;
+        }
+    }
+
+    // remove redundancy load in single block
+    private void promoteGlobalVariable(funcDef f) {
+        analysisUseDef(f);
+        LinkedList<block> bfsQue = new LinkedList<>();
+        HashSet<block> blockVisited = new HashSet<>();
+        // global to current value
+        HashMap<register,entity> globalToCur =  new HashMap<>();
+        bfsQue.add(f.rootBlock);
+        blockVisited.add(f.rootBlock);
+        while (!bfsQue.isEmpty()) {
+            block BB = bfsQue.pop();
+            globalToCur.clear();
+            for (statement stmt : BB.globalAssociated) {
+                if (stmt instanceof store) {
+                    store SI = (store) stmt;
+                    globalToCur.put(SI.target,SI.resource);
+                } else if (stmt instanceof load){
+                    load LI = (load) stmt;
+                    if (globalToCur.containsKey(LI.ptr)) {
+                        entity en = globalToCur.get(LI.ptr);
+                        for (statement use : LI.rd.uses) {
+                            use.replaceRegWithEntity(LI.rd,en);
+                        }
+                        BB.delete_Statement(LI);
+                    } else {
+                        globalToCur.put(LI.ptr,LI.rd);
+                    }
+                } else if (stmt instanceof call) {
+                    call CI = (call)stmt;
+                    globalToCur.keySet().removeAll(CI.funcAssociated.globalVariableUsed);
+                }
+            }
+            for (block successor : BB.successors)
+                if (!blockVisited.contains(successor)) {
+                    blockVisited.add(successor);
+                    bfsQue.add(successor);
+                }
+        }
+    }
+
     public void run() {
         pg.funcDefs.forEach(this::runInFunc);
+        pg.funcDefs.forEach(this::promoteGlobalVariable);
     }
 }

@@ -1,4 +1,4 @@
-package Backend;
+package Backend.IRGen;
 
 import AST.*;
 
@@ -32,6 +32,8 @@ public class IRBuilder implements ASTVisitor {
     private register lastFuncCaller = null;
     private IRType lastFuncCallerIRType = null;
     private int loopDepth = 0, iterCount = 0, selectCount = 0;
+    // for builtin call's association
+    private funcDef builtinFunc = new funcDef();
 
     public IRBuilder(program pg, globalScope gScope, HashMap<String, classDef> idToDef, HashMap<String, funcDef> idToFuncDef) {
         this.pg = pg;
@@ -142,7 +144,7 @@ public class IRBuilder implements ASTVisitor {
     public void visit(RootNode it) {
         it.declList.forEach(dc -> dc.accept(this));
         if (initFuncCounter > 0) {
-            mainFunc.rootBlock.push_front(new call(null, voidIrType, "_GLOBAL_"));
+            mainFunc.rootBlock.push_front(new call(null, voidIrType, "_GLOBAL_",globalInitializer));
             globalInitializer.rootBlock.push_back(new ret(null, voidIrType));
             pg.push_back(globalInitializer);
         }
@@ -312,7 +314,7 @@ public class IRBuilder implements ASTVisitor {
                                 currentBlock.push_back(new store(rs, rd, tmpIrType));
                                 currentBlock.push_back(new ret(null, voidIrType));
                                 pg.push_back(currentFunc);
-                                globalInitializer.rootBlock.push_back(new call(null, voidIrType, currentFunc.funcId));
+                                globalInitializer.rootBlock.push_back(new call(null, voidIrType, currentFunc.funcId,currentFunc));
                             }
                             currentFunc = null;
                             currentBlock = null;
@@ -568,7 +570,7 @@ public class IRBuilder implements ASTVisitor {
     private register constStringCastToString(exprNode firstExpr) {
         IRType firstIRType = firstExpr.irType;
         register receiveReg = new register(), afterCast = new register(), rdLen = new register(), rdCptr = new register(), i8Ptr = new register();
-        call tmpCall = new call(receiveReg, i8Star, "myNew");
+        call tmpCall = new call(receiveReg, i8Star, "myNew",builtinFunc);
         tmpCall.push_back(new entityTypePair(new constant(12), i64));
         currentBlock.push_back(tmpCall);
         currentBlock.push_back(new bitcast(afterCast, receiveReg, stringStar, i8Star));
@@ -847,7 +849,7 @@ public class IRBuilder implements ASTVisitor {
                 if (second.irType.cDef == null) secondRs = constStringCastToString(second);
                 else secondRs = (register) second.rd;
                 register rd = new register(), rdCmp = new register();
-                call tmpCall = new call(rdCmp, i32, "_string_getStrcmp");
+                call tmpCall = new call(rdCmp, i32, "_string_getStrcmp",builtinFunc);
                 tmpCall.push_back(new entityTypePair(lastRes, stringStar));
                 tmpCall.push_back(new entityTypePair(secondRs, stringStar));
                 currentBlock.push_back(tmpCall);
@@ -889,7 +891,7 @@ public class IRBuilder implements ASTVisitor {
                 if (second.irType.cDef == null) secondRs = constStringCastToString(second);
                 else secondRs = (register) second.rd;
                 register rd = new register(), rdCmp = new register();
-                call tmpCall = new call(rdCmp, i32, "_string_getStrcmp");
+                call tmpCall = new call(rdCmp, i32, "_string_getStrcmp",builtinFunc);
                 tmpCall.push_back(new entityTypePair(lastRes, stringStar));
                 tmpCall.push_back(new entityTypePair(secondRs, stringStar));
                 currentBlock.push_back(tmpCall);
@@ -949,7 +951,7 @@ public class IRBuilder implements ASTVisitor {
                 if (second.irType.cDef == null) secondRs = constStringCastToString(second);
                 else secondRs = (register) second.rd;
                 register rd = new register();
-                call tmpCall = new call(rd, stringStar, "_string_stringAppend");
+                call tmpCall = new call(rd, stringStar, "_string_stringAppend",builtinFunc);
                 tmpCall.push_back(new entityTypePair(lastRes, stringStar));
                 tmpCall.push_back(new entityTypePair(secondRs, stringStar));
                 currentBlock.push_back(tmpCall);
@@ -1055,7 +1057,7 @@ public class IRBuilder implements ASTVisitor {
         presentNode.accept(this);
         IRType presentIRType = new IRType(irType);
         presentIRType.ptrNum--;
-        call tmpCall = new call(receiveReg, i8Star, "myNew");
+        call tmpCall = new call(receiveReg, i8Star, "myNew",builtinFunc);
         entity mallocSize, arrayLen = presentNode.rd;
         entity rs;
         int irSize = presentIRType.getSize();
@@ -1145,7 +1147,7 @@ public class IRBuilder implements ASTVisitor {
             } else it.irType = new IRType(it.type);
             int size = it.irType.cDef.getSize();
             register receive_ptr = new register();
-            call tmpCall = new call(receive_ptr, i8Star, "myNew");
+            call tmpCall = new call(receive_ptr, i8Star, "myNew",builtinFunc);
             tmpCall.push_back(new entityTypePair(new constant(size), i64));
             currentBlock.push_back(tmpCall);
             it.rd = new register();
@@ -1153,7 +1155,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.push_back(new bitcast((register) it.rd, receive_ptr, it.irType, i8Star));
             String constructorName = "_" + it.type.name + "_" + it.type.name;
             if (idToFuncDef.containsKey(constructorName)) {
-                call constructor = new call(null, voidIrType, constructorName);
+                call constructor = new call(null, voidIrType, constructorName,idToFuncDef.get(constructorName));
                 constructor.parameters.push(new entityTypePair(it.rd, it.irType));
                 currentBlock.push_back(constructor);
             }
@@ -1219,7 +1221,7 @@ public class IRBuilder implements ASTVisitor {
                 funcDef funcTmp = idToFuncDef.get(currentCallId);
                 ir = funcTmp.returnType;
                 if (!ir.isVoid) rd = new register();
-                call tmpCall = new call(rd, ir, currentCallId);
+                call tmpCall = new call(rd, ir, currentCallId,currentFunc);
                 int counter = 0;
             /*if (it.postfixExpr.irType != null && it.postfixExpr.irType.cDef!=null) {
                 counter++;
