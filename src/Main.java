@@ -76,15 +76,15 @@ public class Main {
             program pg = new program();
             new IRBuilder(pg, gScope, idToDef, idToFuncDef).visit(ASTRoot);
             new IRPrinter(System.out).visitProgram(pg);
-            //new Mem2Reg(pg).run();
+            new Mem2Reg(pg).run();
             new IRPrinter(System.out).visitProgram(pg);
-            //if (optimize) new IROptimizer(pg).run();
+            if (optimize) new IROptimizer(pg).run();
             new IRPrinter(out_llvm).visitProgram(pg);
             AsmPg asmPg = new AsmPg();
             new InstrSelector(asmPg).visitProgram(pg);
             new LivenessAnalysis(asmPg).work();
-            //new RegAlloc(asmPg).work();
-            new RegAlloc_Basic(asmPg).work();
+            new RegAlloc(asmPg).work();
+            //new RegAlloc_Basic(asmPg).work();
             new AsmOptimizer(asmPg).work();
             new AsmPrinter(asmPg, out_asm).print();
         } catch (error er) {

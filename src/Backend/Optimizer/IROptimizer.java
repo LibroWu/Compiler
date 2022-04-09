@@ -54,8 +54,8 @@ public class IROptimizer {
 
     public void run() {
         new IRPrinter(System.out).visitProgram(pg);
-        //pg.funcDefs.forEach(this::RunCP);
-        //pg.funcDefs.forEach(this::RunADCE);
+        pg.funcDefs.forEach(this::RunCP);
+        pg.funcDefs.forEach(this::RunADCE);
         //pg.funcDefs.forEach(this::emptyIRBlockRemove);
     }
 }
