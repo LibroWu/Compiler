@@ -107,10 +107,19 @@ public class IRPrinter implements Pass {
     public void collectBlocks(block b){
         blockVisited.add(b);
         blockQueue.add(b);
-        for (block successor : b.successors) {
+        if (b.tailStatement instanceof br) {
+            br BI = (br) b.tailStatement;
+            if (!blockVisited.contains(BI.trueBranch)) {
+                collectBlocks(BI.trueBranch);
+            }
+            if (BI.falseBranch!=null && !blockVisited.contains(BI.falseBranch)) {
+                collectBlocks(BI.falseBranch);
+            }
+        }
+        /*for (block successor : b.successors) {
             if (!blockVisited.contains(successor))
                 collectBlocks(successor);
-        }
+        }*/
     }
 
     @Override

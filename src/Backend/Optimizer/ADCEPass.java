@@ -45,7 +45,7 @@ public class ADCEPass {
     public void calcDominateTree(funcDef f) {
         postOrderSequence = new LinkedList<>();
         calcPostOrderSequence(f.returnBlock);
-        System.out.println(postOrderSequence);
+        //System.out.println(postOrderSequence);
         f.returnBlock.postIDom = f.returnBlock;
         f.returnBlock.ctrlDepth = 0;
         boolean Changed = true;
@@ -88,9 +88,9 @@ public class ADCEPass {
                 }
             }
         }
-        for (block b : postOrderSequence) {
+        /*for (block b : postOrderSequence) {
             System.out.println("DF " + b + " " + b.postDF);
-        }
+        }*/
     }
 
     private void buildCDG() {
@@ -100,13 +100,13 @@ public class ADCEPass {
                 b.ctrlPredecessor.add(f);
             }
         }
-        for (block b : postOrderSequence) {
+        /*for (block b : postOrderSequence) {
             System.out.println(b + " " + b.postIDom + " " + b.ctrlSuccessors);
-        }
+        }*/
     }
 
     private block findDeadFrontier(block B) {
-        System.out.println("find DeadFrontier "+B);
+        //System.out.println("find DeadFrontier "+B);
         if (B.deadFrontier != null) return B.deadFrontier;
         br BI = (br) B.tailStatement;
         if (!B.trueEdgeVisited) {
@@ -142,7 +142,7 @@ public class ADCEPass {
     }
 
     public void RunADCE(funcDef f) {
-        System.out.println("in func "+f.funcId);
+        //System.out.println("in func "+f.funcId);
         f.entryBlock = new block(0);
         f.entryBlock.blockIndex = -16;
         f.entryBlock.successors.add(f.rootBlock);
@@ -189,12 +189,12 @@ public class ADCEPass {
         f.rootBlock.isActivate = true;
         f.rootBlock.tailStatement.isActivate = true;
         // debug print
-        for (block BB : postOrderSequence) {
+        /*for (block BB : postOrderSequence) {
             System.out.println("block " + BB + " " + BB.isActivate);
-            /*for (statement s = BB.headStatement; s != null; s = s.next) {
+            for (statement s = BB.headStatement; s != null; s = s.next) {
                 System.out.println(s + " " + s.isActivate);
-            }*/
-        }
+            }
+        }*/
         LinkedList<block> surviveBlock = new LinkedList<>();
         for (block BB : postOrderSequence) {
             if (BB != f.entryBlock && !BB.isActivate) {
@@ -251,7 +251,9 @@ public class ADCEPass {
             }
         }
         for (block BB : surviveBlock) {
-            for (statement s = BB.headStatement; s != null; s = s.next) {
+            statement nxt;
+            for (statement s = BB.headStatement; s != null; s = nxt) {
+                nxt = s.next;
                 if (!s.isActivate) BB.delete_Statement(s);
             }
             if (BB.tailStatement instanceof br) {
@@ -303,6 +305,6 @@ public class ADCEPass {
                 break;
             }
         }*/
-        System.out.println(surviveBlock);
+        //System.out.println(surviveBlock);
     }
 }

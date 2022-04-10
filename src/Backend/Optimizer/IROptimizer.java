@@ -53,14 +53,20 @@ public class IROptimizer {
     }
 
     public void run() {
-        new IRPrinter(System.out).visitProgram(pg);
+        //new IRPrinter(System.out).visitProgram(pg);
         pg.funcDefs.forEach(this::RunCP);
+        //System.out.println("after first CP round");
+        //new IRPrinter(System.out).visitProgram(pg);
         pg.funcDefs.forEach(this::RunADCE);
-        new IRPrinter(System.out).visitProgram(pg);
+        //System.out.println("after first ADCE round");
+        ///new IRPrinter(System.out).visitProgram(pg);
         RunIE();
+        //System.out.println("after IE");
         //new IRPrinter(System.out).visitProgram(pg);
-        pg.funcDefs.forEach(this::RunCP);
+        //pg.funcDefs.forEach(this::RunCP);
+        //System.out.println("after RunCP");
         //new IRPrinter(System.out).visitProgram(pg);
-        pg.funcDefs.forEach(this::RunADCE);
+        //new IRPrinter(System.out).visitProgram(pg);
+        //pg.funcDefs.forEach(this::RunADCE);
     }
 }

@@ -35,7 +35,7 @@ public class InlineExpansionPass {
                 }
             }
         }
-        System.out.println(f.funcId+" "+f.stmtCount);
+        //System.out.println(f.funcId+" "+f.stmtCount);
     }
 
     private Comparator<funcDef> funcCmp = new Comparator<funcDef>() {
@@ -48,7 +48,7 @@ public class InlineExpansionPass {
     private void collectWorkSet(){
         pg.funcDefs.sort(funcCmp);
         for (funcDef funcDef : pg.funcDefs) {
-            System.out.println(funcDef.stmtCount);
+            //System.out.println(funcDef.stmtCount);
             for (block BB : funcDef.blockQue) {
                 for (statement s = BB.headStatement; s != null; s = s.next) {
                     if (s instanceof call) {
@@ -64,7 +64,7 @@ public class InlineExpansionPass {
     public InlineExpansionPass(program pg) {
         this.pg = pg;
         expansionThreshold = 100;
-        expansionLimit = 2;
+        expansionLimit = 4;
     }
 
     public InlineExpansionPass(program pg, int expansionThreshold,int expansionLimit) {
@@ -74,7 +74,7 @@ public class InlineExpansionPass {
     }
 
     private LinkedList<block> getCopyOfAFunc(funcDef f,funcDef newf, HashMap<register,entity> ValReplace, LinkedList<call> W,int expansionLimit,int loopDepth) {
-        new IRPrinter(System.out).visitFuncDef(f);
+        //new IRPrinter(System.out).visitFuncDef(f);
         block begBl = new block(loopDepth);
         LinkedList<block> originalQueue = new LinkedList<>(),shadowQueue = new LinkedList<>();
         originToShadow.clear();
@@ -117,6 +117,7 @@ public class InlineExpansionPass {
                 }
             }
             shd.predecessor.clear();
+
             shd.successors.clear();
         }
         // todo maintain use and def
@@ -126,7 +127,7 @@ public class InlineExpansionPass {
                     entityBlockPair.bl = originToShadow.get(entityBlockPair.bl);
                     if (entityBlockPair.en instanceof register) {
                         if (!ValReplace.containsKey(entityBlockPair.en)) {
-                            System.out.println(entityBlockPair.en);
+                            //System.out.println(entityBlockPair.en);
                             throw new RuntimeException("Error!");
                         }
                         entityBlockPair.en = ValReplace.get(entityBlockPair.en);
@@ -189,8 +190,8 @@ public class InlineExpansionPass {
             call c = W.pop();
             if (c.funcAssociated==c.parentBlock.parentFunc || c.funcAssociated.stmtCount>expansionThreshold || c.expansionLimit==0) continue;
             // Expand c
-            System.out.println(c.parentBlock.parentFunc.funcId);
-            new IRPrinter(System.out).visitFuncDef(c.parentBlock.parentFunc);
+            /*System.out.println("expanding "+c.funcName+" in "+c.parentBlock.parentFunc.funcId);
+            new IRPrinter(System.out).visitFuncDef(c.parentBlock.parentFunc);*/
             funcDef f = c.funcAssociated;
             block BB = c.parentBlock;
             // will not have phi nodes in new head, so do not need to replace phis
@@ -220,11 +221,11 @@ public class InlineExpansionPass {
             tailBlock.comment = "end inline expansion " + f.funcId;
             if (c.rd!=null) {
                 ret RI = (ret) endBl.tailStatement;
-                System.out.println(RI.value);
+                //em.out.println(RI.value);
                 for (statement use : c.rd.uses) {
-                    if (use instanceof getelementptr) System.out.println(((getelementptr) use).rs);
+                    //if (use instanceof getelementptr) System.out.println(((getelementptr) use).rs);
                     use.replaceRegWithEntity(c.rd,RI.value);
-                    if (use instanceof getelementptr) System.out.println(((getelementptr) use).rs);
+                    //if (use instanceof getelementptr) System.out.println(((getelementptr) use).rs);
                 }
             }
             // update parent func's statement count
@@ -249,6 +250,8 @@ public class InlineExpansionPass {
                     }
                 }
             }
+            //System.out.println("after expanding "+c.funcName+" in "+c.parentBlock.parentFunc.funcId);
+            //new IRPrinter(System.out).visitFuncDef(c.parentBlock.parentFunc);
         }
         pg.funcDefs.forEach(this::SuccPredCollect);
     }
