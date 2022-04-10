@@ -58,9 +58,9 @@ public class IROptimizer {
         pg.funcDefs.forEach(this::RunADCE);
         new IRPrinter(System.out).visitProgram(pg);
         RunIE();
-        //new IRPrinter(System.out).visitProgram(pg);
+        new IRPrinter(System.out).visitProgram(pg);
         //pg.funcDefs.forEach(this::RunCP);
-        //new IRPrinter(System.out).visitProgram(pg);
+        new IRPrinter(System.out).visitProgram(pg);
         //pg.funcDefs.forEach(this::RunADCE);
     }
 }
