@@ -34,7 +34,7 @@ public class Main {
         PrintStream out_asm;
         if (args.length>0) {
             input = System.in;
-            out_asm = new PrintStream("test.s");
+            out_asm = new PrintStream("output.s");
         } else {
             // debug
             input = new FileInputStream("test\\test.mx");
