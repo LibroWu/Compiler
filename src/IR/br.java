@@ -78,6 +78,11 @@ public class br extends terminalStmt {
         }
     }
 
+    @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        return new br((register) ValReplace.get(val),null,null);
+    }
+
     public br(register val, block trueBranch, block falseBranch) {
         this.val = val;
         this.trueBranch = trueBranch;

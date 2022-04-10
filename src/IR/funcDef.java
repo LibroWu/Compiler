@@ -1,6 +1,7 @@
 package IR;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.HashSet;
 public class funcDef extends globalUnit {
@@ -13,9 +14,11 @@ public class funcDef extends globalUnit {
     public HashSet<register> globalVariableUsed = new HashSet<>();
     public block rootBlock = null,returnBlock = null,entryBlock = null;
     public register retReg = null;
+    // for Inline Expansion
+    public int stmtCount=10000000;
+    public LinkedList<block> blockQue;
 
-    public funcDef() {
-    }
+    public funcDef() {}
 
     public funcDef(String funcId, IRType returnType,ArrayList<IRType> parameters) {
         this.funcId = funcId;

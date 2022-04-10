@@ -27,7 +27,6 @@ public class IROptimizer {
         adcePass.RunADCE(f);
     }
 
-
     /* ------------------------ */
     /* | Constant Propagation | */
     /* ------------------------ */
@@ -44,6 +43,7 @@ public class IROptimizer {
     /* | Inline Expansion | */
     /* -------------------- */
     public void RunIE() {
+        new InlineExpansionPass(pg).RunIE();
     }
 
     /* --------------------- */
@@ -56,6 +56,11 @@ public class IROptimizer {
         new IRPrinter(System.out).visitProgram(pg);
         pg.funcDefs.forEach(this::RunCP);
         pg.funcDefs.forEach(this::RunADCE);
-        //pg.funcDefs.forEach(this::emptyIRBlockRemove);
+        new IRPrinter(System.out).visitProgram(pg);
+        RunIE();
+        //new IRPrinter(System.out).visitProgram(pg);
+        //pg.funcDefs.forEach(this::RunCP);
+        //new IRPrinter(System.out).visitProgram(pg);
+        //pg.funcDefs.forEach(this::RunADCE);
     }
 }

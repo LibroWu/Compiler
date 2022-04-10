@@ -1,7 +1,6 @@
 package IR;
 
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 public abstract class statement {
@@ -28,4 +27,6 @@ public abstract class statement {
     abstract public statement replaceRegWithEntity(register rs, entity en);
 
     abstract public void activatePropagate(LinkedList<statement> W);
+
+    abstract public statement clone(HashMap<register,entity> ValReplace);
 }

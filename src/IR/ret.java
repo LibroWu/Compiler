@@ -60,4 +60,11 @@ public class ret extends terminalStmt {
             }
         }
     }
+
+    @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        entity en = value;
+        if (value instanceof register) en = ValReplace.get(value);
+        return new ret(en,irType);
+    }
 }

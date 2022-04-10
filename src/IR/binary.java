@@ -99,6 +99,16 @@ public class binary extends statement{
         }
     }
 
+    @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        register shdRd = new register();
+        ValReplace.put(rd,shdRd);
+        entity shdRs1 = rs1,shdRs2 = rs2;
+        if (rs1 instanceof register) shdRs1 = ValReplace.get(rs1);
+        if (rs2 instanceof register) shdRs2 = ValReplace.get(rs2);
+        return new binary(op,irType,shdRd,shdRs1,shdRs2);
+    }
+
     public enum opTye {
         ADD,SUB,MUL,SDIV,MOD,AND,OR,XOR,ASHR,LSHR,SHL
     }

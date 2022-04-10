@@ -51,6 +51,14 @@ public class bitcast extends statement{
         }
     }
 
+    @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        register shdRd = new register(),shdRs = rs;
+        ValReplace.put(rd,shdRd);
+        if (ValReplace.containsKey(rs)) shdRs = (register) ValReplace.get(rs);
+        return new bitcast(shdRd,shdRs,rdType,rsType);
+    }
+
     public bitcast(register rd,register rs,IRType rdType,IRType rsType){
         this.rd = rd;
         this.rs = rs;

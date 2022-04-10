@@ -56,4 +56,12 @@ public class load extends user {
             W.add(ptr.def);
         }
     }
+
+    @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        register shdRd = new register(),shdPtr = ptr;
+        ValReplace.put(rd,shdRd);
+        if (ValReplace.containsKey(ptr)) shdPtr = (register) ValReplace.get(ptr);
+        return new load(shdRd,shdPtr,rsType);
+    }
 }

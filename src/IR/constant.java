@@ -44,6 +44,14 @@ public class constant extends entity {
         return true;
     }
 
+    @Override
+    public entity clone() {
+        if (genre == Genre.INT) return new constant(intValue);
+        if (genre == Genre.BOOL) return new constant(intValue>0);
+        if (genre == Genre.STRING) return new constant(stringValue);
+        return new constant();
+    }
+
     public int getIntValue() {
         return intValue;
     }

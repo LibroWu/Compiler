@@ -9,6 +9,8 @@ public class call extends statement{
     public String funcName;
     public funcDef funcAssociated;
     public LinkedList<entityTypePair> parameters = new LinkedList<>();
+    // for inlining
+    public int expansionLimit;
 
     public call(register rd,IRType rdType,String funcName, funcDef funcAssociated){
         this.funcAssociated = funcAssociated;
@@ -83,5 +85,21 @@ public class call extends statement{
                 }
             }
         }
+    }
+
+    @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        register shdRd = null;
+        if (rd!=null) {
+            shdRd = new register();
+            ValReplace.put(rd,shdRd);
+        }
+        call shdCall = new call(shdRd,rdType,funcName,funcAssociated);
+        for (entityTypePair parameter : parameters) {
+            if (parameter.en instanceof register) {
+                shdCall.push_back(new entityTypePair(ValReplace.get(parameter.en), parameter.ir));
+            } else shdCall.push_back(new entityTypePair(parameter.en,parameter.ir));
+        }
+        return shdCall;
     }
 }

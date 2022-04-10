@@ -1222,7 +1222,7 @@ public class IRBuilder implements ASTVisitor {
                 funcDef funcTmp = idToFuncDef.get(currentCallId);
                 ir = funcTmp.returnType;
                 if (!ir.isVoid) rd = new register();
-                call tmpCall = new call(rd, ir, currentCallId,currentFunc);
+                call tmpCall = new call(rd, ir, currentCallId,idToFuncDef.get(currentCallId));
                 int counter = 0;
             /*if (it.postfixExpr.irType != null && it.postfixExpr.irType.cDef!=null) {
                 counter++;

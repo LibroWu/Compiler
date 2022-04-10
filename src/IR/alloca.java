@@ -55,6 +55,13 @@ public class alloca extends statement {
     }
 
     @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        // will not happen
+        // all allocas are promoted to register
+        return null;
+    }
+
+    @Override
     public String toString() {
         return allocaNumber + " " + rd;
     }

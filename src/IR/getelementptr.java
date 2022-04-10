@@ -58,8 +58,12 @@ public class getelementptr extends statement {
 
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
-        if (this.rs == rs) throw new RuntimeException("getelementptr's rs can not be converted to constant");
+        if (this.rs == rs && en instanceof constant) throw new RuntimeException("getelementptr's rs can not be converted to constant");
         boolean flag = false;
+        if (this.rs == rs) {
+            this.rs = (register)en;
+            flag = true;
+        }
         if (locator1 == rs) {
             locator1 = en;
             flag = true;
@@ -95,5 +99,22 @@ public class getelementptr extends statement {
                 W.add(R.def);
             }
         }
+    }
+
+    @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        register shdRd = new register(),shdRs = rs;
+        ValReplace.put(rd,shdRd);
+        if (ValReplace.containsKey(rs))
+            if (ValReplace.get(rs) instanceof register) shdRs = (register) ValReplace.get(rs);
+            else {
+                // todo bugs here
+                shdRs = new register();
+                shdRs.uses = new LinkedList<>();
+            }
+        entity shdLoc1 = locator1,shdLoc2 = locator2;
+        if (locator1 instanceof register) shdLoc1 = ValReplace.get(locator1);
+        if (locator2 instanceof register) shdLoc2 = ValReplace.get(locator2);
+        return new getelementptr(shdRd,shdRs,rsType,shdLoc1,shdLoc2);
     }
 }

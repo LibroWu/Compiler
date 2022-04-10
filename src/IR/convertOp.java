@@ -52,6 +52,15 @@ public class convertOp extends statement {
         }
     }
 
+    @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        register shdRd = new register();
+        ValReplace.put(rd,shdRd);
+        entity shdRs = rs;
+        if (ValReplace.containsKey(rs)) shdRs = ValReplace.get(rs);
+        return new convertOp(shdRd,shdRs,convert,rdType,rsType);
+    }
+
     public enum convertType {
         TRUNC, ZEXT, SEXT
     }

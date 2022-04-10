@@ -30,6 +30,8 @@ public class block {
     public LinkedList<block> alivePredecessors = null;
     public HashSet<block> deadPredecessors = null;
     public boolean trueEdgeVisited = false,falseEdgeVisited = false;
+    // for expansion
+    public funcDef parentFunc;
     // for debug
     public int blockIndex = 0;
 
@@ -93,7 +95,10 @@ public class block {
         r.parentBlock = this;
         if (s.prev == null) headStatement = r;
         else s.prev.next = r;
-        if (s.next == null) tailStatement = r;
+        if (s.next == null) {
+            tailStatement = r;
+            tailStmt = (terminalStmt) r;
+        }
         else s.next.prev = r;
         s.next = s.prev = null;
         s.parentBlock = null;

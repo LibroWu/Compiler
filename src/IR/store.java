@@ -70,4 +70,13 @@ public class store extends user {
             }
         }
     }
+
+    @Override
+    public statement clone(HashMap<register, entity> ValReplace) {
+        entity shdResource = resource;
+        register shdTarget = target;
+        if (resource instanceof register) shdResource = ValReplace.get(resource);
+        if (ValReplace.containsKey(target)) shdTarget = (register) ValReplace.get(target);
+        return new store(shdResource,shdTarget,resourceType);
+    }
 }
