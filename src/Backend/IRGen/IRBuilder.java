@@ -4,7 +4,6 @@ import AST.*;
 
 import IR.*;
 import Util.Scope;
-import Util.error.semanticError;
 import Util.globalScope;
 import Util.Type.*;
 import Util.regTypePair;
@@ -785,7 +784,7 @@ public class IRBuilder implements ASTVisitor {
         for (int i = 1; i < listLen; ++i) {
             exprNode second = it.exprList.get(i);
             second.accept(this);
-            binary.opTye op = binary.opTye.OR;
+            binary.opType op = binary.opType.OR;
             register rd = new register();
             currentBlock.push_back(new binary(op, firstExpr.irType, rd, lastRes, second.rd));
             lastRes = rd;
@@ -804,7 +803,7 @@ public class IRBuilder implements ASTVisitor {
         for (int i = 1; i < listLen; ++i) {
             exprNode second = it.exprList.get(i);
             second.accept(this);
-            binary.opTye op = binary.opTye.XOR;
+            binary.opType op = binary.opType.XOR;
             register rd = new register();
             currentBlock.push_back(new binary(op, i32, rd, lastRes, second.rd));
             lastRes = rd;
@@ -823,7 +822,7 @@ public class IRBuilder implements ASTVisitor {
         for (int i = 1; i < listLen; ++i) {
             exprNode second = it.exprList.get(i);
             second.accept(this);
-            binary.opTye op = binary.opTye.AND;
+            binary.opType op = binary.opType.AND;
             register rd = new register();
             currentBlock.push_back(new binary(op, i32, rd, lastRes, second.rd));
             lastRes = rd;
@@ -926,7 +925,7 @@ public class IRBuilder implements ASTVisitor {
         for (int i = 1; i < listLen; ++i) {
             exprNode second = it.exprList.get(i);
             second.accept(this);
-            binary.opTye op = (Objects.equals(it.OpList.get(i - 1), ">>")) ? binary.opTye.ASHR : binary.opTye.SHL;
+            binary.opType op = (Objects.equals(it.OpList.get(i - 1), ">>")) ? binary.opType.ASHR : binary.opType.SHL;
             register rd = new register();
             currentBlock.push_back(new binary(op, i32, rd, lastRes, second.rd));
             lastRes = rd;
@@ -964,7 +963,7 @@ public class IRBuilder implements ASTVisitor {
             for (int i = 1; i < listLen; ++i) {
                 exprNode second = it.exprList.get(i);
                 second.accept(this);
-                binary.opTye op = (Objects.equals(it.OpList.get(i - 1), "+")) ? binary.opTye.ADD : binary.opTye.SUB;
+                binary.opType op = (Objects.equals(it.OpList.get(i - 1), "+")) ? binary.opType.ADD : binary.opType.SUB;
                 register rd = new register();
                 currentBlock.push_back(new binary(op, i32, rd, lastRes, second.rd));
                 lastRes = rd;
@@ -984,8 +983,8 @@ public class IRBuilder implements ASTVisitor {
         for (int i = 1; i < listLen; ++i) {
             exprNode second = it.exprList.get(i);
             second.accept(this);
-            binary.opTye op = (Objects.equals(it.OpList.get(i - 1), "*")) ? binary.opTye.MUL :
-                    (Objects.equals(it.OpList.get(i - 1), "%")) ? binary.opTye.MOD : binary.opTye.SDIV;
+            binary.opType op = (Objects.equals(it.OpList.get(i - 1), "*")) ? binary.opType.MUL :
+                    (Objects.equals(it.OpList.get(i - 1), "%")) ? binary.opType.MOD : binary.opType.SDIV;
             register rd = new register();
             currentBlock.push_back(new binary(op, i32, rd, lastRes, second.rd));
             lastRes = rd;
@@ -1014,7 +1013,7 @@ public class IRBuilder implements ASTVisitor {
             it.irType = it.unaryExpr.irType;
             it.rd = it.unaryExpr.rd;
             if (Objects.equals(it.op, "++") || Objects.equals(it.op, "--")) {
-                binary.opTye op = Objects.equals(it.op, "++") ? binary.opTye.ADD : binary.opTye.SUB;
+                binary.opType op = Objects.equals(it.op, "++") ? binary.opType.ADD : binary.opType.SUB;
                 register rd = new register();
                 currentBlock.push_back(new binary(op, i32, rd, it.unaryExpr.rd, new constant(1)));
                 store SI = new store(rd, it.idReg, i32);
@@ -1031,17 +1030,17 @@ public class IRBuilder implements ASTVisitor {
                         resource = new register();
                         currentBlock.push_back(new convertOp(resource, it.rd, convertOp.convertType.TRUNC, i1, it.irType));
                     } else resource = (register) it.rd;
-                    currentBlock.push_back(new binary(binary.opTye.XOR, i1, rd, resource, constUnit));
+                    currentBlock.push_back(new binary(binary.opType.XOR, i1, rd, resource, constUnit));
                     it.rd = rd;
                     it.irType = i1;
                 }
             } else if (Objects.equals(it.op, "-")) {
                 register rd = new register();
-                currentBlock.push_back(new binary(binary.opTye.SUB, i32, rd, constZero, it.rd));
+                currentBlock.push_back(new binary(binary.opType.SUB, i32, rd, constZero, it.rd));
                 it.rd = rd;
             } else if (Objects.equals(it.op, "~")) {
                 register rd = new register();
-                currentBlock.push_back(new binary(binary.opTye.XOR, i32, rd, constFull, it.rd));
+                currentBlock.push_back(new binary(binary.opType.XOR, i32, rd, constFull, it.rd));
                 it.rd = rd;
             } else if (Objects.equals(it.op, "*")) {
 
@@ -1074,8 +1073,8 @@ public class IRBuilder implements ASTVisitor {
                 rs = new register();
                 currentBlock.push_back(new convertOp((register) rs, presentNode.rd, convertOp.convertType.SEXT, i64, i32));
             } else rs = presentNode.rd;
-            currentBlock.push_back(new binary(binary.opTye.MUL, i64, middleReg, rs, new constant(irSize)));
-            currentBlock.push_back(new binary(binary.opTye.ADD, i64, (register) mallocSize, middleReg, new constant(4)));
+            currentBlock.push_back(new binary(binary.opType.MUL, i64, middleReg, rs, new constant(irSize)));
+            currentBlock.push_back(new binary(binary.opType.ADD, i64, (register) mallocSize, middleReg, new constant(4)));
         }
         tmpCall.push_back(new entityTypePair(mallocSize, i64));
         currentBlock.push_back(tmpCall);
@@ -1106,7 +1105,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock = checkBlock;
             load LI = new load(iRd, newLoopRd, i64.getPtr());
             currentBlock.push_back(LI);
-            currentBlock.push_back(new binary(binary.opTye.ADD, i64, addResult, iRd, constIRSize));
+            currentBlock.push_back(new binary(binary.opType.ADD, i64, addResult, iRd, constIRSize));
             SI = new store(addResult, newLoopRd, i64);
             currentBlock.push_back(SI);
             currentBlock.push_back(new icmp(cmpResult, iRd, mallocSize, icmp.cmpOpType.SLT, i64));
@@ -1171,7 +1170,7 @@ public class IRBuilder implements ASTVisitor {
             it.rd = it.postfixExpr.rd;
             it.irType = it.postfixExpr.irType;
             register rd = new register();
-            binary.opTye op = it.isSelfPlus ? binary.opTye.ADD : binary.opTye.SUB;
+            binary.opType op = it.isSelfPlus ? binary.opType.ADD : binary.opType.SUB;
             currentBlock.push_back(new binary(op, it.irType, rd, it.rd, new constant(1)));
             store SI = new store(rd, it.idReg, it.irType);
             currentBlock.push_back(SI);
@@ -1291,8 +1290,8 @@ public class IRBuilder implements ASTVisitor {
             register ptrReg = new register(), i8ptr = new register(), middlePtr = new register(), locate = new register(), locateMiddle = new register(), afterConvert = new register();
             IRType ptrIRType = it.postfixExpr.irType;
             //currentBlock.push_back(new convertOp(afterConvert, it.Expr.rd, convertOp.convertType.SEXT, i64, i32));
-            currentBlock.push_back(new binary(binary.opTye.MUL, i64, locateMiddle, it.Expr.rd, new constant(ptrIRType.reducePtr().getSize())));
-            currentBlock.push_back(new binary(binary.opTye.ADD, i64, locate, locateMiddle, new constant(4)));
+            currentBlock.push_back(new binary(binary.opType.MUL, i64, locateMiddle, it.Expr.rd, new constant(ptrIRType.reducePtr().getSize())));
+            currentBlock.push_back(new binary(binary.opType.ADD, i64, locate, locateMiddle, new constant(4)));
             if (!ptrIRType.equal(i8Star))
                 currentBlock.push_back(new bitcast(i8ptr, (register) it.postfixExpr.rd, i8Star, ptrIRType));
             else i8ptr = (register) it.postfixExpr.rd;

@@ -113,16 +113,16 @@ public class binary extends statement{
         return new binary(op,irType,shdRd,shdRs1,shdRs2);
     }
 
-    public enum opTye {
+    public enum opType {
         ADD,SUB,MUL,SDIV,MOD,AND,OR,XOR,ASHR,LSHR,SHL
     }
 
-    public opTye op;
+    public opType op;
     public entity rs1,rs2;
     public register rd;
     public IRType irType;
 
-    public binary(opTye op,IRType irType,register rd,entity rs1,entity rs2){
+    public binary(opType op, IRType irType, register rd, entity rs1, entity rs2){
         this.op  = op;
         this.rd  = rd;
         this.rs1 = rs1;

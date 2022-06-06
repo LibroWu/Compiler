@@ -8,11 +8,12 @@ import os, time
 """
 # test_cases_dir = './testcases/sema/'
 test_cases_dir = './testcases/codegen/'
-test_cases_dir = './testcases/optim-new/'
+#test_cases_dir = './testcases/optim-new/'
+#test_cases_dir = './testcases/optim/'
 compile_cmd = "bash ./build.bash"
 execute_cmd = "bash ./codegen.bash"
 excluded_test_cases = ["foo.mx"]
-ravel_path = "ravel --enable-cache"
+ravel_path = "ravel --oj-mode"
 builtin_path = "./BuiltIn.s"
 halt_on_3_fails = False
 calculate_score = False

@@ -10,12 +10,14 @@ import java.util.LinkedList;
 
 public class InlineExpansionPass {
     private program pg;
-    private int expansionThreshold,expansionLimit;
+    private final int expansionThreshold,expansionLimit,totalExpansionThreshold;
     private LinkedList<call> W = new LinkedList<>();
     HashMap<block,block> originToShadow = new HashMap<>();
 
     private void countStmt(funcDef f) {
+        f.selfCallCount = 0;
         f.stmtCount = 0;
+        f.expandedCount = 0;
         f.blockQue = new LinkedList<>();
         HashSet<block> blockVisited = new HashSet<>();
         LinkedList<block> bfsQue = new LinkedList<>();
@@ -27,6 +29,10 @@ public class InlineExpansionPass {
             f.blockQue.add(BB);
             for (statement s = BB.headStatement; s != null; s = s.next) {
                 ++f.stmtCount;
+                if (s instanceof call) {
+                    call c = (call) s;
+                    if (c.funcAssociated==f) ++f.selfCallCount;
+                }
             }
             for (block successor : BB.successors) {
                 if (!blockVisited.contains(successor)) {
@@ -63,14 +69,16 @@ public class InlineExpansionPass {
 
     public InlineExpansionPass(program pg) {
         this.pg = pg;
-        expansionThreshold = 100;
+        expansionThreshold = 1000;
         expansionLimit = 4;
+        totalExpansionThreshold = 10000;
     }
 
-    public InlineExpansionPass(program pg, int expansionThreshold,int expansionLimit) {
+    public InlineExpansionPass(program pg, int expansionThreshold,int expansionLimit,int totalExpansionThreshold) {
         this.pg = pg;
         this.expansionThreshold = expansionThreshold;
         this.expansionLimit = expansionLimit;
+        this.totalExpansionThreshold = totalExpansionThreshold;
     }
 
     private LinkedList<block> getCopyOfAFunc(funcDef f,funcDef newf, HashMap<register,entity> ValReplace, LinkedList<call> W,int expansionLimit,int loopDepth) {
@@ -89,6 +97,7 @@ public class InlineExpansionPass {
                 if (shadowStmt instanceof call) {
                     call c = (call)shadowStmt;
                     c.expansionLimit = expansionLimit-1;
+                    if (c.funcAssociated==f && f.selfCallCount>1) c.expansionLimit/= f.selfCallCount;
                     if (c.funcAssociated.stmtCount<=expansionThreshold && c.expansionLimit>0) W.add(c);
                 }
                 shd.push_back(shadowStmt);
@@ -188,7 +197,7 @@ public class InlineExpansionPass {
         collectWorkSet();
         while (!W.isEmpty()) {
             call c = W.pop();
-            if (c.funcAssociated==c.parentBlock.parentFunc || c.funcAssociated.stmtCount>expansionThreshold || c.expansionLimit==0) continue;
+            if (c.funcAssociated==c.parentBlock.parentFunc || c.funcAssociated.stmtCount>expansionThreshold || c.expansionLimit==0 || c.funcAssociated.expandedCount>totalExpansionThreshold) continue;
             // Expand c
             /*System.out.println("expanding "+c.funcName+" in "+c.parentBlock.parentFunc.funcId);
             new IRPrinter(System.out).visitFuncDef(c.parentBlock.parentFunc);*/
@@ -230,6 +239,7 @@ public class InlineExpansionPass {
             }
             // update parent func's statement count
             BB.parentFunc.stmtCount+=f.stmtCount;
+            f.expandedCount += f.stmtCount;
             c.removed = true;
             BB.push_back(new br(null,begBl,null));
             endBl.replace(endBl.tailStatement,new br(null,tailBlock,null));

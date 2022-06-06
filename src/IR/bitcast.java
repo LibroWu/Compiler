@@ -39,7 +39,10 @@ public class bitcast extends statement {
 
     @Override
     public statement replaceRegWithEntity(register rs, entity en) {
-        if (this.rs == rs) throw new RuntimeException("bitcast's rd can not be converted to constant");
+        if (en instanceof constant) throw new RuntimeException("bitcast's rd can not be converted to constant");
+        register reg = (register) en;
+        reg.uses.add(this);
+        this.rs = reg;
         return this;
     }
 

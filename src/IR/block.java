@@ -100,6 +100,8 @@ public class block {
             tailStmt = (terminalStmt) r;
         }
         else s.next.prev = r;
+        r.prev = s.prev;
+        r.next = s.next;
         s.next = s.prev = null;
         s.parentBlock = null;
         s.removed = true;

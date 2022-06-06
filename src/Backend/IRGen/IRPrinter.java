@@ -262,7 +262,7 @@ public class IRPrinter implements Pass {
         }
     }
 
-    private String getOp(binary.opTye op) {
+    private String getOp(binary.opType op) {
         String s;
         switch (op) {
             case ADD:

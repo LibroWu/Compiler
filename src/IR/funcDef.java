@@ -15,7 +15,7 @@ public class funcDef extends globalUnit {
     public block rootBlock = null,returnBlock = null,entryBlock = null;
     public register retReg = null;
     // for Inline Expansion
-    public int stmtCount=10000000;
+    public int stmtCount=10000000,selfCallCount = 0, expandedCount = 0;
     public LinkedList<block> blockQue;
 
     public funcDef() {}
