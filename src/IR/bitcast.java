@@ -1,12 +1,35 @@
 package IR;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class bitcast extends statement {
     public register rd, rs;
     public IRType rdType, rsType;
+    // for liveness analysis
+    @Override
+    public void fillSet() {
+        use.add(rs);
+        def.add(rd);
+    }
 
+    @Override
+    public void calcInst() {
+        liveOut = new HashSet<>();
+        if (next!=null) {
+            liveOut.addAll(next.liveIn);
+        }
+        liveIn = new HashSet<>(liveOut);
+        liveIn.removeAll(def);
+        liveIn.addAll(use);
+    }
+
+    @Override
+    public boolean check() {
+        return !liveOut.contains(rd);
+    }
+    //
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
         if (ValReplace.containsKey(rs)) {

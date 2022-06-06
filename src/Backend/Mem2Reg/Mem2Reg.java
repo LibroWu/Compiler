@@ -19,8 +19,6 @@ public class Mem2Reg {
         this.pg = pg;
     }
 
-
-
     private boolean rewriteSingleStoreAlloca(alloca AI, AllocaInfo Info) {
         Info.UsingBlocks.clear();
         block StoreBB = Info.OnlyStore.parentBlock;

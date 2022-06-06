@@ -1,13 +1,37 @@
 package IR;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class br extends terminalStmt {
     //null if jump directly
     public register val;
     public block trueBranch, falseBranch;
+    // for liveness analysis
+    @Override
+    public void fillSet() {
+        if (val!=null) use.add(val);
+    }
 
+    @Override
+    public void calcInst() {
+        liveOut = new HashSet<>();
+        if (trueBranch.headStatement!=null) {
+            liveOut.addAll(trueBranch.headStatement.liveIn);
+        }
+        if (falseBranch!=null && falseBranch.headStatement!=null) {
+            liveOut.addAll(falseBranch.headStatement.liveIn);
+        }
+        liveIn = new HashSet<>(liveOut);
+        if (val!=null) liveIn.add(val);
+    }
+
+    @Override
+    public boolean check() {
+        return false;
+    }
+    //
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
         if (ValReplace.containsKey(val)) val = (register) ValReplace.get(val);

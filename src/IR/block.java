@@ -32,6 +32,9 @@ public class block {
     public boolean trueEdgeVisited = false,falseEdgeVisited = false;
     // for expansion
     public funcDef parentFunc;
+    // for loop opt
+    public HashSet<block> naturalLoop;
+    public block preHeader;
     // for debug
     public int blockIndex = 0;
 

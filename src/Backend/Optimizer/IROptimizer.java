@@ -7,6 +7,7 @@ public class IROptimizer {
     public program pg;
     private final ADCEPass adcePass = new ADCEPass();
     private final ConstPropagationPass constPropagationPass = new ConstPropagationPass();
+
     public IROptimizer(program pg) {
         this.pg = pg;
     }
@@ -52,6 +53,7 @@ public class IROptimizer {
     /* | Loop Optimization | */
     /* --------------------- */
     public void RunLoop() {
+        new LoopOptPass(pg).Run();
     }
 
     /* --------------- */
@@ -85,6 +87,7 @@ public class IROptimizer {
         RunExpressionEliminate();
         System.out.println("after IE again");
         new IRPrinter(System.out).visitProgram(pg);
+        RunLoop();
         //pg.funcDefs.forEach(this::RunCP);
         //System.out.println("after RunCP");
         //new IRPrinter(System.out).visitProgram(pg);

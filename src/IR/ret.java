@@ -1,12 +1,33 @@
 package IR;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class ret extends terminalStmt {
     public entity value;
     public IRType irType;
+    // for liveness analysis
+    @Override
+    public void fillSet() {
+        if (value instanceof register) use.add((register) value);
+    }
 
+    @Override
+    public void calcInst() {
+        liveOut = new HashSet<>();
+        if (next != null) {
+            throw new RuntimeException("ret can not have next statement");
+        }
+        liveIn = new HashSet<>(use);
+        liveIn.addAll(liveOut);
+    }
+
+    @Override
+    public boolean check() {
+        return false;
+    }
+    //
     public ret(entity value, IRType irType) {
         this.value = value;
         this.irType = irType;

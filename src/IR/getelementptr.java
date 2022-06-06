@@ -1,13 +1,38 @@
 package IR;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class getelementptr extends statement {
     public register rd, rs;
     public entity locator1, locator2;
     public IRType rsType;
+    // for liveness analysis
+    @Override
+    public void fillSet() {
+        use.add(rs);
+        if (locator1 instanceof register) use.add((register) locator1);
+        if (locator2 instanceof register) use.add((register) locator2);
+        def.add(rd);
+    }
 
+    @Override
+    public void calcInst() {
+        liveOut = new HashSet<>();
+        if (next!=null) {
+            liveOut.addAll(next.liveIn);
+        }
+        liveIn = new HashSet<>(liveOut);
+        liveIn.removeAll(def);
+        liveIn.addAll(use);
+    }
+
+    @Override
+    public boolean check() {
+        return !liveOut.contains(rd);
+    }
+    //
     public getelementptr(register rd, register rs, IRType rsType, entity locator1, entity locator2) {
         this.rd = rd;
         this.rs = rs;

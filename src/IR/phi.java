@@ -3,6 +3,7 @@ package IR;
 import Assembly.AsmBlock;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class phi extends statement {
@@ -11,7 +12,33 @@ public class phi extends statement {
     public LinkedList<entityBlockPair> entityBlockPairs = new LinkedList<>();
     public alloca creator = null;
     public AsmBlock asmParentBlock = null;
+    // for liveness analysis
+    @Override
+    public void fillSet() {
+        def.add(rd);
+        for (entityBlockPair entityBlockPair : entityBlockPairs) {
+            if (entityBlockPair.en instanceof register) {
+                use.add((register) entityBlockPair.en);
+            }
+        }
+    }
 
+    @Override
+    public void calcInst() {
+        liveOut = new HashSet<>();
+        if (next!=null) {
+            liveOut.addAll(next.liveIn);
+        }
+        liveIn = new HashSet<>(liveOut);
+        liveIn.removeAll(def);
+        liveIn.addAll(use);
+    }
+
+    @Override
+    public boolean check() {
+        return !liveOut.contains(rd);
+    }
+    //
     public void push_back(entityBlockPair t) {
         entityBlockPairs.add(t);
     }

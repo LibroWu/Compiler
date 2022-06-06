@@ -1,6 +1,8 @@
 package IR;
 
+import java.util.BitSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public abstract class statement {
@@ -14,6 +16,18 @@ public abstract class statement {
 
     // for mem2reg
     abstract public void replace(HashMap<entity, entity> ValReplace);
+
+    // for liveness analysis
+    public HashSet<register> def,use,liveIn,liveOut;
+    abstract public void fillSet();
+    abstract public void calcInst();
+    abstract public boolean check();
+    public void initialize(){
+        def = new HashSet<>();
+        use = new HashSet<>();
+        liveIn = new HashSet<>();
+        liveOut = new HashSet<>();
+    }
 
     // for IR optimizer
     abstract public void init();

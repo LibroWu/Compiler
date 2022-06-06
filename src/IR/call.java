@@ -1,6 +1,7 @@
 package IR;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class call extends statement{
@@ -11,7 +12,33 @@ public class call extends statement{
     public LinkedList<entityTypePair> parameters = new LinkedList<>();
     // for inlining
     public int expansionLimit;
+    // for liveness analysis
+    @Override
+    public void fillSet() {
+        if (rd!=null) def.add(rd);
+        for (entityTypePair parameter : parameters) {
+            if (parameter.en instanceof register) {
+                use.add((register)parameter.en);
+            }
+        }
+    }
 
+    @Override
+    public void calcInst() {
+        liveOut = new HashSet<>();
+        if (next!=null) {
+            liveOut.addAll(next.liveIn);
+        }
+        liveIn = new HashSet<>(liveOut);
+        liveIn.removeAll(def);
+        liveIn.addAll(use);
+    }
+
+    @Override
+    public boolean check() {
+        return rd!=null && !liveOut.contains(rd);
+    }
+    //
     public call(register rd,IRType rdType,String funcName, funcDef funcAssociated){
         this.funcAssociated = funcAssociated;
         this.rd = rd;

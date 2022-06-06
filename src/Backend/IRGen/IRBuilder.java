@@ -480,7 +480,36 @@ public class IRBuilder implements ASTVisitor {
             currentBlock.push_back(new br(null, checkBlock, null));
             currentBlock = exitBlock;
         } else {
-            block body = new block(loopDepth), checkBlock = new block(loopDepth), exitBlock = new block(loopDepth);
+            // turn while to loop until for loop invariant
+            block body = new block(loopDepth), checkBlock = new block(loopDepth), exitBlock = new block(loopDepth),preHeader = new block(loopDepth);
+            loopExitBlock = exitBlock;
+            loopContinueBlock = checkBlock;
+            body.jumpTo = checkBlock.jumpTo = exitBlock.jumpTo = preHeader.jumpTo = true;
+            currentBlock.push_back(new br(null, preHeader, null));
+            currentBlock = preHeader;
+            it.cond.accept(this);
+            if (it.cond.rd instanceof constant) {
+                constant con = (constant) it.cond.rd;
+                if (con.getBoolValue()) {
+                    currentBlock.push_back(new br(null, body, null));
+                    currentBlock.successors.add(exitBlock);
+                } else currentBlock.push_back(new br(null, exitBlock, null));
+            } else currentBlock.push_back(new br((register) it.cond.rd, body, exitBlock));
+            currentBlock = body;
+            it.mainStmt.accept(this);
+            currentBlock.push_back(new br(null, checkBlock, null));
+            currentBlock = checkBlock;
+            it.cond.accept(this);
+            if (it.cond.rd instanceof constant) {
+                constant con = (constant) it.cond.rd;
+                if (con.getBoolValue()) {
+                    currentBlock.push_back(new br(null, body, null));
+                    currentBlock.successors.add(exitBlock);
+                } else currentBlock.push_back(new br(null, exitBlock, null));
+            } else currentBlock.push_back(new br((register) it.cond.rd, body, exitBlock));
+            currentBlock = exitBlock;
+            // is while
+            /*block body = new block(loopDepth), checkBlock = new block(loopDepth), exitBlock = new block(loopDepth);
             body.comment = "loop body " + currentFunc.funcId + " loopDepth " + loopDepth + " iterCount " + iterCount;
             checkBlock.comment = "loop check block " + currentFunc.funcId + " loopDepth " + loopDepth + " iterCount " + iterCount;
             exitBlock.comment = "loop exit block " + currentFunc.funcId + " loopDepth " + loopDepth + " iterCount " + iterCount;
@@ -500,7 +529,7 @@ public class IRBuilder implements ASTVisitor {
             currentBlock = body;
             it.mainStmt.accept(this);
             currentBlock.push_back(new br(null, checkBlock, null));
-            currentBlock = exitBlock;
+            currentBlock = exitBlock;*/
         }
         loopExitBlock = parentLoopExitBlock;
         loopContinueBlock = parentLoopContinueBlock;

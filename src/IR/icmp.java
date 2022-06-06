@@ -1,9 +1,35 @@
 package IR;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class icmp extends statement{
+    // for liveness analysis
+    @Override
+    public void fillSet() {
+        if (rs1 instanceof register) use.add((register) rs1);
+        if (rs2 instanceof register) use.add((register) rs2);
+        def.add(rd);
+    }
+
+    @Override
+    public void calcInst() {
+        liveOut = new HashSet<>();
+        if (next!=null) {
+            liveOut.addAll(next.liveIn);
+        }
+        liveIn = new HashSet<>(liveOut);
+        liveIn.removeAll(def);
+        liveIn.addAll(use);
+    }
+
+    @Override
+    public boolean check() {
+        return !liveOut.contains(rd);
+    }
+    //
+
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
         if (ValReplace.containsKey(rs1)) rs1 = ValReplace.get(rs1);

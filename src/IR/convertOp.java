@@ -1,9 +1,34 @@
 package IR;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class convertOp extends statement {
+    // for liveness analysis
+    @Override
+    public void fillSet() {
+        if (rs instanceof register)use.add((register) rs);
+        def.add(rd);
+    }
+
+    @Override
+    public void calcInst() {
+        liveOut = new HashSet<>();
+        if (next!=null) {
+            liveOut.addAll(next.liveIn);
+        }
+        liveIn = new HashSet<>(liveOut);
+        liveIn.removeAll(def);
+        liveIn.addAll(use);
+    }
+
+    @Override
+    public boolean check() {
+        return !liveOut.contains(rd);
+    }
+    //
+
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
         if (ValReplace.containsKey(rs)) rs = ValReplace.get(rs);

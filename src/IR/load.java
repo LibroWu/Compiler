@@ -1,6 +1,7 @@
 package IR;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class load extends user {
@@ -8,7 +9,29 @@ public class load extends user {
     public IRType rsType;
     public int align;
     public entity recorder = null;
+    // for liveness analysis
+    @Override
+    public void fillSet() {
+        use.add(ptr);
+        def.add(rd);
+    }
 
+    @Override
+    public void calcInst() {
+        liveOut = new HashSet<>();
+        if (next!=null) {
+            liveOut.addAll(next.liveIn);
+        }
+        liveIn = new HashSet<>(liveOut);
+        liveIn.removeAll(def);
+        liveIn.addAll(use);
+    }
+
+    @Override
+    public boolean check() {
+        return !liveOut.contains(rd);
+    }
+    //
     public load(register rd, register ptr, IRType rsType) {
         this.rd = rd;
         this.ptr = ptr;
