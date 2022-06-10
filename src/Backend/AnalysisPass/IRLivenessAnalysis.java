@@ -1,8 +1,5 @@
-package Backend.ToolPass;
+package Backend.AnalysisPass;
 
-import Assembly.AsmBlock;
-import Assembly.AsmFunc;
-import Assembly.Instr.Inst;
 import IR.*;
 
 import java.io.PrintStream;

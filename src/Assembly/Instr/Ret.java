@@ -11,6 +11,8 @@ public class Ret extends Inst {
     @Override
     public void calcInst() {
         liveOut = new BitSet(bitSize);
+        liveOut.set(0,5);
+        liveOut.set(8);
         liveIn =  new BitSet(bitSize);
     }
 

@@ -137,7 +137,8 @@ public class InstrSelector implements Pass {
                         } else
                             from.insert_before(i, new IType(rd, zero, new Imm(constValue), Inst.CalCategory.add));
                     } else {
-                        from.insert_before(i, new Mv(rd, getAsmReg((register) en)));
+                        //from.insert_before(i, new Mv(rd, getAsmReg((register) en)));
+                        from.insert_before(i, new RType(rd, zero,getAsmReg((register) en), Inst.CalCategory.add));
                     }
                 }
             }

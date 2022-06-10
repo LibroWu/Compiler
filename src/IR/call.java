@@ -38,6 +38,12 @@ public class call extends statement{
     public boolean check() {
         return rd!=null && !liveOut.contains(rd);
     }
+
+    @Override
+    public register getReg() {
+        return rd;
+    }
+
     //
     public call(register rd,IRType rdType,String funcName, funcDef funcAssociated){
         this.funcAssociated = funcAssociated;
@@ -128,5 +134,15 @@ public class call extends statement{
             } else shdCall.push_back(new entityTypePair(parameter.en,parameter.ir));
         }
         return shdCall;
+    }
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
     }
 }

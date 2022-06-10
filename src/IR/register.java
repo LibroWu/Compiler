@@ -7,6 +7,9 @@ public class register extends entity{
     public int loopDepth = 0;
     public LinkedList<statement> uses;
     public statement def;
+
+    public boolean isLoopInvariant;
+
     public register (){
         super();
         registerCount = --curCount;

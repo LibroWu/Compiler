@@ -32,6 +32,12 @@ public class getelementptr extends statement {
     public boolean check() {
         return !liveOut.contains(rd);
     }
+
+    @Override
+    public register getReg() {
+        return rd;
+    }
+
     //
     public getelementptr(register rd, register rs, IRType rsType, entity locator1, entity locator2) {
         this.rd = rd;
@@ -141,5 +147,15 @@ public class getelementptr extends statement {
         if (locator1 instanceof register) shdLoc1 = ValReplace.get(locator1);
         if (locator2 instanceof register) shdLoc2 = ValReplace.get(locator2);
         return new getelementptr(shdRd,shdRs,rsType,shdLoc1,shdLoc2);
+    }
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
     }
 }

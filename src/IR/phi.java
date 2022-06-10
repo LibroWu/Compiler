@@ -12,6 +12,17 @@ public class phi extends statement {
     public LinkedList<entityBlockPair> entityBlockPairs = new LinkedList<>();
     public alloca creator = null;
     public AsmBlock asmParentBlock = null;
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
+    }
+
     // for liveness analysis
     @Override
     public void fillSet() {
@@ -38,6 +49,12 @@ public class phi extends statement {
     public boolean check() {
         return !liveOut.contains(rd);
     }
+
+    @Override
+    public register getReg() {
+        return rd;
+    }
+
     //
     public void push_back(entityBlockPair t) {
         entityBlockPairs.add(t);
@@ -118,6 +135,7 @@ public class phi extends statement {
     @Override
     public void activatePropagate(LinkedList<statement> W) {
         for (entityBlockPair entityBlockPair : entityBlockPairs) {
+            if (!entityBlockPair.bl.reachable) continue;
             statement s = entityBlockPair.bl.tailStatement;
             if (!s.inWorklist) {
                 s.inWorklist = true;

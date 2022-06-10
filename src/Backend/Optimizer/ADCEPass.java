@@ -1,6 +1,6 @@
 package Backend.Optimizer;
 
-import Backend.ToolPass.postDominateTreePass;
+import Backend.AnalysisPass.postDominateTreePass;
 import IR.*;
 
 import java.util.LinkedList;
@@ -56,9 +56,19 @@ public class ADCEPass {
         f.entryBlock.ctrlSuccessors.add(f.returnBlock);
         f.returnBlock.ctrlPredecessor.add(f.entryBlock);
         LinkedList<statement> W = new LinkedList<>();
+        for (register parameterReg : f.parameterRegs) {
+            parameterReg.uses = new LinkedList<>();
+        }
+        for (block B : postOrderSequence) {
+            for (statement s = B.headStatement; s != null; s = s.next) {
+                s.init();
+            }
+        }
         for (block B : postOrderSequence) {
             B.isActivate = false;
+            B.reachable = true;
             for (statement s = B.headStatement; s != null; s = s.next) {
+                s.analyseUseDef();
                 if (s instanceof store || s instanceof call || s instanceof ret) {
                     W.add(s);
                     s.inWorklist = true;

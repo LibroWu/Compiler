@@ -9,6 +9,17 @@ public class store extends user {
     public entity resource;
     public int align;
     public IRType resourceType;
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
+    }
+
     // for liveness analysis
     @Override
     public void fillSet() {
@@ -30,6 +41,12 @@ public class store extends user {
     public boolean check() {
         return false;
     }
+
+    @Override
+    public register getReg() {
+        return null;
+    }
+
     //
     public store(entity resource, register target, IRType resourceType) {
         this.resource = resource;

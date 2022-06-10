@@ -28,6 +28,12 @@ public class binary extends statement{
     public boolean check() {
         return !liveOut.contains(rd);
     }
+
+    @Override
+    public register getReg() {
+        return rd;
+    }
+
     //
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
@@ -136,6 +142,39 @@ public class binary extends statement{
         }
         if (rs2 instanceof register) shdRs2 = ValReplace.get(rs2);
         return new binary(op,irType,shdRd,shdRs1,shdRs2);
+    }
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        // avoid side effect like "divide by zero"
+        if (op==opType.MOD || op==opType.SDIV) return false;
+        if (!liveOut.contains(rd)) return false;
+        boolean check1,check2;
+        if (rs1 instanceof constant) {
+            check1 = true;
+        } else {
+            register rs = (register) rs1;
+            check1 = (rs.def==null) || !(loop.contains(rs.def.parentBlock)) || rs.isLoopInvariant;
+        }
+        if (!check1) return false;
+        if (rs2 instanceof constant) {
+            check2 = true;
+        } else {
+            register rs = (register) rs2;
+            check2 = (rs.def==null) || !(loop.contains(rs.def.parentBlock)) || rs.isLoopInvariant;
+        }
+        return check2;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+        rd.isLoopInvariant = true;
+        for (statement use : rd.uses) {
+            if (use.isLoopInvariant(loop,liveOut)) {
+                W.add(use);
+                promotableStatements.add(use);
+            }
+        }
     }
 
     public enum opType {

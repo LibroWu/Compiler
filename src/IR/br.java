@@ -31,6 +31,12 @@ public class br extends terminalStmt {
     public boolean check() {
         return false;
     }
+
+    @Override
+    public register getReg() {
+        return null;
+    }
+
     //
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
@@ -59,6 +65,7 @@ public class br extends terminalStmt {
 
     static private void removeUnreachableBlock(block BB) {
         BB.reachable = false;
+        //System.out.println("------ "+BB+" successors:"+BB.successors+" pred "+BB.predecessor);
         for (block successor : BB.successors) {
             successor.predecessor.remove(BB);
             if (successor.predecessor.size() == 0) removeUnreachableBlock(successor);
@@ -105,6 +112,16 @@ public class br extends terminalStmt {
     @Override
     public statement clone(HashMap<register, entity> ValReplace) {
         return new br((register) ValReplace.get(val),null,null);
+    }
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
     }
 
     public br(register val, block trueBranch, block falseBranch) {

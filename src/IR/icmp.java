@@ -5,6 +5,17 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 public class icmp extends statement{
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
+    }
+
     // for liveness analysis
     @Override
     public void fillSet() {
@@ -27,6 +38,11 @@ public class icmp extends statement{
     @Override
     public boolean check() {
         return !liveOut.contains(rd);
+    }
+
+    @Override
+    public register getReg() {
+        return rd;
     }
     //
 
@@ -56,13 +72,18 @@ public class icmp extends statement{
 
     @Override
     public boolean isResConst() {
-        return !(rs1 instanceof register) && !(rs2 instanceof register);
+        return (rs1 instanceof constant && rs2 instanceof constant) || (rs1==rs2);
     }
 
     @Override
     public void removeStmt(LinkedList<statement> W) {
-        // in Mx, resources must be constant
-        constant con,con1=(constant) rs1,con2 =(constant) rs2;
+        constant con,con1,con2;
+        if (rs1 instanceof constant && rs2 instanceof constant){
+            con1=(constant) rs1;
+            con2=(constant) rs2;
+        } else {
+            con1 = con2 = new constant(0);
+        }
         switch (cmpOp) {
             case SLT : con = new constant(con1.getIntValue()<con2.getIntValue());break;
             case SLE : con = new constant(!(con1.getIntValue()>con2.getIntValue()));break;

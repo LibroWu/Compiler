@@ -5,6 +5,7 @@ import Assembly.AsmFunc;
 import Assembly.AsmPg;
 import Assembly.Instr.*;
 import Assembly.Operand.*;
+import Backend.CodeGen.AsmPrinter;
 
 import java.util.*;
 
@@ -29,7 +30,7 @@ public class GraphColoring {
     private ArrayList<LinkedList<Integer>> adjList;
     private ArrayList<InWhichNodeSet> inWhichNodeSets;
     private int finalRegCount;
-    private final double[] myExp = {1, 10, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18};
+    private final double[] myExp = {0, 10, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18};
     private PhyReg ra, sp, s0, zero, t0, t1, t2, t3, t4, t5, a0;
     private ArrayList<PhyReg> phyRegs;
     private BitSet colorSet = new BitSet(K), callerSavedSet = new BitSet(K), calleeSavedUsed = new BitSet(32);
@@ -75,9 +76,11 @@ public class GraphColoring {
     private void Build() {
         asmFunc.blockList.forEach(asmBlock -> {
             BitSet live = (BitSet) asmBlock.tailInst.liveOut.clone();
-            // have bugs here
+            live.set(0,5);
+            live.set(8);
+            // may have bugs here
             for (Inst i = asmBlock.tailInst; i != null; i = i.prev) {
-                if (i instanceof Br) {
+                if (i instanceof Br || i instanceof Ret) {
                     live.or(i.liveOut);
                 }
                 if (i instanceof Mv) {
@@ -129,7 +132,10 @@ public class GraphColoring {
         initial.forEach(n -> {
             if (degree.get(n) >= K) spillWorklist.add(n);
             else if (MoveRelated(n)) freezeWorklist.add(n);
-            else simplifyWorklist.add(n);
+            else {
+                //System.out.println("MakeWorkList to simplify "+n);
+                simplifyWorklist.add(n);
+            }
         });
         initial.clear();
     }
@@ -167,7 +173,10 @@ public class GraphColoring {
             spillWorklist.remove(m);
             if (MoveRelated(m))
                 freezeWorklist.add(m);
-            else simplifyWorklist.add(m);
+            else {
+                //System.out.println("Decrement to simplify "+m);
+                simplifyWorklist.add(m);
+            }
         }
     }
 
@@ -263,6 +272,7 @@ public class GraphColoring {
     private void AddWorkList(int u) {
         if (u >= 32 && !MoveRelated(u) && degree.get(u) < K) {
             freezeWorklist.remove(u);
+            //System.out.println("AddWorkList to simplify "+u);
             simplifyWorklist.add(u);
         }
     }
@@ -276,6 +286,7 @@ public class GraphColoring {
         Iterator<Integer> iter = freezeWorklist.iterator();
         int u = iter.next();
         freezeWorklist.remove(u);
+        //System.out.println("Freeze to simplify "+u);
         simplifyWorklist.add(u);
         FreezeMoves(u);
     }
@@ -298,6 +309,7 @@ public class GraphColoring {
                 }
                 if (!hasNodeMoves && degree.get(v) < K) {
                     freezeWorklist.remove(v);
+                    //System.out.println("FreezeMoves to simplify "+v);
                     simplifyWorklist.add(v);
                 }
             }
@@ -384,20 +396,21 @@ public class GraphColoring {
     }
 
     private void SelectSpill() {
-        passTheFunc();
         int m = spillWorklist.iterator().next();
         double chosenThreshold = 1e50;
         for (Integer i : spillWorklist) {
             if (i<32) continue;
-            double currentPriority = Priority.get(i) / degree.get(i);
+            int dd = degree.get(i);
+            double currentPriority = Priority.get(i) / (dd*dd);
             if (((virtualReg)IntToReg.get(i)).isAlloc) currentPriority = 0;
-            if (i > asmFunc.originalRegisterCount + 32) currentPriority += 1e6;
+            if (i > asmFunc.originalRegisterCount + 32) currentPriority += 1e50;
             if (currentPriority < chosenThreshold) {
                 chosenThreshold = currentPriority;
                 m = i;
             }
         }
         spillWorklist.remove(m);
+        //System.out.println("select to simplify "+m);
         simplifyWorklist.add(m);
         FreezeMoves(m);
     }
@@ -413,7 +426,8 @@ public class GraphColoring {
                 if (coloredNodes.contains(aliasW) || aliasW < 32) forbidBits.set(color.get(aliasW));
             }
             int nextClearBit = forbidBits.nextClearBit(0);
-            if (nextClearBit < 0 || nextClearBit >= K) spilledNodes.add(n);
+            if (nextClearBit < 0 || nextClearBit >= K)
+                spilledNodes.add(n);
             else {
                 coloredNodes.add(n);
                 int colorChosen = forbidBits.nextClearBit(0);
@@ -433,11 +447,8 @@ public class GraphColoring {
         }
         asmFunc.calleeSavedCount = calleeSavedCount;
     }
-
+    private int counter = 4;
     private void RewriteProgram() {
-        //System.out.println("***********");
-        //new AsmPrinter(asmPg,System.out).print();
-
         LinkedList<Integer> newTemps = new LinkedList<>();
         HashMap<Integer, Integer> getStackPos = new HashMap<>();
         for (Integer spilledNode : spilledNodes) {
@@ -618,6 +629,10 @@ public class GraphColoring {
             Priority.add(0.0);
             moveList.add(new LinkedList<>());
             adjList.add(new LinkedList<>());
+        }
+        passTheFunc();
+        for (int i = 32; i < finalRegCount; ++i)
+            if (IntToReg.containsKey(i)){
             initial.add(i);
         }
         for (int i = 0; i < 32; ++i) {
@@ -697,6 +712,9 @@ public class GraphColoring {
     }
 
     public void Main() {
+        /*if (counter--==0) return;
+        System.out.println("***********");
+        new AsmPrinter(asmPg,System.out).print();*/
         livenessAnalysis.workInFunc(asmFunc);
         initialize();
         Build();
@@ -712,6 +730,7 @@ public class GraphColoring {
         if (spilledNodes.isEmpty()) {
             Replace();
         } else {
+            //System.out.println(spilledNodes);
             RewriteProgram();
             this.Main();
         }

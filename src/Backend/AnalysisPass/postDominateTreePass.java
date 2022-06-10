@@ -1,4 +1,4 @@
-package Backend.ToolPass;
+package Backend.AnalysisPass;
 
 import IR.block;
 import IR.funcDef;

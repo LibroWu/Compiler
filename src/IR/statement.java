@@ -1,6 +1,5 @@
 package IR;
 
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,6 +29,8 @@ public abstract class statement {
     }
 
     // for IR optimizer
+    abstract public register getReg();
+
     abstract public void init();
 
     abstract public void analyseUseDef();
@@ -43,4 +44,9 @@ public abstract class statement {
     abstract public void activatePropagate(LinkedList<statement> W);
 
     abstract public statement clone(HashMap<register,entity> ValReplace);
+
+    abstract public boolean isLoopInvariant(HashSet<block> loop,HashSet<register> live);
+
+    abstract public void loopInvariantDelivery(LinkedList<statement> W,LinkedList<statement> promotableStatements,HashSet<block> loop,HashSet<register> live);
+
 }

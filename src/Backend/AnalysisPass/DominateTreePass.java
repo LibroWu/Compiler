@@ -1,6 +1,5 @@
-package Backend.ToolPass;
+package Backend.AnalysisPass;
 
-import Assembly.Instr.Li;
 import IR.block;
 import IR.funcDef;
 

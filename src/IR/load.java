@@ -9,6 +9,17 @@ public class load extends user {
     public IRType rsType;
     public int align;
     public entity recorder = null;
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
+    }
+
     // for liveness analysis
     @Override
     public void fillSet() {
@@ -31,6 +42,12 @@ public class load extends user {
     public boolean check() {
         return !liveOut.contains(rd);
     }
+
+    @Override
+    public register getReg() {
+        return rd;
+    }
+
     //
     public load(register rd, register ptr, IRType rsType) {
         this.rd = rd;

@@ -27,6 +27,11 @@ public class convertOp extends statement {
     public boolean check() {
         return !liveOut.contains(rd);
     }
+
+    @Override
+    public register getReg() {
+        return rd;
+    }
     //
 
     @Override
@@ -84,6 +89,16 @@ public class convertOp extends statement {
         entity shdRs = rs;
         if (ValReplace.containsKey(rs)) shdRs = ValReplace.get(rs);
         return new convertOp(shdRd,shdRs,convert,rdType,rsType);
+    }
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
     }
 
     public enum convertType {

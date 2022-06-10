@@ -1,7 +1,7 @@
 package Backend.Mem2Reg;
 
 import IR.*;
-import Backend.ToolPass.DominateTreePass;
+import Backend.AnalysisPass.DominateTreePass;
 import java.util.*;
 
 public class Mem2Reg {

@@ -27,6 +27,12 @@ public class ret extends terminalStmt {
     public boolean check() {
         return false;
     }
+
+    @Override
+    public register getReg() {
+        return null;
+    }
+
     //
     public ret(entity value, IRType irType) {
         this.value = value;
@@ -87,5 +93,15 @@ public class ret extends terminalStmt {
         entity en = value;
         if (value instanceof register) en = ValReplace.get(value);
         return new ret(en,irType);
+    }
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
     }
 }

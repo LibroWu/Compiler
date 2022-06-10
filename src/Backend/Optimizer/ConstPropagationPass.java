@@ -39,24 +39,29 @@ public class ConstPropagationPass {
         return W;
     }
 
-    // try to shrink BB's next block bl with BB
-    private block shrinkChain(block bl, block BB) {
-        if (bl.visited) return bl;
-        BB.visited = true;
-        if (bl.headStatement == bl.tailStatement && bl.tailStatement instanceof br) {
-            br BI = (br) bl.tailStatement;
-            if (BI.val == null) {
-                BI.trueBranch = shrinkChain(BI.trueBranch, bl);
-                for (phi phi : BI.trueBranch.Phis) {
-                    if (phi.removed) continue;
-                    for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
-                        if (entityBlockPair.bl == bl) entityBlockPair.bl = BB;
+    public void removeDeadPhiBlocks(funcDef f){
+        LinkedList<block> bfsQue = new LinkedList<>();
+        HashSet<block> blockVisited = new HashSet<>();
+        bfsQue.add(f.rootBlock);
+        while (!bfsQue.isEmpty()) {
+            block BB = bfsQue.pop();
+            BB.reachable = true;
+            for (phi phi : BB.Phis) {
+                LinkedList<entityBlockPair> entityBlockPairs = new LinkedList<>();
+                for (entityBlockPair entityBlockPair : phi.entityBlockPairs) {
+                    if (entityBlockPair.bl.reachable) {
+                        entityBlockPairs.add(entityBlockPair);
                     }
                 }
-                bl = BI.trueBranch;
+                phi.entityBlockPairs = entityBlockPairs;
+            }
+            for (block successor : BB.successors) {
+                if (!blockVisited.contains(successor)) {
+                    blockVisited.add(successor);
+                    bfsQue.add(successor);
+                }
             }
         }
-        return bl;
     }
 
     public void RunCP(funcDef f) {
@@ -70,6 +75,7 @@ public class ConstPropagationPass {
             if (!s.removed && s.parentBlock.reachable && s.isResConst())
                 s.removeStmt(W);
         }
+        removeDeadPhiBlocks(f);
     }
 
 }

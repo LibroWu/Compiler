@@ -34,7 +34,9 @@ public class block {
     public funcDef parentFunc;
     // for loop opt
     public HashSet<block> naturalLoop;
-    public block preHeader;
+    public block preHeader,loopTreeParent,loopHeader;
+    public boolean isTopLoop;
+    public LinkedList<block> subLoops;
     // for debug
     public int blockIndex = 0;
 

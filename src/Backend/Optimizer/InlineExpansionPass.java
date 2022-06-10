@@ -126,7 +126,6 @@ public class InlineExpansionPass {
                 }
             }
             shd.predecessor.clear();
-
             shd.successors.clear();
         }
         // todo maintain use and def

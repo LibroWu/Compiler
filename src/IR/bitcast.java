@@ -29,6 +29,12 @@ public class bitcast extends statement {
     public boolean check() {
         return !liveOut.contains(rd);
     }
+
+    @Override
+    public register getReg() {
+        return rd;
+    }
+
     //
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
@@ -96,5 +102,15 @@ public class bitcast extends statement {
         this.rs = rs;
         this.rdType = rdType;
         this.rsType = rsType;
+    }
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
     }
 }

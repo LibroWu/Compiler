@@ -39,6 +39,12 @@ public class alloca extends statement {
     public boolean check() {
         return !liveOut.contains(rd);
     }
+
+    @Override
+    public register getReg() {
+        return rd;
+    }
+
     //
     @Override
     public void replace(HashMap<entity, entity> ValReplace) {
@@ -81,6 +87,16 @@ public class alloca extends statement {
         // will not happen
         // all allocas are promoted to register
         return null;
+    }
+
+    @Override
+    public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
+        return false;
+    }
+
+    @Override
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+
     }
 
     @Override
