@@ -19,7 +19,7 @@ public class LivenessAnalysis {
         asmPg.funcS.forEach(this::collectFunc);
     }
 
-    private void collectFunc(AsmFunc asmFunc) {
+    public void collectFunc(AsmFunc asmFunc) {
         blockCnt = 0;
         Queue<AsmBlock> queue = new LinkedList<>();
         queue.offer(asmFunc.rootBlock);

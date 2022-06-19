@@ -10,8 +10,8 @@ import java.util.Queue;
 import java.util.LinkedList;
 import java.util.List;
 public class AsmPrinter {
-    private PrintStream out;
-    private AsmPg asmPg;
+    public PrintStream out;
+    public AsmPg asmPg;
 
     public AsmPrinter(AsmPg asmPg, PrintStream out) {
         this.asmPg = asmPg;

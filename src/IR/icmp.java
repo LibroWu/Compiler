@@ -16,6 +16,27 @@ public class icmp extends statement{
 
     }
 
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        int r1,r2;
+        boolean res;
+        if (rs1 instanceof register) r1 = vrMap.get(rs1);
+        else r1 = ((constant) rs1).getValue();
+        if (rs2 instanceof register) r2 = vrMap.get(rs2);
+        else r2 = ((constant) rs2).getValue();
+        switch (cmpOp) {
+            case SLT : res=r1<r2;break;
+            case SLE : res=r1<=r2;break;
+            case SGT : res=r1>r2;break;
+            case SGE : res=r1>=r2;break;
+            case EQ  : res=r1==r2;break;
+            case NEQ : res=r1!=r2;break;
+            default  : res = false;
+        }
+        vrMap.put(rd,(res?1:0));
+        return false;
+    }
+
     // for liveness analysis
     @Override
     public void fillSet() {

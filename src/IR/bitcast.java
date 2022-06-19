@@ -113,4 +113,12 @@ public class bitcast extends statement {
     public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
 
     }
+
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        if (globalVars.containsKey(rs)) {
+            globalVars.put(rd,globalVars.get(rs));
+        }else vrMap.put(rd,vrMap.get(rs));
+        return false;
+    }
 }

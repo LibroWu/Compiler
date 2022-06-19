@@ -177,6 +177,35 @@ public class binary extends statement{
         }
     }
 
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        int r1,r2,res;
+        if (rs1 instanceof register) r1 = vrMap.get(rs1);
+        else r1 = ((constant) rs1).getValue();
+        if (rs2 instanceof register) r2 = vrMap.get(rs2);
+        else r2 = ((constant) rs2).getValue();
+        switch (op) {
+            case ADD  : res=r1+r2; break;
+            case SUB  : res=r1-r2; break;
+            case MUL  : res=r1*r2; break;
+            case SDIV :
+                if (r2==0) res = ~(1<<31);
+                else res = r1/r2; break;
+            case MOD  :
+                if (r2==0) res = ~(1<<31);
+                else res = r1%r2; break;
+            case AND  : res = r1&r2; break;
+            case OR   : res = r1|r2; break;
+            case XOR  : res = r1^r2; break;
+            case ASHR : res = r1>>r2; break;
+            case LSHR : res = r1>>>r2; break;
+            case SHL  : res = r1<<r2; break;
+            default   : res = 0;
+        }
+        vrMap.put(rd,res);
+        return false;
+    }
+
     public enum opType {
         ADD,SUB,MUL,SDIV,MOD,AND,OR,XOR,ASHR,LSHR,SHL
     }

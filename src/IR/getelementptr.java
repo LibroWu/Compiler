@@ -158,4 +158,22 @@ public class getelementptr extends statement {
     public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
 
     }
+
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        int siz = rsType.reducePtr().getSize(), loc = vrMap.get(rs),loc1,loc2;
+        if (locator1 instanceof constant) loc1 = ((constant) locator1).getValue();
+        else loc1 = vrMap.get(locator1);
+        loc += loc1 * siz;
+        if (locator2 != null && (locator2 instanceof register || ((constant)locator2).getValue()!=0)) {
+            // must be class
+            if (locator2 instanceof constant) loc2 = ((constant) locator2).getValue();
+            else loc2 = vrMap.get(locator2);
+            IRTypeWithCounter tmp = rsType.cDef.memberForAsm.get(loc2);
+            if (rsType.cDef.align == 1) loc += tmp.offset1;
+            else loc += tmp.offset4;
+        }
+        vrMap.put(rd,loc);
+        return false;
+    }
 }

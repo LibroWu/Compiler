@@ -104,4 +104,9 @@ public class ret extends terminalStmt {
     public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
 
     }
+
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        return false;
+    }
 }

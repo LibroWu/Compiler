@@ -124,6 +124,11 @@ public class br extends terminalStmt {
 
     }
 
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        return false;
+    }
+
     public br(register val, block trueBranch, block falseBranch) {
         this.val = val;
         this.trueBranch = trueBranch;

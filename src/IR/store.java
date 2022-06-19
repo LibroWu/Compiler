@@ -20,6 +20,24 @@ public class store extends user {
 
     }
 
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        int res = 0, loc = 0, siz = resourceType.getSize();
+        if (resource instanceof constant) res = ((constant)resource).getValue();
+        else if (globalVars.containsKey(resource)) res = globalVars.get(resource);
+        else if (vrMap.containsKey(resource)) res = vrMap.get(resource);
+        if (globalVars.containsKey(target)) {
+            globalVars.put(target,res);
+        } else {
+            loc = vrMap.get(target);
+            for (int i = siz; i > 0; --i) {
+                bytes[loc + i - 1] = (byte) (res & 255);
+                res >>= 8;
+            }
+        }
+        return false;
+    }
+
     // for liveness analysis
     @Override
     public void fillSet() {

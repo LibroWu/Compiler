@@ -19,6 +19,7 @@ import Parser.MxLParser;
 import Util.MxLErrorListener;
 import Util.error.error;
 import Util.globalScope;
+import VM.VMachine;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -77,15 +78,17 @@ public class Main {
             new IRBuilder(pg, gScope, idToDef, idToFuncDef).visit(ASTRoot);
             //new IRPrinter(System.out).visitProgram(pg);
             new Mem2Reg(pg).run();
-            if (optimize) new IROptimizer(pg).run();
+            //if (optimize) new IROptimizer(pg).run();
             new IRPrinter(out_llvm).visitProgram(pg);
+            AsmPg vmPg = new AsmPg();
+            new VMachine(pg,32,new AsmPrinter(vmPg,out_asm)).run();
             AsmPg asmPg = new AsmPg();
             new InstrSelector(asmPg).visitProgram(pg);
             new LivenessAnalysis(asmPg).work();
             new RegAlloc(asmPg).work();
             //new RegAlloc_Basic(asmPg).work();
             new AsmOptimizer(asmPg).work();
-            new AsmPrinter(asmPg, out_asm).print();
+            //new AsmPrinter(asmPg, out_asm).print();
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

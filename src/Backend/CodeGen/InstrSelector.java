@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-public class InstrSelector implements Pass {
+public class InstrSelector {
     private HashMap<block, AsmBlock> blockMap = new HashMap<>();
     private HashMap<register, Reg> regMap = new HashMap<>();
     private HashMap<String, Reg> globalVarCache;
@@ -79,15 +79,18 @@ public class InstrSelector implements Pass {
         return value;
     }
 
-    @Override
+    public void visitVMProgram(program pg) {
+        pg.globalVarDecls.forEach(this::visitGlobalVarDecl);
+        pg.globalStringConstants.forEach(this::visitGlobalStringConstant);
+    }
+
     public void visitProgram(program pg) {
         pg.funcDefs.forEach(this::visitFuncDef);
         pg.globalVarDecls.forEach(this::visitGlobalVarDecl);
         pg.globalStringConstants.forEach(this::visitGlobalStringConstant);
     }
 
-    @Override
-    public void visitFuncDef(funcDef f) {
+    public AsmFunc visitFuncDef(funcDef f) {
         blockVisited = new HashSet<>();
         globalVarCache = new HashMap<>();
         cnt = 0;
@@ -152,9 +155,9 @@ public class InstrSelector implements Pass {
         asmFunc.registerCount = asmFunc.originalRegisterCount = cnt;
         asmFunc.allocCount = f.allocas.size();
         asmFunc.stackReserved += 3;
+        return asmFunc;
     }
 
-    @Override
     public void visitBlock(block b) {
         blockVisited.add(b);
         AsmBlock asmBlock = getAsmBlock(b);
@@ -601,23 +604,12 @@ public class InstrSelector implements Pass {
         }
     }
 
-    @Override
     public void visitGlobalVarDecl(globalVarDecl gv) {
         asmPg.globals.add(new AsmGlobal(gv.name, gv.align, "" + getImmValue((constant) gv.rs), false));
     }
 
-    @Override
     public void visitGlobalStringConstant(globalStringConstant gs) {
         asmPg.globals.add(new AsmGlobal(".libro.str" + ((gs.counter == 0) ? "" : "." + gs.counter), gs.irType.arrayLen, gs.rawString, true));
     }
 
-    @Override
-    public void visitClassDef(classDef f) {
-
-    }
-
-    @Override
-    public void visitDeclare(declare dec) {
-
-    }
 }

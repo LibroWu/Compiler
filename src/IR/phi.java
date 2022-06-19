@@ -13,14 +13,31 @@ public class phi extends statement {
     public alloca creator = null;
     public AsmBlock asmParentBlock = null;
 
+    public int exeRes;
+
     @Override
     public boolean isLoopInvariant(HashSet<block> loop, HashSet<register> live) {
         return false;
     }
 
     @Override
-    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {
+    public void loopInvariantDelivery(LinkedList<statement> W, LinkedList<statement> promotableStatements, HashSet<block> loop, HashSet<register> live) {}
 
+    public void phiExecute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        int res = 0;
+        for (entityBlockPair entityBlockPair : entityBlockPairs) {
+            if (entityBlockPair.bl==fromBlock) {
+                if (entityBlockPair.en instanceof constant)
+                    res = ((constant) entityBlockPair.en).getValue();
+                else res = vrMap.get(entityBlockPair.en);
+            }
+        }
+        exeRes = res;
+        //vrMap.put(rd,res);
+    }
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        return false;
     }
 
     // for liveness analysis

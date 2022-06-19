@@ -101,6 +101,15 @@ public class convertOp extends statement {
 
     }
 
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        int res = 0;
+        if (rs instanceof constant) res = ((constant)rs).getValue();
+        else res = vrMap.get(rs);
+        vrMap.put(rd,res);
+        return false;
+    }
+
     public enum convertType {
         TRUNC, ZEXT, SEXT
     }

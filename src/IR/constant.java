@@ -68,6 +68,12 @@ public class constant extends entity {
         intValue = flag?1:0;
     }
 
+    public int getValue(){
+        if (this.genre == Genre.BOOL) return (intValue>0?1:0);
+        if (this.genre == Genre.INT) return intValue;
+        return 0;
+    }
+
     @Override
     public String toString() {
         if (this.genre == Genre.BOOL) return "const " + (intValue>0);

@@ -11,6 +11,8 @@ public class program {
     public ArrayList<declare> declares = new ArrayList<>();//useless in asm
     public ArrayList<globalStringConstant> globalStringConstants = new ArrayList<>();
 
+    public funcDef builtinFunc,mainFunc;
+
     public void push_back(funcDef gl) {
         funcDefs.add(gl);
     }

@@ -100,6 +100,11 @@ public class alloca extends statement {
     }
 
     @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return allocaNumber + " " + rd;
     }

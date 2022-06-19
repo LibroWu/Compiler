@@ -20,6 +20,22 @@ public class load extends user {
 
     }
 
+    @Override
+    public boolean execute(HashMap<register, Integer> vrMap, HashMap<register, Integer> globalVars, block fromBlock, byte[] bytes) {
+        int siz = rsType.getSize(),loc;
+        int res = 0;
+        if (globalVars.containsKey(ptr)){
+            res = globalVars.get(ptr);
+        } else {
+            loc  = vrMap.get(ptr);
+            for (int i = 0; i < siz; ++i) {
+                res = (res << 8) + (bytes[loc + i] & 0xff);
+            }
+        }
+        vrMap.put(rd,res);
+        return false;
+    }
+
     // for liveness analysis
     @Override
     public void fillSet() {
